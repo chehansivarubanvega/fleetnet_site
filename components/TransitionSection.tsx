@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useRef } from 'react';
+import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { useGSAP } from '@gsap/react';
 import Image from 'next/image';
+import { useRef } from 'react';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -76,8 +76,8 @@ export default function TransitionSection() {
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: sectionRef.current,
-        start: "top 80%",
-        end: "top 20%",
+        start: "top 70%",
+        end: "top 30%",
         toggleActions: "play none none reverse"
       }
     });
@@ -112,8 +112,8 @@ export default function TransitionSection() {
       scrollTrigger: {
         trigger: sectionRef.current,
         start: "top top",
-        end: "+=4000", // Increased distance for 3 phases
-        scrub: 1,
+        end: "+=2000",
+        scrub: 1.5,
         pin: true,
         anticipatePin: 1
       }

@@ -1,4 +1,4 @@
-import type {Metadata} from 'next';
+import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({children}: {children: React.ReactNode}) {
   return (
-    <html lang="en" className={`${inter.variable} font-sans`}>
+    <html lang="en" suppressHydrationWarning className={`${inter.variable} font-sans`}>
       <body suppressHydrationWarning className="antialiased">{children}</body>
     </html>
   );

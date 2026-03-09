@@ -1,10 +1,12 @@
-import Navbar from '@/components/Navbar';
-import Hero from '@/components/Hero';
-import TransitionSection from '@/components/TransitionSection';
-import OperationsNarrative from '@/components/OperationsNarrative';
-import FluidBackground from '@/components/FluidBackground';
 import Features from '@/components/Features';
+import FluidBackground from '@/components/FluidBackground';
 import Footer from '@/components/Footer';
+import Hero from '@/components/Hero';
+import Navbar from '@/components/Navbar';
+import OperationsNarrative from '@/components/OperationsNarrative';
+import PartnerHands from '@/components/PartnerHands';
+import TrackerSection from '@/components/TrackerSection';
+import TransitionSection from '@/components/TransitionSection';
 
 export default function Home() {
   return (
@@ -14,6 +16,8 @@ export default function Home() {
       <Hero />
       <TransitionSection />
       <OperationsNarrative />
+      <TrackerSection />
+      <PartnerHands />
       
       {/* Stats Section */}
       <section className="py-16 bg-white border-b border-slate-100 relative z-20">

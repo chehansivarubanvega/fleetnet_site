@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useRef } from 'react';
+import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { useGSAP } from '@gsap/react';
 import Image from 'next/image';
+import { useRef } from 'react';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -68,9 +68,9 @@ export default function OperationsNarrative() {
       scrollTrigger: {
         trigger: sectionRef.current,
         start: "top top",
-        end: "+=6000",
+        end: "+=3000",
         pin: true,
-        scrub: 1,
+        scrub: 1.5,
         anticipatePin: 1,
       }
     });
@@ -102,7 +102,7 @@ export default function OperationsNarrative() {
     .to('#text-1 h2 span', { opacity: 1, stagger: 0.03, duration: 0.2 }, "scene1+=1");
 
     // Hold scene 1
-    mainTl.to({}, { duration: 1.5 });
+    mainTl.to({}, { duration: 0.8 });
 
     // --- SCENE 2: Live Fleet Intelligence ---
     mainTl.to(cardsRef.current, {
@@ -135,7 +135,7 @@ export default function OperationsNarrative() {
     }, "scene2+=1.2");
 
     // Hold scene 2
-    mainTl.to({}, { duration: 1.5 });
+    mainTl.to({}, { duration: 0.8 });
 
     // --- SCENE 3: Predictive Alerts ---
     mainTl.to(wireframeRef.current, {
@@ -161,7 +161,7 @@ export default function OperationsNarrative() {
     .to('#text-3 p', { opacity: 1, y: 0, duration: 0.6 }, "scene3+=1.1");
 
     // Final hold
-    mainTl.to({}, { duration: 2 });
+    mainTl.to({}, { duration: 1 });
 
   }, { scope: sectionRef });
 
