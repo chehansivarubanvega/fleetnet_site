@@ -32,71 +32,56 @@ export default function PartnerHands() {
     gsap.set(logosRef.current, { opacity: 0, y: 40, scale: 0.9 });
 
     // 2. Timeline with ScrollTrigger
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: sectionRef.current,
-        start: 'top top',
-        end: '+=4000', // 4000px of scroll distance for the entire pin
-        pin: true,
-        scrub: 1, // Smooth scrub
-        anticipatePin: 1,
-        onUpdate: (self) => {
-          // Background Color Interpolation (LERP)
-          // Starts at rgb(245, 245, 245) and moves to rgb(2, 6, 23) (very dark blue/black)
-          const p = self.progress;
-          if (sectionRef.current) {
-            const r = Math.round(gsap.utils.interpolate(245, 5, p));
-            const g = Math.round(gsap.utils.interpolate(245, 5, p));
-            const b = Math.round(gsap.utils.interpolate(245, 10, p));
-            sectionRef.current.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
-          }
+    const mainTl = gsap.timeline({ paused: true });
+
+    // Build the automatic sequence
+    mainTl.to([leftHandRef.current, rightHandRef.current], {
+      xPercent: 0,
+      yPercent: 0,
+      ease: 'power3.out',
+      duration: 1.2
+    })
+    .to(textRef.current, {
+      opacity: 1,
+      y: 0,
+      duration: 0.8,
+      ease: 'power2.out'
+    }, "-=0.4")
+    .to(logosRef.current, {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      stagger: 0.1,
+      duration: 0.8,
+      ease: 'back.out(1.7)'
+    }, "-=0.2");
+
+    ScrollTrigger.create({
+      trigger: sectionRef.current,
+      start: 'top top',
+      end: '+=800', // Dramatically shorter scroll distance
+      pin: true,
+      onUpdate: (self) => {
+        // Background Color Interpolation (Keep this scrubbed as it feels premium)
+        const p = self.progress;
+        if (sectionRef.current) {
+          const r = Math.round(gsap.utils.interpolate(245, 5, p));
+          const g = Math.round(gsap.utils.interpolate(245, 5, p));
+          const b = Math.round(gsap.utils.interpolate(245, 10, p));
+          sectionRef.current.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+        }
+
+        // Trigger the animation sequence once at 10% progress
+        if (p > 0.1 && !mainTl.isActive() && mainTl.progress() === 0) {
+          mainTl.play();
+        }
+        
+        // Reverse if user scrolls back to the very top
+        if (p < 0.05 && !mainTl.isActive() && mainTl.progress() > 0) {
+          mainTl.reverse();
         }
       }
     });
-
-    // ═══════════════════════════════════════════
-    // Phase 1: Hands move in
-    // ═══════════════════════════════════════════
-    tl.to(leftHandRef.current, {
-      xPercent: 0,
-      yPercent: 0,
-      ease: 'power2.out',
-      duration: 3
-    }, 'moveIn')
-    .to(rightHandRef.current, {
-      xPercent: 0,
-      yPercent: 0,
-      ease: 'power2.out',
-      duration: 3
-    }, 'moveIn');
-
-    // ═══════════════════════════════════════════
-    // Phase 2: Staggered Text & Logo Reveal
-    // ═══════════════════════════════════════════
-    // Only starts after the hands are mostly in position (e.g., at duration 2.0 of 'moveIn')
-    tl.addLabel('reveal', 'moveIn+=2.0');
-
-    // Text Reveal
-    tl.to(textRef.current, {
-      opacity: 1,
-      y: 0,
-      duration: 1,
-      ease: 'power3.out'
-    }, 'reveal');
-
-    // Logos staggered reveal
-    logosRef.current.forEach((logo, index) => {
-      tl.to(logo, {
-        opacity: 1,
-        y: 0,
-        scale: 1,
-        duration: 0.8,
-        ease: 'back.out(1.5)'
-      }, `reveal+=${0.2 + (index * 0.15)}`);
-    });
-
-    // Hold at the end to read the logos before unpinning
-    tl.to({}, { duration: 1.5 });
 
   }, { scope: sectionRef });
 
@@ -131,13 +116,13 @@ export default function PartnerHands() {
             <div 
               key={partner.name}
               ref={(el) => { logosRef.current[i] = el; }}
-              className="relative w-24 h-24 md:w-32 md:h-32 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 p-4 shadow-xl flex items-center justify-center will-change-transform group transition-colors hover:bg-white/10"
+              className="relative w-24 h-24 md:w-32 md:h-32 bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-gray-100 flex items-center justify-center will-change-transform group transition-transform hover:-translate-y-2 hover:shadow-[0_20px_40px_rgb(0,0,0,0.2)]"
             >
               <Image 
                 src={partner.src} 
                 alt={`${partner.name} logo`}
                 fill
-                className="object-contain p-2 md:p-3 filter brightness-0 invert opacity-80 group-hover:opacity-100 transition-opacity"
+                className="object-contain p-4 md:p-6"
               />
             </div>
           ))}

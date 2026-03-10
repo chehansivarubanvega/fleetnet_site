@@ -64,105 +64,24 @@ export default function TransitionSection() {
   useGSAP(() => {
     const cards = cardsRef.current;
     
-    // 1. Initial State & Entrance Animation
+    // Simple staggered reveal as the section scrolls into view
     gsap.set(cards, { 
-      scale: 0, 
       opacity: 0,
-      x: 0,
-      y: 0,
-      rotation: (i) => (i - (CARDS.length - 1) / 2) * 2 // Very subtle initial fan
+      y: 50
     });
 
-    const tl = gsap.timeline({
+    gsap.to(cards, {
       scrollTrigger: {
         trigger: sectionRef.current,
-        start: "top 70%",
-        end: "top 30%",
+        start: "top 80%", // Start revealing when the section is 20% into the viewport
+        end: "bottom 80%",
         toggleActions: "play none none reverse"
-      }
-    });
-
-    tl.to(cards, {
-      scale: 1,
-      opacity: 1,
-      rotation: (i) => {
-        const total = CARDS.length - 1;
-        const progress = i / total; // 0 to 1
-        return -10 + (progress * 20); // -10 to 10
       },
+      opacity: 1,
+      y: 0,
       stagger: 0.1,
-      duration: 1.2,
-      ease: "elastic.out(1, 0.75)"
-    });
-
-    // 2. Idle Floating Effect (Oscillation)
-    cards.forEach((card, i) => {
-      gsap.to(card, {
-        y: "+=15",
-        duration: 2 + i * 0.2,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-        delay: i * 0.1
-      });
-    });
-
-    // 3. Scroll-Scrubbed Multi-Phase Timeline
-    const mainTimeline = gsap.timeline({
-      scrollTrigger: {
-        trigger: sectionRef.current,
-        start: "top top",
-        end: "+=2000",
-        scrub: 1.5,
-        pin: true,
-        anticipatePin: 1
-      }
-    });
-
-    // --- PHASE 1: Stack to 3-Stacks (Shuffle) ---
-    const stackCols = 3;
-    const stackSpacing = 450; // Horizontal distance between stacks
-    
-    cards.forEach((card, i) => {
-      if (!card) return;
-      const stackIndex = i % stackCols; // 0, 1, or 2
-      const cardInStackIndex = Math.floor(i / stackCols); // 0, 1, or 2
-      
-      const targetX = (stackIndex - 1) * stackSpacing;
-      // Slight vertical offset within the stack for "messy" shuffle look
-      const targetY = cardInStackIndex * 4; 
-      const targetRotation = (cardInStackIndex - 1) * 3; // -3, 0, 3 deg
-
-      mainTimeline.to(card, {
-        x: targetX,
-        y: targetY,
-        rotation: targetRotation,
-        duration: 1,
-        ease: "back.out(1.2)" // Shuffling feel
-      }, 0);
-    });
-
-    // Add a pause in the 3-stack layout for reading
-    mainTimeline.to({}, { duration: 0.8 }); 
-
-    // --- PHASE 2: 3-Stacks to Scatter ---
-    cards.forEach((card, i) => {
-      if (!card) return;
-      const stackIndex = i % stackCols;
-      const angle = (stackIndex / stackCols) * Math.PI * 2 + (Math.random() * 0.5);
-      const distance = 1500;
-      const scatterX = Math.cos(angle) * distance;
-      const scatterY = Math.sin(angle) * distance;
-
-      mainTimeline.to(card, {
-        x: scatterX,
-        y: scatterY,
-        rotation: gsap.utils.random(-90, 90),
-        opacity: 0,
-        scale: 0.2,
-        duration: 1.5,
-        ease: "power2.in"
-      }, ">-1.2"); // Staggered start of scattering
+      duration: 0.8,
+      ease: "power3.out"
     });
 
   }, { scope: sectionRef });
@@ -170,47 +89,55 @@ export default function TransitionSection() {
   return (
     <section 
       ref={sectionRef} 
-      className="relative min-h-screen w-full flex items-center justify-center overflow-hidden z-10 py-20"
+      className="relative min-h-screen w-full flex flex-col items-center justify-center overflow-hidden z-10 py-32 px-6"
     >
+      <div className="max-w-7xl mx-auto text-center mb-20 text-white z-20">
+        <h2 className="text-5xl md:text-7xl font-black tracking-tight mb-6">
+          Visibility. Control. Insight.
+        </h2>
+        <p className="text-xl md:text-2xl text-white/70 max-w-3xl mx-auto font-medium">
+          Everything you need to optimize your fleet operations from the ground up, built into one cohesive platform.
+        </p>
+      </div>
+
       <div 
         ref={containerRef}
-        className="relative w-full max-w-4xl aspect-[4/3] flex items-center justify-center"
+        className="relative w-full max-w-7xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 z-20"
       >
         {CARDS.map((card, i) => (
           <div
             key={card.title}
             ref={(el) => { cardsRef.current[i] = el; }}
-            className="absolute w-[280px] md:w-[320px] aspect-[10/14] rounded-2xl overflow-hidden bg-black/80 border-4 border-white shadow-[0_20px_50px_rgba(0,0,0,0.5)] will-change-transform"
-            style={{ zIndex: CARDS.length - i }}
+            className="group relative w-full aspect-[4/3] rounded-3xl overflow-hidden bg-black/40 border border-white/10 shadow-2xl will-change-transform transform transition-all duration-300 hover:scale-[1.02] hover:border-white/30"
           >
-            <div className="relative w-full h-full p-8 flex flex-col justify-between">
+            <div className="relative w-full h-full p-8 md:p-10 flex flex-col justify-between">
               {/* Image Background */}
               <div className="absolute inset-0 z-0">
                 <Image 
                   src={card.image} 
                   alt={card.title}
                   fill
-                  className="object-cover opacity-40 mix-blend-luminosity"
+                  className="object-cover opacity-40 mix-blend-luminosity group-hover:opacity-60 transition-opacity duration-500"
                   priority={i < 3}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/60 to-transparent" />
               </div>
 
               {/* Top Section: Checkmark */}
               <div className="relative z-10">
-                <div className="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center shadow-lg border-2 border-white">
+                <div className="w-12 h-12 rounded-full bg-red-600/90 flex items-center justify-center shadow-[0_0_30px_rgba(220,38,38,0.4)] border flex-shrink-0 group-hover:bg-red-500 transition-colors">
                   <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M5 13l4 4L19 7" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
               </div>
               
               {/* Bottom Section: Content */}
-              <div className="relative z-10">
-                <h3 className="text-3xl font-black text-white mb-3 tracking-tight leading-none group-hover:text-red-500 transition-colors">
+              <div className="relative z-10 mt-auto">
+                <h3 className="text-2xl md:text-3xl font-bold text-white mb-3 tracking-tight group-hover:text-red-400 transition-colors">
                   {card.title}
                 </h3>
-                <p className="text-base text-white/90 leading-relaxed font-medium">
+                <p className="text-sm md:text-base text-white/80 leading-relaxed font-medium">
                   {card.description}
                 </p>
               </div>

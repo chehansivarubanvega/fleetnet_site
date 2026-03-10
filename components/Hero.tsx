@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useRef } from 'react';
-import Image from 'next/image';
-import { motion, useScroll, useTransform } from 'motion/react';
 import { ArrowDown } from 'lucide-react';
+import { motion, useMotionValueEvent, useScroll, useTransform } from 'motion/react';
+import Image from 'next/image';
+import React, { useRef } from 'react';
 
 export default function Hero() {
   const [mounted, setMounted] = React.useState(false);
+  const [isScene2Active, setIsScene2Active] = React.useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   
   React.useEffect(() => {
@@ -18,43 +19,31 @@ export default function Hero() {
     offset: ["start start", "end end"]
   });
 
-  // Scene 1: Hero Content (0% -> 15% scroll) — exits quickly
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
-  const heroY = useTransform(scrollYProgress, [0, 0.15], [0, -50]);
-  const heroX = useTransform(scrollYProgress, [0, 0.15], [0, -150]);
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    // If scroll progresses past the 1% mark (immediately as Scene 1 starts exiting), activate Scene 2 animations
+    setIsScene2Active(latest > 0.05);
+  });
+
+  // Scene 1: Hero Content (0% -> 10% scroll) — exits quickly
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.1], [1, 0]);
+  const heroY = useTransform(scrollYProgress, [0, 0.1], [0, -50]);
+  const heroX = useTransform(scrollYProgress, [0, 0.1], [0, -150]);
   
   // Mockup Choreography (Interpolation)
-  const mockupScale = useTransform(scrollYProgress, [0, 0.3], [1, 0.4]);
-  const mockupOpacity = useTransform(scrollYProgress, [0.3, 0.4], [1, 0]);
+  const mockupScale = useTransform(scrollYProgress, [0, 0.2], [1, 0.4]);
+  const mockupOpacity = useTransform(scrollYProgress, [0.1, 0.2], [1, 0]);
 
   // Independent Mockup Movements
-  const desktopY = useTransform(scrollYProgress, [0, 0.3], [0, -600]);
-  const desktopRotate = useTransform(scrollYProgress, [0, 0.3], [0, -15]);
+  const desktopY = useTransform(scrollYProgress, [0, 0.2], [0, -600]);
+  const desktopRotate = useTransform(scrollYProgress, [0, 0.2], [0, -15]);
   
-  const mobileY = useTransform(scrollYProgress, [0, 0.3], [0, 600]);
-  const mobileRotate = useTransform(scrollYProgress, [0, 0.3], [0, 15]);
+  const mobileY = useTransform(scrollYProgress, [0, 0.2], [0, 600]);
+  const mobileRotate = useTransform(scrollYProgress, [0, 0.2], [0, 15]);
   
-  const mockupRotate = useTransform(scrollYProgress, [0, 0.3], [0, 5]);
-  
-  // Scene 2: Mission Content — starts sooner, tighter stagger
-  const missionBadgeOpacity = useTransform(scrollYProgress, [0.4, 0.48], [0, 1]);
-  const missionBadgeY = useTransform(scrollYProgress, [0.4, 0.48], [40, 0]);
-  const missionBadgeClip = useTransform(scrollYProgress, [0.4, 0.48], ["inset(100% 0 0 0)", "inset(0% 0 0 0)"]);
-
-  const missionH1Opacity = useTransform(scrollYProgress, [0.46, 0.56], [0, 1]);
-  const missionH1Y = useTransform(scrollYProgress, [0.46, 0.56], [60, 0]);
-  const missionH1Clip = useTransform(scrollYProgress, [0.46, 0.56], ["inset(100% 0 0 0)", "inset(0% 0 0 0)"]);
-
-  const missionH2Opacity = useTransform(scrollYProgress, [0.52, 0.62], [0, 1]);
-  const missionH2Y = useTransform(scrollYProgress, [0.52, 0.62], [60, 0]);
-  const missionH2Clip = useTransform(scrollYProgress, [0.52, 0.62], ["inset(100% 0 0 0)", "inset(0% 0 0 0)"]);
-
-  const missionPOpacity = useTransform(scrollYProgress, [0.58, 0.68], [0, 1]);
-  const missionPY = useTransform(scrollYProgress, [0.58, 0.68], [40, 0]);
-  const missionPClip = useTransform(scrollYProgress, [0.58, 0.68], ["inset(100% 0 0 0)", "inset(0% 0 0 0)"]);
+  const mockupRotate = useTransform(scrollYProgress, [0, 0.2], [0, 5]);
 
   // Global exit for Scene 2
-  const missionExitOpacity = useTransform(scrollYProgress, [0.85, 1], [1, 0]);
+  const missionExitOpacity = useTransform(scrollYProgress, [0.8, 1], [1, 0]);
 
   // Fallback values for SSR to prevent hydration mismatch
   const currentHeroOpacity = mounted ? heroOpacity : 1;
@@ -71,29 +60,12 @@ export default function Hero() {
   
   const currentMockupRotate = mounted ? mockupRotate : 0;
 
-  // Mission Fallbacks
-  const currentMissionBadgeOpacity = mounted ? missionBadgeOpacity : 0;
-  const currentMissionBadgeY = mounted ? missionBadgeY : 40;
-  const currentMissionBadgeClip = mounted ? missionBadgeClip : "inset(100% 0 0 0)";
-
-  const currentMissionH1Opacity = mounted ? missionH1Opacity : 0;
-  const currentMissionH1Y = mounted ? missionH1Y : 60;
-  const currentMissionH1Clip = mounted ? missionH1Clip : "inset(100% 0 0 0)";
-
-  const currentMissionH2Opacity = mounted ? missionH2Opacity : 0;
-  const currentMissionH2Y = mounted ? missionH2Y : 60;
-  const currentMissionH2Clip = mounted ? missionH2Clip : "inset(100% 0 0 0)";
-
-  const currentMissionPOpacity = mounted ? missionPOpacity : 0;
-  const currentMissionPY = mounted ? missionPY : 40;
-  const currentMissionPClip = mounted ? missionPClip : "inset(100% 0 0 0)";
-
   const currentMissionExitOpacity = mounted ? missionExitOpacity : 1;
 
   return (
     <section 
       ref={containerRef}
-      className="relative h-[300vh] w-full"
+      className="relative h-[200vh] w-full"
     >
       {/* Sticky Stage */}
       <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center">
@@ -146,11 +118,9 @@ export default function Hero() {
           >
             {/* Badge Reveal */}
             <motion.div 
-              style={{ 
-                opacity: currentMissionBadgeOpacity, 
-                y: currentMissionBadgeY,
-                clipPath: currentMissionBadgeClip
-              }}
+              initial={{ opacity: 0, y: 40, clipPath: "inset(100% 0 0 0)" }}
+              animate={isScene2Active ? { opacity: 1, y: 0, clipPath: "inset(0% 0 0 0)" } : { opacity: 0, y: 40, clipPath: "inset(100% 0 0 0)" }}
+              transition={{ duration: isScene2Active ? 0.8 : 0.2, ease: "easeOut" }}
               className="inline-flex items-center px-10 py-4 rounded-full border border-white/20 bg-black/30 backdrop-blur-2xl mb-14"
             >
               <span className="text-white text-sm font-bold tracking-[0.4em] uppercase">
@@ -160,11 +130,9 @@ export default function Hero() {
 
             {/* Heading Reveal - Line 1 */}
             <motion.h2 
-              style={{ 
-                opacity: currentMissionH1Opacity, 
-                y: currentMissionH1Y,
-                clipPath: currentMissionH1Clip
-              }}
+              initial={{ opacity: 0, y: 60, clipPath: "inset(100% 0 0 0)" }}
+              animate={isScene2Active ? { opacity: 1, y: 0, clipPath: "inset(0% 0 0 0)" } : { opacity: 0, y: 60, clipPath: "inset(100% 0 0 0)" }}
+              transition={{ duration: isScene2Active ? 0.8 : 0.2, delay: isScene2Active ? 0.1 : 0, ease: "easeOut" }}
               className="text-6xl md:text-[100px] font-bold text-white leading-[1] mb-4 max-w-6xl tracking-tight"
             >
               We&apos;re changing that.
@@ -172,11 +140,9 @@ export default function Hero() {
 
             {/* Heading Reveal - Line 2 */}
             <motion.h2 
-              style={{ 
-                opacity: currentMissionH2Opacity, 
-                y: currentMissionH2Y,
-                clipPath: currentMissionH2Clip
-              }}
+              initial={{ opacity: 0, y: 60, clipPath: "inset(100% 0 0 0)" }}
+              animate={isScene2Active ? { opacity: 1, y: 0, clipPath: "inset(0% 0 0 0)" } : { opacity: 0, y: 60, clipPath: "inset(100% 0 0 0)" }}
+              transition={{ duration: isScene2Active ? 0.8 : 0.2, delay: isScene2Active ? 0.2 : 0, ease: "easeOut" }}
               className="text-6xl md:text-[100px] font-bold text-white leading-[1] mb-14 max-w-6xl tracking-tight"
             >
               One optimized route at a time.
@@ -184,11 +150,9 @@ export default function Hero() {
 
             {/* Paragraph Reveal */}
             <motion.p 
-              style={{ 
-                opacity: currentMissionPOpacity, 
-                y: currentMissionPY,
-                clipPath: currentMissionPClip
-              }}
+              initial={{ opacity: 0, y: 40, clipPath: "inset(100% 0 0 0)" }}
+              animate={isScene2Active ? { opacity: 1, y: 0, clipPath: "inset(0% 0 0 0)" } : { opacity: 0, y: 40, clipPath: "inset(100% 0 0 0)" }}
+              transition={{ duration: isScene2Active ? 0.8 : 0.2, delay: isScene2Active ? 0.3 : 0, ease: "easeOut" }}
               className="text-2xl md:text-3xl text-white/70 max-w-4xl leading-relaxed font-medium"
             >
               FleetNET honors the organizations rewriting the rules of logistics—locally rooted, 

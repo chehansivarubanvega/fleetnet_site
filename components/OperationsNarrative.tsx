@@ -25,25 +25,40 @@ const DATA_POINTS = [
 
 export default function OperationsNarrative() {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  // Scene Refs
   const iconRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
   const wireframeRef = useRef<HTMLDivElement>(null);
   const bubbleRef = useRef<HTMLDivElement>(null);
-  const textRef = useRef<HTMLDivElement>(null);
+  
+  // Text Refs
+  const text1Ref = useRef<HTMLDivElement>(null);
+  const text2Ref = useRef<HTMLDivElement>(null);
+  const text3Ref = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {
-    // --- Background Theme Transition ---
-    // Transitions the FluidBackground from Warm to Cold/Dark
+    if (!sectionRef.current) return;
+
+    // --- 1. THEME INITIALIZATION ---
+    gsap.set([wireframeRef.current, bubbleRef.current, text1Ref.current, text2Ref.current, text3Ref.current], { 
+      opacity: 0, 
+      y: 50,
+      visibility: 'hidden'
+    });
+    gsap.set(cardsRef.current, { opacity: 0, scale: 0.8, y: 100 });
+    gsap.set(iconRef.current, { opacity: 1, scale: 1, y: 0 });
+
+    // --- 2. BACKGROUND COLOR TRANSITION (THEME) ---
     ScrollTrigger.create({
       trigger: sectionRef.current,
-      start: "top bottom", // Start when section enters viewport
-      end: "top center", // Complete by the time it reaches center
+      start: "top bottom",
+      end: "top center",
       scrub: true,
       onUpdate: (self) => {
         const p = self.progress;
         const root = document.documentElement;
-        
-        // Define target colors
         const targets = {
           base: ["#2a0f04", "#050505"],
           c1: ["#ff4500", "#991b1b"],
@@ -51,11 +66,7 @@ export default function OperationsNarrative() {
           c3: ["#3d1a08", "#0f172a"],
           c4: ["#ffcc00", "#ef4444"]
         };
-
-        const interpolate = (start: string, end: string, progress: number) => {
-          return gsap.utils.interpolate(start, end, progress);
-        };
-
+        const interpolate = (start: string, end: string, progress: number) => gsap.utils.interpolate(start, end, progress);
         root.style.setProperty('--bg-base', interpolate(targets.base[0], targets.base[1], p));
         root.style.setProperty('--bg-color-1', interpolate(targets.c1[0], targets.c1[1], p));
         root.style.setProperty('--bg-color-2', interpolate(targets.c2[0], targets.c2[1], p));
@@ -64,104 +75,93 @@ export default function OperationsNarrative() {
       }
     });
 
-    const mainTl = gsap.timeline({
-      scrollTrigger: {
-        trigger: sectionRef.current,
-        start: "top top",
-        end: "+=3000",
-        pin: true,
-        scrub: 1.5,
-        anticipatePin: 1,
+    // --- 3. SCENE MANAGER ---
+    const scenes = [
+      {
+        id: 'scene1',
+        enter: () => {
+          const tl = gsap.timeline();
+          tl.set(text1Ref.current, { visibility: 'visible' });
+          tl.to(iconRef.current, { y: -120, opacity: 0, scale: 0.5, duration: 0.8, ease: "power3.inOut" }, 0);
+          tl.to(cardsRef.current, { opacity: 1, scale: 1, y: 0, stagger: 0.1, duration: 1, ease: "back.out(1.5)" }, 0.2);
+          tl.to(text1Ref.current, { opacity: 1, y: 0, duration: 0.8 }, 0.4);
+          tl.to('#text-1 h2 span span', { opacity: 1, stagger: 0.02, duration: 0.1 }, 0.6);
+          return tl;
+        },
+        exit: () => {
+          const tl = gsap.timeline();
+          tl.to(cardsRef.current, { opacity: 0, scale: 0.8, y: 50, stagger: 0.05, duration: 0.6, ease: "power2.in" }, 0);
+          tl.to(text1Ref.current, { opacity: 0, y: -30, duration: 0.5 }, 0.1);
+          return tl;
+        }
+      },
+      {
+        id: 'scene2',
+        enter: () => {
+          const tl = gsap.timeline();
+          tl.set(text2Ref.current, { visibility: 'visible' });
+          tl.to(wireframeRef.current, { opacity: 1, scale: 1, duration: 1.2, ease: "expo.out" }, 0);
+          tl.to(text2Ref.current, { opacity: 1, y: 0, duration: 0.8 }, 0.3);
+          tl.to('#text-2 h2 span span', { opacity: 1, stagger: 0.03, duration: 0.1 }, 0.5);
+          tl.to(wireframeRef.current, { filter: "brightness(1.5) contrast(1.2) drop-shadow(0 0 30px rgba(239, 68, 68, 0.3))", duration: 1 }, 0.7);
+          return tl;
+        },
+        exit: () => {
+          const tl = gsap.timeline();
+          tl.to(wireframeRef.current, { scale: 1.2, opacity: 0, duration: 0.8, ease: "power3.in" }, 0);
+          tl.to(text2Ref.current, { opacity: 0, y: -30, duration: 0.5 }, 0.1);
+          return tl;
+        }
+      },
+      {
+        id: 'scene3',
+        enter: () => {
+          const tl = gsap.timeline();
+          tl.set(text3Ref.current, { visibility: 'visible' });
+          tl.to(bubbleRef.current, { opacity: 1, scale: 1, duration: 1, ease: "elastic.out(1, 0.6)" }, 0);
+          tl.to(text3Ref.current, { opacity: 1, y: 0, duration: 0.8 }, 0.3);
+          tl.to('#text-3 h2 span span', { opacity: 1, stagger: 0.03, duration: 0.1 }, 0.5);
+          return tl;
+        },
+        exit: () => {
+          const tl = gsap.timeline();
+          tl.to(bubbleRef.current, { scale: 0.5, opacity: 0, duration: 0.6 }, 0);
+          tl.to(text3Ref.current, { opacity: 0, y: -30, duration: 0.5 }, 0.1);
+          return tl;
+        }
+      }
+    ];
+
+    let currentScene = -1;
+
+    ScrollTrigger.create({
+      trigger: sectionRef.current,
+      start: "top top",
+      end: "+=1800",
+      pin: true,
+      anticipatePin: 1,
+      onUpdate: (self) => {
+        const p = self.progress;
+        let targetScene = -1;
+
+        if (p > 0.05 && p <= 0.35) targetScene = 0;
+        else if (p > 0.35 && p <= 0.7) targetScene = 1;
+        else if (p > 0.7) targetScene = 2;
+
+        if (targetScene !== currentScene) {
+          if (currentScene !== -1) scenes[currentScene].exit();
+          if (targetScene !== -1) scenes[targetScene].enter();
+          currentScene = targetScene;
+        }
+
+        // Final cleanup for scrolling back up to absolute top
+        if (p < 0.02 && currentScene !== -1) {
+          scenes[currentScene].exit();
+          gsap.to(iconRef.current, { opacity: 1, scale: 1, y: 0, duration: 0.5 });
+          currentScene = -1;
+        }
       }
     });
-
-    // Initial states
-    gsap.set(iconRef.current, { scale: 1, opacity: 1, y: 0 });
-    gsap.set(cardsRef.current, { scale: 0.8, opacity: 0, y: 100 });
-    gsap.set(wireframeRef.current, { opacity: 0, scale: 0.8 });
-    gsap.set(bubbleRef.current, { opacity: 0, scale: 0 });
-    gsap.set('.narrative-text', { opacity: 0, y: 40 });
-
-    // --- SCENE 1: Total Asset Control ---
-    mainTl.to(iconRef.current, {
-      y: -150,
-      opacity: 0,
-      scale: 0.3,
-      duration: 1,
-      ease: "power4.inOut"
-    }, "scene1")
-    .to(cardsRef.current, {
-      opacity: 1,
-      scale: 1,
-      y: 0,
-      stagger: 0.15,
-      duration: 1.2,
-      ease: "back.out(1.7)"
-    }, "scene1+=0.3")
-    .to('#text-1', { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }, "scene1+=0.8")
-    .to('#text-1 h2 span', { opacity: 1, stagger: 0.03, duration: 0.2 }, "scene1+=1");
-
-    // Hold scene 1
-    mainTl.to({}, { duration: 0.8 });
-
-    // --- SCENE 2: Live Fleet Intelligence ---
-    mainTl.to(cardsRef.current, {
-      opacity: 0,
-      scale: 0.5,
-      stagger: 0.05,
-      duration: 0.8,
-      ease: "power2.in"
-    }, "scene2")
-    .to('#text-1', { opacity: 0, y: -40, duration: 0.5 }, "scene2")
-    .to(wireframeRef.current, {
-      opacity: 1,
-      scale: 1,
-      duration: 1.5,
-      ease: "expo.out"
-    }, "scene2+=0.3")
-    .to('#text-2', { opacity: 1, y: 0, duration: 0.5 }, "scene2+=0.5") // FIX: Animate container to opacity 1
-    .to('#text-2 h2 span', { 
-      opacity: 1, 
-      stagger: 0.04, 
-      duration: 0.2,
-      ease: "none"
-    }, "scene2+=0.8")
-    .to('#text-2 p', { opacity: 1, y: 0, duration: 0.6 }, "scene2+=1");
-
-    // Sub-animation for wireframe points
-    mainTl.to(wireframeRef.current, {
-      filter: "brightness(1.8) contrast(1.1) drop-shadow(0 0 20px rgba(239, 68, 68, 0.4))",
-      duration: 1,
-    }, "scene2+=1.2");
-
-    // Hold scene 2
-    mainTl.to({}, { duration: 0.8 });
-
-    // --- SCENE 3: Predictive Alerts ---
-    mainTl.to(wireframeRef.current, {
-      scale: 1.5,
-      opacity: 0,
-      duration: 1,
-      ease: "power4.in"
-    }, "scene3")
-    .to('#text-2', { opacity: 0, y: -40, duration: 0.5 }, "scene3")
-    .to(bubbleRef.current, {
-      opacity: 1,
-      scale: 1.2,
-      duration: 1.2,
-      ease: "elastic.out(1, 0.4)"
-    }, "scene3+=0.4")
-    .to('#text-3', { opacity: 1, y: 0, duration: 0.5 }, "scene3+=0.6") // FIX: Animate container to opacity 1
-    .to('#text-3 h2 span', { 
-      opacity: 1, 
-      stagger: 0.04, 
-      duration: 0.2,
-      ease: "none"
-    }, "scene3+=0.9")
-    .to('#text-3 p', { opacity: 1, y: 0, duration: 0.6 }, "scene3+=1.1");
-
-    // Final hold
-    mainTl.to({}, { duration: 1 });
 
   }, { scope: sectionRef });
 
@@ -184,12 +184,11 @@ export default function OperationsNarrative() {
     <section ref={sectionRef} className="relative w-full min-h-screen overflow-hidden z-10 font-[family-name:var(--font-outfit)]">
       <div className="absolute inset-0 flex items-center justify-center p-6 md:p-20">
         
-        {/* Scene Container */}
-        <div className="relative w-full h-full flex items-center justify-center">
+        <div ref={containerRef} className="relative w-full h-full flex items-center justify-center z-20">
           
-          {/* Scene 1 Assets: Icon & Cards */}
+          {/* SCENE 1 ASSETS */}
           <div ref={iconRef} className="absolute z-20">
-            <div className="w-40 h-40 md:w-56 md:h-56 rounded-[2.5rem] bg-white/5 backdrop-blur-2xl border border-white/10 flex items-center justify-center p-8 shadow-[0_0_50px_rgba(255,255,255,0.05)]">
+            <div className="w-40 h-40 md:w-56 md:h-56 rounded-[3rem] bg-white/5 backdrop-blur-3xl border border-white/10 flex items-center justify-center p-10 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)]">
               <Image 
                 src="/images/FLEETnet app icon.png" 
                 alt="Unified Command" 
@@ -205,132 +204,116 @@ export default function OperationsNarrative() {
               <div
                 key={label}
                 ref={(el) => { cardsRef.current[i] = el; }}
-                className="w-40 md:w-72 aspect-[3/4.5] rounded-3xl bg-gradient-to-b from-white/10 to-white/5 backdrop-blur-3xl border border-white/20 p-6 md:p-8 flex flex-col justify-end shadow-2xl will-change-transform group overflow-hidden"
+                className="w-44 md:w-80 aspect-[3/4.2] rounded-[2.5rem] bg-white/5 backdrop-blur-3xl border border-white/10 p-8 md:p-10 flex flex-col justify-end shadow-2xl will-change-transform group overflow-hidden"
               >
-                <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-red-600/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="absolute inset-0 bg-gradient-to-t from-red-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <div className="relative z-10">
-                  <div className="w-12 h-12 rounded-2xl bg-red-600 mb-6 flex items-center justify-center shadow-lg shadow-red-600/30">
-                    <div className="w-3 h-3 bg-white rounded-full animate-pulse" />
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-red-500 to-red-700 mb-8 flex items-center justify-center shadow-lg shadow-red-600/20">
+                    <div className="w-3.5 h-3.5 bg-white rounded-full animate-pulse shadow-[0_0_15px_white]" />
                   </div>
-                  <h4 className="text-2xl md:text-3xl font-bold text-white mb-3 tracking-tight">{label}</h4>
-                  <p className="text-white/40 text-sm md:text-base leading-relaxed mb-4">Enterprise Grade {label} Logic</p>
-                  <div className="h-1.5 w-16 bg-red-500 rounded-full" />
+                  <h4 className="text-3xl font-bold text-white mb-2 tracking-tight">{label}</h4>
+                  <p className="text-white/30 text-sm font-medium leading-relaxed uppercase tracking-wider mb-6">Core Module 0{i+1}</p>
+                  <div className="h-1 w-20 bg-red-500/50 rounded-full" />
                 </div>
               </div>
             ))}
           </div>
 
-          {/* Scene 2 Asset: Wireframe */}
-          <div ref={wireframeRef} className="absolute inset-0 flex items-center justify-center pointer-events-none will-change-transform p-4">
-            <div className="w-full max-w-5xl aspect-video rounded-[3.5rem] border border-red-500/30 bg-red-500/5 backdrop-blur-md relative overflow-hidden group shadow-[0_0_80px_rgba(239,68,68,0.1)]">
-              {/* Grid Lines */}
-              <div className="absolute inset-0 grid grid-cols-12 grid-rows-8 opacity-30">
-                {Array.from({ length: 96 }).map((_, i) => (
-                  <div key={i} className="border-[0.5px] border-red-500/20" />
-                ))}
-              </div>
+          {/* SCENE 2 ASSETS: WIREFRAME HUD */}
+          <div ref={wireframeRef} className="absolute inset-0 flex items-center justify-center pointer-events-none p-4 opacity-0 scale-90">
+            <div className="w-full max-w-6xl aspect-video rounded-[4rem] border border-red-500/20 bg-red-500/[0.02] backdrop-blur-xl relative overflow-hidden shadow-[0_0_100px_rgba(239,68,68,0.05)]">
+              {/* Complex Grid */}
+              <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(239, 68, 68, 0.2) 1px, transparent 0)', backgroundSize: '40px 40px' }} />
               
-              {/* Data Visuals */}
               <div className="absolute inset-0 flex items-center justify-center">
-                 <div className="w-3/4 h-3/4 border-2 border-red-500/20 rounded-full animate-[spin_20s_linear_infinite] border-dashed" />
-                 <div className="absolute w-1/2 h-1/2 border border-red-500/40 rounded-full animate-[spin_10s_linear_infinite_reverse]" />
+                 <div className="w-2/3 h-2/3 border border-red-500/10 rounded-full animate-[spin_30s_linear_infinite]" />
+                 <div className="absolute w-1/2 h-1/2 border border-red-500/20 rounded-full animate-[spin_15s_linear_infinite_reverse] border-dashed" />
+                 <div className="absolute w-full h-[0.5px] bg-red-500/20 top-1/2 -translate-y-1/2" />
+                 <div className="absolute w-[0.5px] h-full bg-red-500/20 left-1/2 -translate-x-1/2" />
               </div>
 
               {/* Data Points */}
               <div className="absolute inset-0">
                  {DATA_POINTS.map((pt, i) => (
-                   <div 
-                    key={i}
-                    className="absolute w-1.5 h-1.5 bg-red-500 rounded-full shadow-[0_0_15px_rgba(239,68,68,1)] animate-pulse"
-                    style={{
-                      left: pt.left,
-                      top: pt.top,
-                      animationDelay: pt.delay
-                    }}
-                   />
+                    <div key={i} className="absolute flex flex-col items-center" style={{ left: pt.left, top: pt.top }}>
+                      <div className="w-2 h-2 bg-red-500 rounded-full shadow-[0_0_20px_rgba(239,68,68,1)] animate-ping absolute opacity-40" />
+                      <div className="w-2 h-2 bg-red-500 rounded-full shadow-[0_0_10px_rgba(239,68,68,1)]" />
+                    </div>
                  ))}
               </div>
 
-              {/* HUD Elements */}
-              <div className="absolute top-8 left-8 text-red-500/60 font-mono text-[10px] space-y-1">
-                <div>SYSTEM_ACTIVE: TRUE</div>
-                <div>FLEET_REACH: GLOBAL</div>
-                <div>SCAN_FREQ: 120HZ</div>
+              {/* HUD ELEMENTS */}
+              <div className="absolute top-12 left-12 font-mono text-[11px] text-red-500/40 space-y-2 uppercase tracking-widest">
+                <div className="flex items-center gap-2">
+                  <div className="w-1 h-1 bg-red-500 rounded-full animate-pulse" />
+                  <span>Stream: Connected</span>
+                </div>
+                <div>Lat: 51.5074° N / Lon: 0.1278° W</div>
               </div>
-              
-              {/* Scanning Lines */}
-              <div className="absolute top-0 left-0 w-full h-[150px] bg-gradient-to-b from-red-500/10 via-red-500/5 to-transparent opacity-50 animate-scan pointer-events-none" />
             </div>
           </div>
 
-          {/* Scene 3 Asset: Notification Bubble */}
-          <div ref={bubbleRef} className="absolute pointer-events-none will-change-transform -translate-x-20 md:-translate-x-40">
-            <div className="relative group">
-               {/* Optimized pulse: Replaced blur-[100px] with a radial gradient */}
-               <div 
-                 className="absolute inset-[-40px] rounded-full opacity-40 animate-pulse will-change-transform" 
-                 style={{ background: 'radial-gradient(circle, rgba(220,38,38,0.8) 0%, transparent 70%)' }}
-               />
-               <div className="relative w-48 h-48 md:w-80 md:h-80 rounded-full bg-gradient-to-br from-red-500 via-red-600 to-red-900 border-[6px] border-white shadow-[0_0_60px_rgba(239,68,68,0.5)] flex items-center justify-center p-12 overflow-hidden">
-                  <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay" />
-                  <svg className="w-full h-full text-white drop-shadow-[0_10px_10px_rgba(0,0,0,0.3)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                  </svg>
-                  <div className="absolute -top-4 -right-4 w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-xl ring-8 ring-red-600/20">
-                    <span className="text-red-600 font-extrabold text-3xl">!</span>
-                  </div>
-               </div>
-            </div>
+          {/* SCENE 3 ASSETS: AI BUBBLE */}
+          <div ref={bubbleRef} className="absolute pointer-events-none opacity-0 scale-50">
+             <div className="relative">
+                <div className="absolute inset-[-100px] rounded-full opacity-30 blur-3xl animate-pulse" style={{ background: 'radial-gradient(circle, rgba(239,68,68,0.4) 0%, transparent 70%)' }} />
+                <div className="relative w-64 h-64 md:w-96 md:h-96 rounded-full bg-gradient-to-br from-[#121212] to-black border-[1px] border-white/10 shadow-2xl flex items-center justify-center p-16 overflow-hidden">
+                   <div className="absolute inset-0 bg-gradient-to-t from-red-600/20 to-transparent" />
+                   <div className="w-full h-full relative z-10 text-red-500/80">
+                      <svg fill="currentColor" viewBox="0 0 24 24" className="w-full h-full animate-pulse-slow">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+                      </svg>
+                   </div>
+                   <div className="absolute -top-6 -right-6 w-20 h-20 bg-red-600 rounded-full flex items-center justify-center border-4 border-[#050505] shadow-xl">
+                      <span className="text-white font-black text-4xl">!</span>
+                   </div>
+                </div>
+             </div>
           </div>
 
         </div>
 
-        {/* Text Overlay Section - Improved positioning to avoid overlapping central assets */}
-        <div ref={textRef} className="absolute inset-0 z-30 pointer-events-none overflow-hidden uppercase font-black italic tracking-tighter">
+        {/* TEXT OVERLAY LAYER - Positioned to wrap around the central action */}
+        <div className="absolute inset-0 z-10 pointer-events-none uppercase font-black italic tracking-tighter">
           
-          {/* Scene 1 Text: Bottom Center */}
-          <div id="text-1" className="narrative-text absolute bottom-[8%] left-1/2 -translate-x-1/2 w-full max-w-5xl px-10 text-center flex flex-col items-center">
-            <h2 className="text-5xl md:text-8xl text-white mb-6 leading-none">
+          <div ref={text1Ref} id="text-1" className="absolute top-[8%] left-1/2 -translate-x-1/2 w-full max-w-5xl text-center">
+            <h2 className="text-5xl md:text-8xl text-white/90 mb-4 leading-none">
               {splitText("Total Asset Control")}
             </h2>
-            <p className="text-lg md:text-2xl text-white/50 max-w-3xl font-light leading-relaxed normal-case not-italic tracking-normal">
-              Manage every vehicle, role, and permission from a unified operational layer designed for enterprise scale.
-            </p>
+            <div className="h-1 w-32 bg-red-600/50 mx-auto" />
           </div>
 
-          {/* Scene 2 Text: Top Left (Dynamic Offset) */}
-          <div id="text-2" className="narrative-text absolute top-[12%] left-[6%] w-full max-w-2xl text-left flex flex-col items-start pr-10">
-            <h2 className="text-5xl md:text-8xl text-white mb-6 whitespace-pre-line leading-[0.8]">
+          <div ref={text2Ref} id="text-2" className="absolute top-[12%] left-[5%] w-full max-w-2xl text-left">
+            <h2 className="text-5xl md:text-8xl text-white/90 mb-6 leading-[0.8] whitespace-pre-line">
               {splitText("Live Fleet\nIntelligence")}
             </h2>
-            <div className="h-1.5 w-32 bg-red-600 mb-8 shadow-[0_0_15px_rgba(220,38,38,0.5)]" />
-            <p className="text-lg md:text-2xl text-white/40 max-w-md font-light leading-relaxed normal-case not-italic tracking-normal">
-              Real-time data streams and wireframe visualization providing total situational awareness across your entire global network.
+            <div className="h-2 w-32 bg-red-600/50 mb-8" />
+            <p className="text-lg md:text-2xl text-white/30 max-w-sm font-light normal-case not-italic tracking-normal">
+              Real-time situational awareness across every node in your network.
             </p>
           </div>
 
-          {/* Scene 3 Text: Bottom Right (Dynamic Offset) */}
-          <div id="text-3" className="narrative-text absolute bottom-[12%] right-[6%] w-full max-w-2xl text-right flex flex-col items-end pl-10">
-            <h2 className="text-5xl md:text-8xl text-white mb-6 leading-[0.8] whitespace-pre-line">
+          <div ref={text3Ref} id="text-3" className="absolute bottom-[12%] right-[5%] w-full max-w-2xl text-right flex flex-col items-end">
+            <h2 className="text-5xl md:text-8xl text-white/90 mb-6 leading-[0.8] whitespace-pre-line">
               {splitText("Predictive\nAlerts")}
             </h2>
-            <div className="h-1.5 w-32 bg-red-600 mb-8 shadow-[0_0_15px_rgba(220,38,38,0.5)]" />
-            <p className="text-lg md:text-2xl text-white/40 max-w-md font-light leading-relaxed normal-case not-italic tracking-normal">
-              Stay ahead of maintenance and operational failures with proactive, glowing insights powered by adaptive AI.
+            <div className="h-2 w-32 bg-red-600/50 mb-8" />
+            <p className="text-lg md:text-2xl text-white/30 max-w-sm font-light normal-case not-italic tracking-normal">
+              Stay ahead of failure points with proactive, AI-driven operational insights.
             </p>
           </div>
+
         </div>
 
       </div>
 
-      {/* Animation Helpers */}
       <style jsx global>{`
-        @keyframes scan {
-          from { transform: translateY(-100%); }
-          to { transform: translateY(500%); }
+        @keyframes pulse-slow {
+          0%, 100% { transform: scale(1); opacity: 0.8; }
+          50% { transform: scale(1.05); opacity: 1; }
         }
-        .animate-scan {
-          animation: scan 4s linear infinite;
+        .animate-pulse-slow {
+          animation: pulse-slow 3s ease-in-out infinite;
         }
       `}</style>
     </section>
