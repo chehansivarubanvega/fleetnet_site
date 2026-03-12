@@ -1,32 +1,41 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
+import { useGSAP } from '@gsap/react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { ChevronDown, Globe, Menu, Phone, Search, X } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
 import Image from 'next/image';
-import { motion, AnimatePresence } from 'motion/react';
-import { ChevronDown, Menu, X, Search, Globe, Phone } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import Link from 'next/link';
+import { useRef, useState } from 'react';
+
+// Only register client-side
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 const navItems = [
   {
     label: 'About FleetNET',
-    href: '#',
+    href: '/about',
     children: [
+      { label: 'About Overview', href: '/about', description: 'Who we are and why we exist.' },
       { label: 'Our Vision', href: '#', description: 'Leading the way in fleet intelligence.' },
       { label: 'Global Presence', href: '#', description: 'Operations in over 120 countries.' },
       { label: 'Sustainability', href: '#', description: 'Our commitment to green energy.' },
     ],
   },
   {
-    label: 'Solutions & Products',
-    href: '#',
+    label: 'Industries',
+    href: '/industries',
     children: [
-      { label: 'Logistics & Transport', href: '#', description: 'Optimize routes and reduce delivery times.' },
-      { label: 'Public Transit', href: '#', description: 'Manage schedules and passenger safety.' },
-      { label: 'Construction', href: '#', description: 'Heavy machinery tracking and maintenance.' },
-      { label: 'Electric Fleets', href: '#', description: 'EV health monitoring and charging analytics.' },
+      { label: 'All Industries', href: '/industries', description: 'Explore sectors we serve.' },
+      { label: 'Trucking & Freight', href: '/industries', description: 'AI route optimization and safety.' },
+      { label: 'Construction', href: '/industries', description: 'Heavy equipment intelligence.' },
+      { label: 'Public Sector', href: '/industries', description: 'Accountability and compliance.' },
     ],
   },
+  
   {
     label: 'Smart Operations',
     href: '#',
@@ -42,44 +51,66 @@ const navItems = [
 ];
 
 export default function Navbar() {
-  const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const headerRef = useRef<HTMLElement>(null);
+  const navContainerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  useGSAP(() => {
+    if (!headerRef.current || !navContainerRef.current) return;
+
+    // Scroll interpolation for morphing the Navbar
+    ScrollTrigger.create({
+      start: 'top -10',
+      end: 200,
+      scrub: true,
+      onUpdate: (self) => {
+        const p = self.progress; // 0 (top) to 1 (scrolled 200px)
+        
+        // Morph the padding (top-0px when scrolled vs top-24px when not)
+        gsap.set(headerRef.current, { 
+          paddingTop: gsap.utils.interpolate('24px', '8px', p), // Top margin/padding
+          paddingBottom: gsap.utils.interpolate('0px', '8px', p) 
+        });
+
+        // Morph the inner container: From completely transparent to dynamic glass pill
+        gsap.set(navContainerRef.current, {
+          backgroundColor: gsap.utils.interpolate('rgba(255, 255, 255, 0)', 'rgba(10, 10, 10, 0.65)', p),
+          borderColor: gsap.utils.interpolate('rgba(255, 255, 255, 0)', 'rgba(255, 255, 255, 0.1)', p),
+          paddingTop: gsap.utils.interpolate('12px', '8px', p),
+          paddingBottom: gsap.utils.interpolate('12px', '8px', p),
+          boxShadow: gsap.utils.interpolate('0 0 0 rgba(0,0,0,0)', '0 10px 40px -10px rgba(0,0,0,0.5)', p),
+          backdropFilter: `blur(${gsap.utils.interpolate(0, 24, p)}px)`
+        });
+        
+        // Slightly shrink the logo area
+        gsap.set('.navbar-logo-container', {
+           transform: `scale(${gsap.utils.interpolate(1, 0.9, p)})`
+        });
+      }
+    });
+
+  }, { scope: headerRef });
 
   return (
     <header
-      className={cn(
-        'fixed left-0 right-0 z-50 transition-all duration-500 ease-in-out',
-        isScrolled 
-          ? 'top-0 px-0' 
-          : 'top-6 px-4 sm:px-6 lg:px-8'
-      )}
+      ref={headerRef}
+      className="fixed left-0 right-0 z-50 px-4 sm:px-6 lg:px-8 font-[family-name:var(--font-outfit)]"
     >
       <div 
-        className={cn(
-          'mx-auto transition-all duration-500 ease-in-out border',
-          isScrolled 
-            ? 'max-w-full bg-white/95 backdrop-blur-md shadow-md py-3 px-4 sm:px-6 lg:px-8 border-transparent rounded-none' 
-            : 'max-w-[1400px] bg-white/90 backdrop-blur-md rounded-2xl shadow-xl border-white/40 px-8 py-2.5'
-        )}
+        ref={navContainerRef}
+        className="mx-auto max-w-7xl rounded-full border border-transparent transition-all overflow-visible px-6 md:px-8"
       >
-        <div className="flex justify-between items-center gap-4">
+        <div className="flex justify-between items-center gap-4 relative">
+          
           {/* Logo */}
-          <Link href="/" className="flex shrink-0 items-center">
-            <div className="relative h-10 w-40 md:w-48">
+          <Link href="/" className="navbar-logo-container flex shrink-0 items-center transform-origin-left">
+            <div className="relative h-10 w-40 md:w-48 filter drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
               <Image
                 src="/images/fleetnet_logo.png"
                 alt="FleetNET GLOBAL Logo"
                 fill
-                className="object-contain object-left"
+                className="object-contain object-left brightness-0 invert" // Force white logo for dark theme
                 priority
                 referrerPolicy="no-referrer"
               />
@@ -91,40 +122,45 @@ export default function Navbar() {
             {navItems.map((item) => (
               <div
                 key={item.label}
-                className="relative group"
+                className="relative group h-full flex items-center"
                 onMouseEnter={() => setActiveDropdown(item.label)}
                 onMouseLeave={() => setActiveDropdown(null)}
               >
                 <Link
                   href={item.href}
-                  className="flex items-center gap-1.5 px-3 py-2 text-[13px] xl:text-[14px] font-bold text-slate-800 transition-colors duration-300 hover:text-primary whitespace-nowrap"
+                  className="relative px-3 py-2 text-[13px] xl:text-[14px] font-bold text-white/90 transition-colors duration-300 hover:text-white uppercase tracking-wider flex items-center gap-1.5"
                 >
                   {item.label}
-                  {item.children && <ChevronDown className="w-3.5 h-3.5 opacity-40 group-hover:opacity-100 transition-opacity" />}
+                  {item.children && <ChevronDown className="w-3.5 h-3.5 opacity-60 group-hover:opacity-100 transition-transform duration-300 group-hover:rotate-180" />}
+                  
+                  {/* Underline Animation */}
+                  <span className="absolute bottom-1 left-3 right-3 h-[2px] bg-red-500 rounded-full scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center shadow-[0_0_10px_rgba(239,68,68,0.8)]" />
                 </Link>
 
-                {/* Mega Dropdown */}
+                {/* Glassmorphic Mega Dropdown */}
                 {item.children && (
                   <AnimatePresence>
                     {activeDropdown === item.label && (
                       <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 10 }}
-                        transition={{ duration: 0.2 }}
-                        className="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-72 bg-white rounded-xl shadow-2xl border border-slate-100 overflow-hidden"
+                        initial={{ opacity: 0, y: 15, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 15, scale: 0.95 }}
+                        transition={{ duration: 0.2, ease: "easeOut" }}
+                        className="absolute top-[calc(100%+12px)] left-1/2 -translate-x-1/2 w-80 bg-black/70 backdrop-blur-2xl rounded-2xl shadow-[0_20px_50px_-20px_rgba(0,0,0,0.8)] border border-white/10 overflow-hidden"
                       >
-                        <div className="p-4 space-y-1">
+                         <div className="absolute inset-0 bg-gradient-to-b from-red-600/10 to-transparent pointer-events-none" />
+                        <div className="p-3 relative z-10">
                           {item.children.map((child) => (
                             <Link
                               key={child.label}
                               href={child.href}
-                              className="block p-3 rounded-lg hover:bg-slate-50 transition-colors group/item"
+                              className="block p-4 rounded-xl hover:bg-white/10 transition-colors group/item relative overflow-hidden"
                             >
-                              <div className="text-sm font-semibold text-slate-900 group-hover/item:text-primary transition-colors">
+                              <div className="text-sm font-bold text-white group-hover/item:text-red-400 transition-colors flex items-center gap-2">
+                                <span className="w-1.5 h-1.5 rounded-full bg-red-500 opacity-0 group-hover/item:opacity-100 transition-opacity" />
                                 {child.label}
                               </div>
-                              <div className="text-xs text-slate-500 mt-0.5">
+                              <div className="text-[13px] text-white/50 mt-1 ml-3.5 font-medium leading-relaxed">
                                 {child.description}
                               </div>
                             </Link>
@@ -140,25 +176,30 @@ export default function Navbar() {
 
           {/* Right Actions */}
           <div className="hidden lg:flex items-center shrink-0 space-x-2 xl:space-x-4">
-            <button className="text-slate-800 transition-colors duration-300 hover:text-primary p-2">
+            <button className="text-white/80 transition-colors duration-300 hover:text-white p-2">
               <Search className="w-4.5 h-4.5" />
             </button>
-            <button className="text-slate-800 transition-colors duration-300 hover:text-primary p-2 flex items-center gap-1">
+            <button className="text-white/80 transition-colors duration-300 hover:text-white p-2 flex items-center gap-1 uppercase text-xs font-bold tracking-widest">
               <Globe className="w-4.5 h-4.5" />
-              <ChevronDown className="w-3 h-3 opacity-40" />
+              <span>EN</span>
+              <ChevronDown className="w-3 h-3 opacity-60 ml-0.5" />
             </button>
             <Link
               href="#"
-              className="flex items-center gap-2 px-6 py-2 rounded-full font-bold bg-primary text-white hover:bg-primary-dark transition-all duration-300 shadow-md transform hover:scale-105 active:scale-95 whitespace-nowrap"
+              className="relative flex items-center gap-2 px-6 py-2.5 rounded-full font-bold text-white overflow-hidden group shadow-[0_0_20px_rgba(239,68,68,0.4)] transition-all duration-300 hover:shadow-[0_0_30px_rgba(239,68,68,0.6)] hover:scale-105 active:scale-95"
             >
-              <Phone className="w-4 h-4" />
-              Contact
+              <div className="absolute inset-0 bg-gradient-to-r from-red-600 to-red-500 group-hover:translate-x-full transition-transform duration-500 ease-out" />
+              <div className="absolute inset-0 bg-gradient-to-l from-red-500 to-red-600 -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out" />
+              <div className="relative z-10 flex items-center gap-2">
+                 <Phone className="w-4 h-4" />
+                 <span className="uppercase tracking-wider text-sm">Contact</span>
+              </div>
             </Link>
           </div>
 
           {/* Mobile Menu Button */}
           <button
-            className="lg:hidden p-2 text-slate-800 shrink-0"
+            className="lg:hidden p-2 text-white shrink-0 relative z-20"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             {mobileMenuOpen ? (
@@ -174,24 +215,25 @@ export default function Navbar() {
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden bg-white mt-2 rounded-2xl shadow-2xl border border-slate-100 overflow-hidden"
+            initial={{ opacity: 0, height: 0, y: -20 }}
+            animate={{ opacity: 1, height: 'auto', y: 0 }}
+            exit={{ opacity: 0, height: 0, y: -20 }}
+            className="lg:hidden bg-[#0a0a0a]/95 backdrop-blur-3xl mt-4 rounded-3xl shadow-[0_30px_60px_rgba(0,0,0,0.8)] border border-white/10 overflow-hidden mx-4 relative"
           >
-            <div className="px-4 py-6 space-y-4">
+            <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-red-600 via-orange-500 to-red-600" />
+            <div className="px-6 py-8 space-y-6">
               {navItems.map((item) => (
-                <div key={item.label} className="space-y-2">
-                  <div className="text-sm font-bold text-slate-900 uppercase tracking-wider">
+                <div key={item.label} className="space-y-3">
+                  <div className="text-xs font-black text-red-500 uppercase tracking-[0.2em]">
                     {item.label}
                   </div>
                   {item.children ? (
-                    <div className="pl-4 space-y-2">
+                    <div className="pl-4 border-l border-white/10 space-y-3">
                       {item.children.map((child) => (
                         <Link
                           key={child.label}
                           href={child.href}
-                          className="block text-sm text-slate-600 hover:text-primary"
+                          className="block text-[15px] font-medium text-white/80 hover:text-white transition-colors"
                         >
                           {child.label}
                         </Link>
@@ -200,21 +242,25 @@ export default function Navbar() {
                   ) : (
                     <Link
                       href={item.href}
-                      className="block text-sm text-slate-600 hover:text-primary"
+                      className="block text-[15px] font-medium text-white/80 hover:text-white transition-colors pl-4 border-l border-transparent"
                     >
                       View Page
                     </Link>
                   )}
                 </div>
               ))}
-              <div className="pt-4 border-t border-slate-100">
-                <Link
-                  href="#"
-                  className="flex items-center justify-center gap-2 w-full bg-primary text-white py-3 rounded-lg font-bold"
-                >
-                  <Phone className="w-4 h-4" />
-                  Contact
-                </Link>
+              <div className="pt-6 border-t border-white/10 flex gap-4">
+                 <button className="flex-1 bg-white/5 border border-white/10 text-white py-3.5 rounded-xl font-bold uppercase tracking-wider text-sm hover:bg-white/10 transition-colors flex items-center justify-center gap-2">
+                    <Search className="w-4 h-4" />
+                    Search
+                 </button>
+                 <Link
+                   href="#"
+                   className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 to-red-500 shadow-[0_0_20px_rgba(239,68,68,0.4)] text-white py-3.5 rounded-xl font-bold uppercase tracking-wider text-sm"
+                 >
+                   <Phone className="w-4 h-4" />
+                   Contact
+                 </Link>
               </div>
             </div>
           </motion.div>

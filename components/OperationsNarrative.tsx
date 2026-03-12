@@ -6,316 +6,521 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Image from 'next/image';
 import { useRef } from 'react';
 
-gsap.registerPlugin(ScrollTrigger);
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
-const DATA_POINTS = [
-  { left: '25%', top: '30%', delay: '0.2s' },
-  { left: '60%', top: '20%', delay: '1.5s' },
-  { left: '45%', top: '65%', delay: '0.8s' },
-  { left: '80%', top: '40%', delay: '2.1s' },
-  { left: '20%', top: '75%', delay: '0.4s' },
-  { left: '70%', top: '80%', delay: '1.2s' },
-  { left: '35%', top: '15%', delay: '0.9s' },
-  { left: '55%', top: '50%', delay: '1.7s' },
-  { left: '15%', top: '45%', delay: '2.5s' },
-  { left: '85%', top: '25%', delay: '0.1s' },
-  { left: '40%', top: '85%', delay: '1.4s' },
-  { left: '65%', top: '10%', delay: '0.6s' },
+// ─── Module data ──────────────────────────────────────────────────────────────
+const MODULES = [
+  {
+    label: 'Vehicles',
+    sub: 'Fleet Management',
+    accent: '#ef4444',
+    features: ['Registration & profiles', 'Live telemetry', 'Status tracking'],
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-full h-full">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
+      </svg>
+    ),
+  },
+  {
+    label: 'Drivers',
+    sub: 'Personnel Hub',
+    accent: '#3b82f6',
+    features: ['Driver profiles', 'Score & behaviour', 'Assignment tracking'],
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-full h-full">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+      </svg>
+    ),
+  },
+  {
+    label: 'Fuel',
+    sub: 'Consumption Control',
+    accent: '#22c55e',
+    features: ['Fuel log & fill-ups', 'Efficiency analytics', 'Cost reporting'],
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-full h-full">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+      </svg>
+    ),
+  },
+  {
+    label: 'Maintenance',
+    sub: 'Lifecycle Manager',
+    accent: '#f97316',
+    features: ['Service schedules', 'Repair records', 'Cost & alerts'],
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-full h-full">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437l1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008z" />
+      </svg>
+    ),
+  },
+  {
+    label: 'Jobs',
+    sub: 'Workflow Engine',
+    accent: '#a855f7',
+    features: ['Job creation & dispatch', 'Real-time status', 'Driver assignments'],
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-full h-full">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z" />
+      </svg>
+    ),
+  },
+  {
+    label: 'Trips',
+    sub: 'Journey Analytics',
+    accent: '#06b6d4',
+    features: ['Route history', 'Distance & time stats', 'Full trip summaries'],
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-full h-full">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498l4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 00-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0z" />
+      </svg>
+    ),
+  },
+];
+
+// ─── Trip chart data ──────────────────────────────────────────────────────────
+const TRIP_BARS = [
+  { label: 'Mon', km: 340, pct: 70 },
+  { label: 'Tue', km: 490, pct: 100 },
+  { label: 'Wed', km: 210, pct: 43 },
+  { label: 'Thu', km: 380, pct: 78 },
+  { label: 'Fri', km: 450, pct: 92 },
+  { label: 'Sat', km: 160, pct: 33 },
+  { label: 'Sun', km: 120, pct: 24 },
+];
+
+// ─── Live metrics ─────────────────────────────────────────────────────────────
+const LIVE_METRICS = [
+  { label: 'Active Vehicles', value: '48', unit: '', color: '#ef4444', delta: '+3' },
+  { label: 'Fuel Used Today', value: '1,240', unit: 'L', color: '#22c55e', delta: '-8%' },
+  { label: 'Jobs in Progress', value: '17', unit: '', color: '#a855f7', delta: '+5' },
+  { label: 'Avg Speed', value: '62', unit: 'km/h', color: '#f97316', delta: '' },
 ];
 
 export default function OperationsNarrative() {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  
-  // Scene Refs
-  const iconRef = useRef<HTMLDivElement>(null);
-  const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
-  const wireframeRef = useRef<HTMLDivElement>(null);
-  const bubbleRef = useRef<HTMLDivElement>(null);
-  
-  // Text Refs
-  const text1Ref = useRef<HTMLDivElement>(null);
-  const text2Ref = useRef<HTMLDivElement>(null);
-  const text3Ref = useRef<HTMLDivElement>(null);
+  const scene1Ref = useRef<HTMLDivElement>(null);
+  const scene2Ref = useRef<HTMLDivElement>(null);
+  const scene3Ref = useRef<HTMLDivElement>(null);
+  const iconRef   = useRef<HTMLDivElement>(null);
+  const text1Ref  = useRef<HTMLDivElement>(null);
+  const text2Ref  = useRef<HTMLDivElement>(null);
+  const text3Ref  = useRef<HTMLDivElement>(null);
+  const cardsRef  = useRef<(HTMLDivElement | null)[]>([]);
 
   useGSAP(() => {
     if (!sectionRef.current) return;
 
-    // --- 1. THEME INITIALIZATION ---
-    gsap.set([wireframeRef.current, bubbleRef.current, text1Ref.current, text2Ref.current, text3Ref.current], { 
-      opacity: 0, 
-      y: 50,
-      visibility: 'hidden'
-    });
-    gsap.set(cardsRef.current, { opacity: 0, scale: 0.8, y: 100 });
-    gsap.set(iconRef.current, { opacity: 1, scale: 1, y: 0 });
+    // ─── Initial states ──────────────────────────────────────────────────────
+    gsap.set([scene2Ref.current, scene3Ref.current], { autoAlpha: 0, y: 30 });
+    gsap.set(scene1Ref.current, { autoAlpha: 1, y: 0 });
+    gsap.set(iconRef.current,   { autoAlpha: 1, scale: 1, y: 0 });
+    gsap.set(cardsRef.current,  { autoAlpha: 0, y: 24 });
 
-    // --- 2. BACKGROUND COLOR TRANSITION (THEME) ---
+    // ─── Background colour transition ────────────────────────────────────────
     ScrollTrigger.create({
       trigger: sectionRef.current,
-      start: "top bottom",
-      end: "top center",
+      start: 'top bottom',
+      end: 'top center',
       scrub: true,
       onUpdate: (self) => {
         const p = self.progress;
+        const lerp = (a: string, b: string, t: number) => gsap.utils.interpolate(a, b, t);
         const root = document.documentElement;
-        const targets = {
-          base: ["#2a0f04", "#050505"],
-          c1: ["#ff4500", "#991b1b"],
-          c2: ["#ffa500", "#1e293b"],
-          c3: ["#3d1a08", "#0f172a"],
-          c4: ["#ffcc00", "#ef4444"]
-        };
-        const interpolate = (start: string, end: string, progress: number) => gsap.utils.interpolate(start, end, progress);
-        root.style.setProperty('--bg-base', interpolate(targets.base[0], targets.base[1], p));
-        root.style.setProperty('--bg-color-1', interpolate(targets.c1[0], targets.c1[1], p));
-        root.style.setProperty('--bg-color-2', interpolate(targets.c2[0], targets.c2[1], p));
-        root.style.setProperty('--bg-color-3', interpolate(targets.c3[0], targets.c3[1], p));
-        root.style.setProperty('--bg-color-4', interpolate(targets.c4[0], targets.c4[1], p));
-      }
+        root.style.setProperty('--bg-base',    lerp('#2a0f04', '#080c14', p));
+        root.style.setProperty('--bg-color-1', lerp('#ff4500', '#0f172a', p));
+        root.style.setProperty('--bg-color-2', lerp('#ffa500', '#0f172a', p));
+        root.style.setProperty('--bg-color-3', lerp('#3d1a08', '#0f172a', p));
+        root.style.setProperty('--bg-color-4', lerp('#ffcc00', '#1e293b', p));
+      },
     });
 
-    // --- 3. SCENE MANAGER ---
-    const scenes = [
-      {
-        id: 'scene1',
-        enter: () => {
-          const tl = gsap.timeline();
-          tl.set(text1Ref.current, { visibility: 'visible' });
-          tl.to(iconRef.current, { y: -120, opacity: 0, scale: 0.5, duration: 0.8, ease: "power3.inOut" }, 0);
-          tl.to(cardsRef.current, { opacity: 1, scale: 1, y: 0, stagger: 0.1, duration: 1, ease: "back.out(1.5)" }, 0.2);
-          tl.to(text1Ref.current, { opacity: 1, y: 0, duration: 0.8 }, 0.4);
-          tl.to('#text-1 h2 span span', { opacity: 1, stagger: 0.02, duration: 0.1 }, 0.6);
-          return tl;
-        },
-        exit: () => {
-          const tl = gsap.timeline();
-          tl.to(cardsRef.current, { opacity: 0, scale: 0.8, y: 50, stagger: 0.05, duration: 0.6, ease: "power2.in" }, 0);
-          tl.to(text1Ref.current, { opacity: 0, y: -30, duration: 0.5 }, 0.1);
-          return tl;
-        }
+    // ─── Master scroll timeline ──────────────────────────────────────────────
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: 'top top',
+        end: '+=4000',
+        pin: true,
+        scrub: 1,
+        anticipatePin: 1,
       },
-      {
-        id: 'scene2',
-        enter: () => {
-          const tl = gsap.timeline();
-          tl.set(text2Ref.current, { visibility: 'visible' });
-          tl.to(wireframeRef.current, { opacity: 1, scale: 1, duration: 1.2, ease: "expo.out" }, 0);
-          tl.to(text2Ref.current, { opacity: 1, y: 0, duration: 0.8 }, 0.3);
-          tl.to('#text-2 h2 span span', { opacity: 1, stagger: 0.03, duration: 0.1 }, 0.5);
-          tl.to(wireframeRef.current, { filter: "brightness(1.5) contrast(1.2) drop-shadow(0 0 30px rgba(239, 68, 68, 0.3))", duration: 1 }, 0.7);
-          return tl;
-        },
-        exit: () => {
-          const tl = gsap.timeline();
-          tl.to(wireframeRef.current, { scale: 1.2, opacity: 0, duration: 0.8, ease: "power3.in" }, 0);
-          tl.to(text2Ref.current, { opacity: 0, y: -30, duration: 0.5 }, 0.1);
-          return tl;
-        }
-      },
-      {
-        id: 'scene3',
-        enter: () => {
-          const tl = gsap.timeline();
-          tl.set(text3Ref.current, { visibility: 'visible' });
-          tl.to(bubbleRef.current, { opacity: 1, scale: 1, duration: 1, ease: "elastic.out(1, 0.6)" }, 0);
-          tl.to(text3Ref.current, { opacity: 1, y: 0, duration: 0.8 }, 0.3);
-          tl.to('#text-3 h2 span span', { opacity: 1, stagger: 0.03, duration: 0.1 }, 0.5);
-          return tl;
-        },
-        exit: () => {
-          const tl = gsap.timeline();
-          tl.to(bubbleRef.current, { scale: 0.5, opacity: 0, duration: 0.6 }, 0);
-          tl.to(text3Ref.current, { opacity: 0, y: -30, duration: 0.5 }, 0.1);
-          return tl;
-        }
-      }
-    ];
-
-    let currentScene = -1;
-
-    ScrollTrigger.create({
-      trigger: sectionRef.current,
-      start: "top top",
-      end: "+=1800",
-      pin: true,
-      anticipatePin: 1,
-      onUpdate: (self) => {
-        const p = self.progress;
-        let targetScene = -1;
-
-        if (p > 0.05 && p <= 0.35) targetScene = 0;
-        else if (p > 0.35 && p <= 0.7) targetScene = 1;
-        else if (p > 0.7) targetScene = 2;
-
-        if (targetScene !== currentScene) {
-          if (currentScene !== -1) scenes[currentScene].exit();
-          if (targetScene !== -1) scenes[targetScene].enter();
-          currentScene = targetScene;
-        }
-
-        // Final cleanup for scrolling back up to absolute top
-        if (p < 0.02 && currentScene !== -1) {
-          scenes[currentScene].exit();
-          gsap.to(iconRef.current, { opacity: 1, scale: 1, y: 0, duration: 0.5 });
-          currentScene = -1;
-        }
-      }
     });
+
+    // SCENE 1 — logo exits, feature tiles stagger in
+    tl.to(iconRef.current, { y: -50, autoAlpha: 0, scale: 0.85, duration: 0.8, ease: 'power2.inOut' }, 0)
+      .to(cardsRef.current, { autoAlpha: 1, y: 0, stagger: 0.12, duration: 1.4, ease: 'power2.out' }, 0.3)
+      .to({}, { duration: 2.5 })
+
+      // EXIT scene 1
+      .to(scene1Ref.current, { autoAlpha: 0, y: -24, duration: 1, ease: 'power2.in' })
+
+      // ENTER scene 2
+      .to(scene2Ref.current, { autoAlpha: 1, y: 0, duration: 1.2, ease: 'power2.out' }, '+=0.2')
+      .to({}, { duration: 2.5 })
+
+      // EXIT scene 2
+      .to(scene2Ref.current, { autoAlpha: 0, y: -24, duration: 1, ease: 'power2.in' })
+
+      // ENTER scene 3
+      .to(scene3Ref.current, { autoAlpha: 1, y: 0, duration: 1.2, ease: 'power2.out' }, '+=0.2')
+      .to({}, { duration: 2.5 });
 
   }, { scope: sectionRef });
 
-  const splitText = (text: string) => {
-    return text.split(/(\s+)/).map((part, i) => {
-      if (/\s+/.test(part)) {
-        return <span key={i} className="inline-block">{part === '\n' ? <br /> : '\u00A0'}</span>;
-      }
-      return (
-        <span key={i} className="inline-block whitespace-nowrap">
-          {part.split('').map((char, j) => (
-            <span key={j} className="opacity-0 inline-block translate-y-2 scale-50">{char}</span>
-          ))}
-        </span>
-      );
-    });
-  };
-
   return (
-    <section ref={sectionRef} className="relative w-full min-h-screen overflow-hidden z-10 font-[family-name:var(--font-outfit)]">
-      <div className="absolute inset-0 flex items-center justify-center p-6 md:p-20">
-        
-        <div ref={containerRef} className="relative w-full h-full flex items-center justify-center z-20">
-          
-          {/* SCENE 1 ASSETS */}
-          <div ref={iconRef} className="absolute z-20">
-            <div className="w-40 h-40 md:w-56 md:h-56 rounded-[3rem] bg-white/5 backdrop-blur-3xl border border-white/10 flex items-center justify-center p-10 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)]">
-              <Image 
-                src="/images/FLEETnet app icon.png" 
-                alt="Unified Command" 
-                width={160} 
-                height={160}
-                className="w-full h-full object-contain filter drop-shadow-[0_0_20px_rgba(255,255,255,0.2)]"
-              />
+    <section
+      ref={sectionRef}
+      className="relative w-full h-screen overflow-hidden z-10 font-[family-name:var(--font-outfit)]"
+      style={{ backgroundColor: '#080c14' }}
+    >
+
+      {/* ── Background: soft radial glow ── */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: [
+            'radial-gradient(ellipse 90% 70% at 10% 110%, rgba(59,130,246,0.10) 0%, transparent 65%)',
+            'radial-gradient(ellipse 60% 50% at 85% -10%, rgba(99,102,241,0.07) 0%, transparent 60%)',
+          ].join(', '),
+        }}
+      />
+
+      {/* ── Subtle grid overlay ── */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-[0.025]"
+        style={{
+          backgroundImage:
+            'linear-gradient(rgba(255,255,255,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.4) 1px, transparent 1px)',
+          backgroundSize: '80px 80px',
+        }}
+      />
+
+      {/* ─────────────────────────────────────────────────────────────────────
+          LOGO MARK — shown before Scene 1 kicks in
+      ───────────────────────────────────────────────────────────────────── */}
+      <div
+        ref={iconRef}
+        className="absolute inset-0 flex items-center justify-center z-30 pointer-events-none"
+      >
+        <div className="flex flex-col items-center gap-5">
+          <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl border border-white/10 bg-white/[0.04] flex items-center justify-center p-4 shadow-[0_0_60px_rgba(59,130,246,0.12)]">
+            <Image
+              src="/images/FLEETnet app icon.png"
+              alt="FleetNet"
+              width={90}
+              height={90}
+              className="w-full h-full object-contain"
+            />
+          </div>
+          <p className="text-white/25 text-[10px] tracking-[0.4em] uppercase font-bold">Fleet Operations</p>
+        </div>
+      </div>
+
+      {/* ═══════════════════════════════════════════════════════════════════
+          SCENE 1 — Command Center
+      ═══════════════════════════════════════════════════════════════════ */}
+      <div
+        ref={scene1Ref}
+        className="absolute inset-0 flex items-center justify-center px-6 sm:px-10 md:px-16 lg:px-24 z-20 pointer-events-auto"
+      >
+        <div className="w-full max-w-6xl flex flex-col lg:flex-row items-start lg:items-center gap-12 lg:gap-20">
+
+          {/* Left — Narrative copy */}
+          <div ref={text1Ref} className="lg:w-[42%] shrink-0">
+            <p className="text-white/30 text-[10px] tracking-[0.35em] uppercase font-bold mb-5">
+              Command Center
+            </p>
+            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-[4rem] xl:text-[5rem] font-black text-white leading-[1.02] tracking-tight mb-6">
+              Built to run<br />
+              <em className="not-italic text-white/30">everything.</em>
+            </h2>
+            <div className="w-10 h-[1px] bg-white/15 mb-6" />
+            <p className="text-sm md:text-base text-white/45 leading-relaxed max-w-xs font-medium">
+              Every vehicle, driver, fuel record, maintenance job and trip — managed from a single unified platform. One login. Complete control.
+            </p>
+          </div>
+
+          {/* Right — Minimal feature tiles */}
+          <div className="w-full lg:flex-1 grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
+            {MODULES.map((mod, i) => (
+              <div
+                key={mod.label}
+                ref={(el) => { cardsRef.current[i] = el; }}
+                className="relative flex flex-col gap-3 p-4 md:p-5 rounded-lg border border-white/[0.06] bg-white/[0.025] hover:bg-white/[0.05] transition-colors duration-300 overflow-hidden group"
+              >
+                {/* Left color accent line */}
+                <div
+                  className="absolute left-0 top-3 bottom-3 w-[2px] rounded-full"
+                  style={{ backgroundColor: mod.accent }}
+                />
+
+                {/* Icon */}
+                <div
+                  className="w-7 h-7 md:w-8 md:h-8 shrink-0"
+                  style={{ color: mod.accent }}
+                >
+                  {mod.icon}
+                </div>
+
+                {/* Label */}
+                <div>
+                  <p className="text-white font-bold text-sm md:text-[15px] leading-none">{mod.label}</p>
+                  <p
+                    className="text-[9px] uppercase tracking-widest font-semibold mt-1.5 leading-none"
+                    style={{ color: `${mod.accent}90` }}
+                  >
+                    {mod.sub}
+                  </p>
+                </div>
+
+                {/* Feature list — visible on md+ */}
+                <ul className="hidden md:flex flex-col gap-1 mt-1">
+                  {mod.features.map((f) => (
+                    <li key={f} className="flex items-start gap-1.5 text-[10px] text-white/35 leading-snug font-medium">
+                      <span className="mt-[5px] w-[3px] h-[3px] rounded-full shrink-0" style={{ backgroundColor: mod.accent }} />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+
+        </div>
+      </div>
+
+      {/* ═══════════════════════════════════════════════════════════════════
+          SCENE 2 — Trip Analytics
+      ═══════════════════════════════════════════════════════════════════ */}
+      <div
+        ref={scene2Ref}
+        className="absolute inset-0 flex flex-col items-center justify-center px-6 sm:px-10 md:px-16 lg:px-24 z-20 pointer-events-auto"
+      >
+        <div className="w-full max-w-5xl flex flex-col gap-5 h-full max-h-[88vh] py-[8vh]">
+
+          {/* Header */}
+          <div ref={text2Ref} className="shrink-0">
+            <p className="text-white/30 text-[10px] tracking-[0.35em] uppercase font-bold mb-3">Trip Intelligence</p>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white leading-tight">
+              Analyse every <em className="not-italic text-white/30">journey.</em>
+            </h2>
+          </div>
+
+          {/* Stats row */}
+          <div className="grid grid-cols-4 gap-2 md:gap-3 shrink-0">
+            {[
+              { label: 'Total Trips',   value: '1,284',    color: '#f97316' },
+              { label: 'Distance',      value: '48,320 km', color: '#fbbf24' },
+              { label: 'Avg Duration',  value: '1h 42m',   color: '#fb923c' },
+              { label: 'Fuel Used',     value: '12,440 L', color: '#4ade80' },
+            ].map((s) => (
+              <div
+                key={s.label}
+                className="rounded-lg border border-white/[0.06] p-3 md:p-4 flex flex-col gap-1.5"
+                style={{ background: 'rgba(255,255,255,0.03)' }}
+              >
+                <p className="text-[9px] md:text-[10px] text-white/30 uppercase tracking-widest font-bold">{s.label}</p>
+                <p className="text-base md:text-xl lg:text-2xl font-black text-white leading-none">{s.value}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Bar chart */}
+          <div
+            className="flex-1 rounded-lg border border-white/[0.06] overflow-hidden relative min-h-0"
+            style={{ background: 'rgba(255,255,255,0.02)' }}
+          >
+            <div className="h-full flex flex-col p-4 md:p-6">
+              <div className="flex justify-between items-center mb-5 shrink-0">
+                <p className="text-white/50 text-xs md:text-sm font-bold uppercase tracking-widest">Weekly Distance (km)</p>
+                <div className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+                  <span className="text-[9px] text-white/25 uppercase tracking-widest font-bold">This Week</span>
+                </div>
+              </div>
+
+              <div className="flex-1 flex items-end gap-3 md:gap-5 min-h-0">
+                {TRIP_BARS.map((b) => (
+                  <div key={b.label} className="flex flex-col items-center gap-2 flex-1 h-full justify-end">
+                    <span className="text-[9px] md:text-[10px] text-white/40 font-bold">{b.km}</span>
+                    <div
+                      className="w-full relative rounded-t-sm overflow-hidden"
+                      style={{
+                        height: `${b.pct}%`,
+                        minHeight: '6px',
+                        background: 'linear-gradient(to top, rgba(251,191,36,0.75), rgba(249,115,22,0.3))',
+                      }}
+                    >
+                      <div className="absolute top-0 inset-x-0 h-[2px] rounded-full bg-amber-300/60" />
+                    </div>
+                    <span className="text-[9px] md:text-[10px] text-white/25 font-bold uppercase">{b.label}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
-          <div className="absolute inset-0 flex items-center justify-center gap-4 md:gap-12 pointer-events-none px-4">
-            {['Assets', 'Roles', 'Permissions'].map((label, i) => (
+          {/* Latest trip row */}
+          <div
+            className="rounded-lg border border-white/[0.06] p-3 md:p-4 shrink-0"
+            style={{ background: 'rgba(255,255,255,0.02)' }}
+          >
+            <div className="flex items-center gap-4 md:gap-8 flex-wrap">
+              <div className="flex items-center gap-2 shrink-0">
+                <div className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+                <span className="text-[9px] text-white/30 uppercase tracking-widest font-bold">Latest Trip</span>
+              </div>
+              {[
+                { label: 'Route',    value: 'Colombo → Kandy' },
+                { label: 'Driver',   value: 'A. Perera' },
+                { label: 'Distance', value: '116 km' },
+                { label: 'Duration', value: '2h 15m' },
+                { label: 'Fuel',     value: '14.2 L' },
+                { label: 'Status',   value: 'Completed', accent: '#22c55e' },
+              ].map((d) => (
+                <div key={d.label} className="flex flex-col gap-0.5">
+                  <span className="text-[8px] text-white/20 uppercase tracking-widest font-bold">{d.label}</span>
+                  <span
+                    className="text-[10px] md:text-xs font-semibold"
+                    style={{ color: d.accent ?? 'rgba(255,255,255,0.65)' }}
+                  >
+                    {d.value}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      {/* ═══════════════════════════════════════════════════════════════════
+          SCENE 3 — Live Oversight
+      ═══════════════════════════════════════════════════════════════════ */}
+      <div
+        ref={scene3Ref}
+        className="absolute inset-0 flex flex-col items-center justify-center px-6 sm:px-10 md:px-16 lg:px-24 z-20 pointer-events-auto"
+      >
+        <div className="w-full max-w-5xl flex flex-col gap-5 h-full max-h-[88vh] py-[8vh]">
+
+          {/* Header */}
+          <div ref={text3Ref} className="shrink-0">
+            <p className="text-amber-500/50 text-[10px] tracking-[0.35em] uppercase font-bold mb-3">Live Oversight</p>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white leading-tight">
+              Real-time fleet <em className="not-italic text-white/30">awareness.</em>
+            </h2>
+          </div>
+
+          {/* Live metrics */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 shrink-0">
+            {LIVE_METRICS.map((m) => (
               <div
-                key={label}
-                ref={(el) => { cardsRef.current[i] = el; }}
-                className="w-44 md:w-80 aspect-[3/4.2] rounded-[2.5rem] bg-white/5 backdrop-blur-3xl border border-white/10 p-8 md:p-10 flex flex-col justify-end shadow-2xl will-change-transform group overflow-hidden"
+                key={m.label}
+                className="rounded-lg border p-4 md:p-5 flex flex-col gap-3"
+                style={{
+                  background: `${m.color}07`,
+                  borderColor: `${m.color}18`,
+                }}
               >
-                <div className="absolute inset-0 bg-gradient-to-t from-red-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="relative z-10">
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-red-500 to-red-700 mb-8 flex items-center justify-center shadow-lg shadow-red-600/20">
-                    <div className="w-3.5 h-3.5 bg-white rounded-full animate-pulse shadow-[0_0_15px_white]" />
-                  </div>
-                  <h4 className="text-3xl font-bold text-white mb-2 tracking-tight">{label}</h4>
-                  <p className="text-white/30 text-sm font-medium leading-relaxed uppercase tracking-wider mb-6">Core Module 0{i+1}</p>
-                  <div className="h-1 w-20 bg-red-500/50 rounded-full" />
+                <div className="flex items-start justify-between">
+                  <p className="text-[9px] md:text-[10px] text-white/35 uppercase tracking-widest font-bold leading-snug flex-1 pr-1">
+                    {m.label}
+                  </p>
+                  {m.delta && (
+                    <span
+                      className="text-[8px] font-bold px-1.5 py-0.5 rounded-full shrink-0"
+                      style={{ background: `${m.color}18`, color: m.color }}
+                    >
+                      {m.delta}
+                    </span>
+                  )}
+                </div>
+                <div className="flex items-end gap-1">
+                  <span
+                    className="text-2xl md:text-3xl lg:text-4xl font-black text-white leading-none"
+                  >
+                    {m.value}
+                  </span>
+                  {m.unit && <span className="text-xs text-white/30 mb-0.5 font-bold">{m.unit}</span>}
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: m.color }} />
+                  <span className="text-[8px] uppercase tracking-widest text-white/20 font-bold">Live</span>
                 </div>
               </div>
             ))}
           </div>
 
-          {/* SCENE 2 ASSETS: WIREFRAME HUD */}
-          <div ref={wireframeRef} className="absolute inset-0 flex items-center justify-center pointer-events-none p-4 opacity-0 scale-90">
-            <div className="w-full max-w-6xl aspect-video rounded-[4rem] border border-red-500/20 bg-red-500/[0.02] backdrop-blur-xl relative overflow-hidden shadow-[0_0_100px_rgba(239,68,68,0.05)]">
-              {/* Complex Grid */}
-              <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(239, 68, 68, 0.2) 1px, transparent 0)', backgroundSize: '40px 40px' }} />
-              
-              <div className="absolute inset-0 flex items-center justify-center">
-                 <div className="w-2/3 h-2/3 border border-red-500/10 rounded-full animate-[spin_30s_linear_infinite]" />
-                 <div className="absolute w-1/2 h-1/2 border border-red-500/20 rounded-full animate-[spin_15s_linear_infinite_reverse] border-dashed" />
-                 <div className="absolute w-full h-[0.5px] bg-red-500/20 top-1/2 -translate-y-1/2" />
-                 <div className="absolute w-[0.5px] h-full bg-red-500/20 left-1/2 -translate-x-1/2" />
-              </div>
+          {/* System HUD panel */}
+          <div
+            className="flex-1 rounded-lg border border-amber-500/10 relative overflow-hidden min-h-0"
+            style={{ background: 'rgba(249,115,22,0.018)' }}
+          >
+            {/* Dot grid */}
+            <div
+              className="absolute inset-0 opacity-[0.08] pointer-events-none"
+              style={{
+                backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(249,115,22,0.6) 1px, transparent 0)',
+                backgroundSize: '24px 24px',
+              }}
+            />
 
-              {/* Data Points */}
-              <div className="absolute inset-0">
-                 {DATA_POINTS.map((pt, i) => (
-                    <div key={i} className="absolute flex flex-col items-center" style={{ left: pt.left, top: pt.top }}>
-                      <div className="w-2 h-2 bg-red-500 rounded-full shadow-[0_0_20px_rgba(239,68,68,1)] animate-ping absolute opacity-40" />
-                      <div className="w-2 h-2 bg-red-500 rounded-full shadow-[0_0_10px_rgba(239,68,68,1)]" />
-                    </div>
-                 ))}
-              </div>
-
-              {/* HUD ELEMENTS */}
-              <div className="absolute top-12 left-12 font-mono text-[11px] text-red-500/40 space-y-2 uppercase tracking-widest">
+            <div className="relative z-10 p-4 md:p-6 h-full flex flex-col overflow-y-auto">
+              {/* Status bar */}
+              <div className="flex items-center justify-between mb-5 shrink-0">
                 <div className="flex items-center gap-2">
-                  <div className="w-1 h-1 bg-red-500 rounded-full animate-pulse" />
-                  <span>Stream: Connected</span>
+                  <div className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-pulse" />
+                  <span className="font-mono text-[9px] md:text-[10px] text-amber-400/50 uppercase tracking-widest">
+                    System Online
+                  </span>
                 </div>
-                <div>Lat: 51.5074° N / Lon: 0.1278° W</div>
+                <span className="font-mono text-[9px] md:text-[10px] text-white/15 uppercase tracking-widest">
+                  FleetNet OS v4.2
+                </span>
+              </div>
+
+              {/* Info panels */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 flex-1">
+                {[
+                  {
+                    title: 'Fleet Health',
+                    items: ['Engine OK: 44 / 48', 'Maintenance Due: 4', 'Alerts: 2 Critical'],
+                  },
+                  {
+                    title: 'Job Progress',
+                    items: ['Completed Today: 38', 'In Transit: 17', 'Pending: 9'],
+                  },
+                  {
+                    title: 'Fuel Status',
+                    items: ['Avg Efficiency: 9.2 L/100km', 'Low Tank Alerts: 3', 'Cost Today: $640'],
+                  },
+                ].map((panel) => (
+                  <div
+                    key={panel.title}
+                    className="rounded-md border border-amber-500/[0.08] p-3 md:p-4 flex flex-col gap-2.5"
+                    style={{ background: 'rgba(249,115,22,0.025)' }}
+                  >
+                    <p className="text-[9px] md:text-[10px] uppercase tracking-widest font-bold text-amber-400/40">
+                      {panel.title}
+                    </p>
+                    {panel.items.map((item) => (
+                      <div key={item} className="flex items-center gap-2">
+                        <div className="w-1 h-1 rounded-full bg-amber-500/30 shrink-0" />
+                        <span className="text-[9px] md:text-xs text-white/40">{item}</span>
+                      </div>
+                    ))}
+                  </div>
+                ))}
               </div>
             </div>
           </div>
 
-          {/* SCENE 3 ASSETS: AI BUBBLE */}
-          <div ref={bubbleRef} className="absolute pointer-events-none opacity-0 scale-50">
-             <div className="relative">
-                <div className="absolute inset-[-100px] rounded-full opacity-30 blur-3xl animate-pulse" style={{ background: 'radial-gradient(circle, rgba(239,68,68,0.4) 0%, transparent 70%)' }} />
-                <div className="relative w-64 h-64 md:w-96 md:h-96 rounded-full bg-gradient-to-br from-[#121212] to-black border-[1px] border-white/10 shadow-2xl flex items-center justify-center p-16 overflow-hidden">
-                   <div className="absolute inset-0 bg-gradient-to-t from-red-600/20 to-transparent" />
-                   <div className="w-full h-full relative z-10 text-red-500/80">
-                      <svg fill="currentColor" viewBox="0 0 24 24" className="w-full h-full animate-pulse-slow">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
-                      </svg>
-                   </div>
-                   <div className="absolute -top-6 -right-6 w-20 h-20 bg-red-600 rounded-full flex items-center justify-center border-4 border-[#050505] shadow-xl">
-                      <span className="text-white font-black text-4xl">!</span>
-                   </div>
-                </div>
-             </div>
-          </div>
-
         </div>
-
-        {/* TEXT OVERLAY LAYER - Positioned to wrap around the central action */}
-        <div className="absolute inset-0 z-10 pointer-events-none uppercase font-black italic tracking-tighter">
-          
-          <div ref={text1Ref} id="text-1" className="absolute top-[8%] left-1/2 -translate-x-1/2 w-full max-w-5xl text-center">
-            <h2 className="text-5xl md:text-8xl text-white/90 mb-4 leading-none">
-              {splitText("Total Asset Control")}
-            </h2>
-            <div className="h-1 w-32 bg-red-600/50 mx-auto" />
-          </div>
-
-          <div ref={text2Ref} id="text-2" className="absolute top-[12%] left-[5%] w-full max-w-2xl text-left">
-            <h2 className="text-5xl md:text-8xl text-white/90 mb-6 leading-[0.8] whitespace-pre-line">
-              {splitText("Live Fleet\nIntelligence")}
-            </h2>
-            <div className="h-2 w-32 bg-red-600/50 mb-8" />
-            <p className="text-lg md:text-2xl text-white/30 max-w-sm font-light normal-case not-italic tracking-normal">
-              Real-time situational awareness across every node in your network.
-            </p>
-          </div>
-
-          <div ref={text3Ref} id="text-3" className="absolute bottom-[12%] right-[5%] w-full max-w-2xl text-right flex flex-col items-end">
-            <h2 className="text-5xl md:text-8xl text-white/90 mb-6 leading-[0.8] whitespace-pre-line">
-              {splitText("Predictive\nAlerts")}
-            </h2>
-            <div className="h-2 w-32 bg-red-600/50 mb-8" />
-            <p className="text-lg md:text-2xl text-white/30 max-w-sm font-light normal-case not-italic tracking-normal">
-              Stay ahead of failure points with proactive, AI-driven operational insights.
-            </p>
-          </div>
-
-        </div>
-
       </div>
 
-      <style jsx global>{`
-        @keyframes pulse-slow {
-          0%, 100% { transform: scale(1); opacity: 0.8; }
-          50% { transform: scale(1.05); opacity: 1; }
-        }
-        .animate-pulse-slow {
-          animation: pulse-slow 3s ease-in-out infinite;
-        }
-      `}</style>
     </section>
   );
 }

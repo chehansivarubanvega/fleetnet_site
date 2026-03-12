@@ -1,253 +1,287 @@
 'use client';
 
+import { useGSAP } from '@gsap/react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ArrowDown } from 'lucide-react';
-import { motion, useMotionValueEvent, useScroll, useTransform } from 'motion/react';
 import Image from 'next/image';
-import React, { useRef } from 'react';
+import { useRef } from 'react';
+
+// Register plugins
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 export default function Hero() {
-  const [mounted, setMounted] = React.useState(false);
-  const [isScene2Active, setIsScene2Active] = React.useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"]
-  });
-
-  useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    // If scroll progresses past the 1% mark (immediately as Scene 1 starts exiting), activate Scene 2 animations
-    setIsScene2Active(latest > 0.05);
-  });
-
-  // Scene 1: Hero Content (0% -> 10% scroll) — exits quickly
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.1], [1, 0]);
-  const heroY = useTransform(scrollYProgress, [0, 0.1], [0, -50]);
-  const heroX = useTransform(scrollYProgress, [0, 0.1], [0, -150]);
+  // Scene Refs
+  const heroTextRef = useRef<HTMLDivElement>(null);
+  const heroLinesRef = useRef<HTMLHeadingElement>(null);
+  const heroSubRef = useRef<HTMLParagraphElement>(null);
+  const heroBtnRef = useRef<HTMLButtonElement>(null);
   
-  // Mockup Choreography (Interpolation)
-  const mockupScale = useTransform(scrollYProgress, [0, 0.2], [1, 0.4]);
-  const mockupOpacity = useTransform(scrollYProgress, [0.1, 0.2], [1, 0]);
+  const mockupsRef = useRef<HTMLDivElement>(null);
+  const desktopMockupRef = useRef<HTMLDivElement>(null);
+  const mobileMockupRef = useRef<HTMLDivElement>(null);
+  
+  const missionTextRef = useRef<HTMLDivElement>(null);
+  const missionBadgeRef = useRef<HTMLDivElement>(null);
+  const missionLine1Ref = useRef<HTMLHeadingElement>(null);
+  const missionLine2Ref = useRef<HTMLHeadingElement>(null);
+  const missionSubRef = useRef<HTMLParagraphElement>(null);
 
-  // Independent Mockup Movements
-  const desktopY = useTransform(scrollYProgress, [0, 0.2], [0, -600]);
-  const desktopRotate = useTransform(scrollYProgress, [0, 0.2], [0, -15]);
-  
-  const mobileY = useTransform(scrollYProgress, [0, 0.2], [0, 600]);
-  const mobileRotate = useTransform(scrollYProgress, [0, 0.2], [0, 15]);
-  
-  const mockupRotate = useTransform(scrollYProgress, [0, 0.2], [0, 5]);
+  const scrollIndicatorRef = useRef<HTMLDivElement>(null);
 
-  // Global exit for Scene 2
-  const missionExitOpacity = useTransform(scrollYProgress, [0.8, 1], [1, 0]);
+  useGSAP(() => {
+    if (!sectionRef.current) return;
 
-  // Fallback values for SSR to prevent hydration mismatch
-  const currentHeroOpacity = mounted ? heroOpacity : 1;
-  const currentHeroY = mounted ? heroY : 0;
-  const currentHeroX = mounted ? heroX : 0;
-  const currentMockupOpacity = mounted ? mockupOpacity : 1;
-  const currentMockupScale = mounted ? mockupScale : 1;
-  
-  const currentDesktopY = mounted ? desktopY : 0;
-  const currentDesktopRotate = mounted ? desktopRotate : 0;
-  
-  const currentMobileY = mounted ? mobileY : 0;
-  const currentMobileRotate = mounted ? mobileRotate : 0;
-  
-  const currentMockupRotate = mounted ? mockupRotate : 0;
+    // 1. Initial State Setup
+    gsap.set([heroLinesRef.current, heroSubRef.current, heroBtnRef.current], { 
+      opacity: 1, 
+      y: 0 
+    });
+    gsap.set(mockupsRef.current, { 
+      opacity: 1, 
+      scale: 1,
+      rotate: 0 
+    });
+    gsap.set([missionBadgeRef.current, missionLine1Ref.current, missionLine2Ref.current, missionSubRef.current], {
+      opacity: 0,
+      y: 60,
+      clipPath: 'inset(100% -20% -20% -20%)'
+    });
+    // The "Scroll down" indicator starts visible because the user *needs* to scroll to advance
+    gsap.set(scrollIndicatorRef.current, { opacity: 1 });
 
-  const currentMissionExitOpacity = mounted ? missionExitOpacity : 1;
+    // Idle animations for mockups
+    gsap.to(desktopMockupRef.current, {
+      y: -15,
+      duration: 3,
+      repeat: -1,
+      yoyo: true,
+      ease: "sine.inOut"
+    });
+    gsap.to(mobileMockupRef.current, {
+      y: 20,
+      duration: 2.5,
+      repeat: -1,
+      yoyo: true,
+      ease: "sine.inOut",
+      delay: 0.5
+    });
+
+    // 2. SCRUBBED MASTER TIMELINE (PINNED)
+    // This pins the `.hero-sticky-container` to the screen.
+    // The user must scroll `end: "+=3000"` pixels to complete the animation before the page unpins.
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: 'top top',
+        end: '+=2500', // Distance to scroll
+        pin: true,
+        scrub: 1, // Smooth scrubbing
+        anticipatePin: 1
+      }
+    });
+
+    // PHASE 1: Hold the initial scene briefly so it doesn't instantly vanish on tiny scroll
+    tl.to({}, { duration: 0.2 })
+
+      // PHASE 2: Exit Scene 1 (Hero Text & Mockups scale down)
+      .to([heroBtnRef.current, heroSubRef.current, heroLinesRef.current], { 
+        opacity: 0, 
+        y: -40, 
+        duration: 1, 
+        stagger: 0.1, 
+        ease: 'power2.in' 
+      })
+      .to(mockupsRef.current, { 
+        scale: 0.8, // Scale down but don't disappear completely to keep hardware context
+        opacity: 0, 
+        rotate: 5,
+        x: 100, // Move slightly offscreen right
+        duration: 2, 
+        ease: 'power2.inOut' 
+      }, "<")
+
+      // PHASE 3: Enter Scene 2 (Mission Text) sequentially
+      .to(missionBadgeRef.current, { 
+        opacity: 1, 
+        y: 0, 
+        clipPath: 'inset(-20% -20% -20% -20%)', 
+        duration: 1, 
+        ease: 'power2.out' 
+      }, "-=0.2")
+      .to(missionLine1Ref.current, { 
+        opacity: 1, 
+        y: 0, 
+        clipPath: 'inset(-20% -20% -20% -20%)', 
+        duration: 1, 
+        ease: 'power2.out' 
+      }, "-=0.4")
+      .to(missionLine2Ref.current, { 
+        opacity: 1, 
+        y: 0, 
+        clipPath: 'inset(-20% -20% -20% -20%)', 
+        duration: 1, 
+        ease: 'power2.out' 
+      }, "-=0.4")
+      .to(missionSubRef.current, { 
+        opacity: 1, 
+        y: 0, 
+        clipPath: 'inset(-20% -20% -20% -20%)', 
+        duration: 1, 
+        ease: 'power2.out' 
+      }, "-=0.4")
+
+      // PHASE 4: Final Hold before unpinning allows proceeding to next section
+      .to({}, { duration: 0.5 });
+      
+
+  }, { scope: sectionRef });
 
   return (
     <section 
-      ref={containerRef}
-      className="relative h-[200vh] w-full"
+      ref={sectionRef}
+      className="relative w-full font-[family-name:var(--font-outfit)]"
     >
-      {/* Sticky Stage */}
-      <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center">
+      <div 
+        ref={containerRef}
+        className="hero-sticky-container h-screen w-full overflow-hidden flex items-center bg-black/5"
+      >
         
-        <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12 w-full h-full flex items-center">
+        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 w-full h-full flex items-center">
           
-          {/* Scene 1: Hero Text (Left Aligned Entrance Animation) */}
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            style={{ opacity: currentHeroOpacity, y: currentHeroY, x: currentHeroX }}
-            className="w-full lg:w-1/2 z-30 will-change-transform"
+          {/* SCENE 1: Hero Text (Left Aligned) */}
+          <div 
+            ref={heroTextRef}
+            className="absolute top-[10%] sm:top-[12%] lg:top-1/2 lg:-translate-y-1/2 left-6 lg:left-12 right-6 lg:right-auto w-auto lg:w-1/2 z-30 pointer-events-auto"
           >
             <div className="text-left">
-              <motion.h1 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-                className="text-7xl md:text-[120px] font-bold text-white leading-[0.9] mb-10 tracking-tighter"
+              <h1 
+                ref={heroLinesRef}
+                className="text-[3rem] sm:text-6xl md:text-[80px] lg:text-[120px] font-black text-white leading-[0.95] lg:leading-[0.9] mb-3 sm:mb-6 lg:mb-8 tracking-tighter drop-shadow-2xl"
               >
                 Revolution <br />
                 in your <br />
-                <span className="text-black/40">fleet</span>
-              </motion.h1>
-              <motion.p 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
-                className="text-xl md:text-2xl text-white/90 mb-12 leading-relaxed font-medium max-w-xl"
+                <span className="text-white/40">fleet</span>
+              </h1>
+              <p 
+                ref={heroSubRef}
+                className="text-sm sm:text-lg md:text-2xl text-white/80 mb-5 lg:mb-10 leading-relaxed font-medium max-w-xl"
               >
                 A data-driven platform to monitor assets, optimize fuel consumption, 
                 and transition to sustainable mobility.
-              </motion.p>
-              <motion.button 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
-                className="px-12 py-6 bg-white text-black rounded-full font-bold hover:scale-105 transition-transform shadow-2xl text-lg"
+              </p>
+              <button 
+                ref={heroBtnRef}
+                className="px-6 py-3 lg:px-10 lg:py-5 bg-white text-black rounded-full font-bold hover:scale-105 transition-transform shadow-[0_0_30px_rgba(255,255,255,0.2)] text-sm md:text-base lg:text-lg uppercase tracking-wider"
               >
                 Request a Demo
-              </motion.button>
+              </button>
             </div>
-          </motion.div>
+          </div>
 
-          {/* Scene 2: Mission Text (Centered with Staggered Clip-Path Reveal) */}
-          <motion.div 
-            style={{ opacity: currentMissionExitOpacity }}
-            className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 z-30 pointer-events-none will-change-transform"
+          {/* SCENE 2: Mission Text (Centered) */}
+          <div 
+            ref={missionTextRef}
+            className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 z-30 pointer-events-none"
           >
-            {/* Badge Reveal */}
-            <motion.div 
-              initial={{ opacity: 0, y: 40, clipPath: "inset(100% 0 0 0)" }}
-              animate={isScene2Active ? { opacity: 1, y: 0, clipPath: "inset(0% 0 0 0)" } : { opacity: 0, y: 40, clipPath: "inset(100% 0 0 0)" }}
-              transition={{ duration: isScene2Active ? 0.8 : 0.2, ease: "easeOut" }}
-              className="inline-flex items-center px-10 py-4 rounded-full border border-white/20 bg-black/30 backdrop-blur-2xl mb-14"
+            <div 
+              ref={missionBadgeRef}
+              className="inline-flex items-center px-8 py-3 rounded-full border border-white/20 bg-black/40 backdrop-blur-2xl mb-12 shadow-2xl"
             >
-              <span className="text-white text-sm font-bold tracking-[0.4em] uppercase">
+              <span className="text-red-400 text-xs md:text-sm font-bold tracking-[0.3em] uppercase">
                 The industry favors the legacy, not the efficient.
               </span>
-            </motion.div>
+            </div>
 
-            {/* Heading Reveal - Line 1 */}
-            <motion.h2 
-              initial={{ opacity: 0, y: 60, clipPath: "inset(100% 0 0 0)" }}
-              animate={isScene2Active ? { opacity: 1, y: 0, clipPath: "inset(0% 0 0 0)" } : { opacity: 0, y: 60, clipPath: "inset(100% 0 0 0)" }}
-              transition={{ duration: isScene2Active ? 0.8 : 0.2, delay: isScene2Active ? 0.1 : 0, ease: "easeOut" }}
-              className="text-6xl md:text-[100px] font-bold text-white leading-[1] mb-4 max-w-6xl tracking-tight"
+            <h2 
+              ref={missionLine1Ref}
+              className="text-4xl md:text-7xl lg:text-[90px] font-black text-white leading-[1] mb-2 max-w-5xl tracking-tight drop-shadow-2xl"
             >
               We&apos;re changing that.
-            </motion.h2>
+            </h2>
 
-            {/* Heading Reveal - Line 2 */}
-            <motion.h2 
-              initial={{ opacity: 0, y: 60, clipPath: "inset(100% 0 0 0)" }}
-              animate={isScene2Active ? { opacity: 1, y: 0, clipPath: "inset(0% 0 0 0)" } : { opacity: 0, y: 60, clipPath: "inset(100% 0 0 0)" }}
-              transition={{ duration: isScene2Active ? 0.8 : 0.2, delay: isScene2Active ? 0.2 : 0, ease: "easeOut" }}
-              className="text-6xl md:text-[100px] font-bold text-white leading-[1] mb-14 max-w-6xl tracking-tight"
+            <h2 
+              ref={missionLine2Ref}
+              className="text-4xl md:text-7xl lg:text-[90px] font-black text-white leading-[1] mb-10 max-w-5xl tracking-tight drop-shadow-2xl"
             >
               One optimized route at a time.
-            </motion.h2>
+            </h2>
 
-            {/* Paragraph Reveal */}
-            <motion.p 
-              initial={{ opacity: 0, y: 40, clipPath: "inset(100% 0 0 0)" }}
-              animate={isScene2Active ? { opacity: 1, y: 0, clipPath: "inset(0% 0 0 0)" } : { opacity: 0, y: 40, clipPath: "inset(100% 0 0 0)" }}
-              transition={{ duration: isScene2Active ? 0.8 : 0.2, delay: isScene2Active ? 0.3 : 0, ease: "easeOut" }}
-              className="text-2xl md:text-3xl text-white/70 max-w-4xl leading-relaxed font-medium"
+            <p 
+              ref={missionSubRef}
+              className="text-lg md:text-2xl lg:text-3xl text-white/70 max-w-4xl leading-relaxed font-medium"
             >
               FleetNET honors the organizations rewriting the rules of logistics—locally rooted, 
               community-loved, often underrepresented or overlooked, but driven by mission 
               and built with care.
-            </motion.p>
-          </motion.div>
+            </p>
+          </div>
 
-          {/* Mockup Choreography Container (Starts on the Right) */}
-          <motion.div
-            style={{ 
-              opacity: currentMockupOpacity,
-              scale: currentMockupScale,
-              rotate: currentMockupRotate
-            }}
-            className="absolute right-0 top-0 bottom-0 w-full lg:w-1/2 flex items-center justify-center pointer-events-none z-20 will-change-transform"
+          {/* MOCKUPS (Right Aligned) */}
+          <div
+            ref={mockupsRef}
+            className="absolute right-0 top-[43%] sm:top-[45%] lg:top-0 bottom-0 w-full lg:w-1/2 flex items-start lg:items-center justify-center pointer-events-none z-20"
           >
-            <div className="relative w-full h-full flex items-center justify-center p-6 lg:p-12">
+            <div className="relative w-full h-full flex items-start lg:items-center justify-center p-4 lg:p-12 scale-[0.75] sm:scale-95 lg:scale-100">
               
-              {/* Desktop Monitor Mockup (Idle Float + Scroll Up) */}
-              <motion.div
-                style={{ 
-                  y: currentDesktopY,
-                  rotate: currentDesktopRotate
-                }}
-                animate={{ y: [0, -15, 0] }}
-                transition={{ 
-                  y: { duration: 6, repeat: Infinity, ease: [0.45, 0, 0.55, 1] }
-                }}
-                className="absolute w-full max-w-[700px] aspect-[16/10] bg-[#0a0a0a] rounded-[1.5rem] lg:rounded-[2.5rem] p-2 lg:p-4 shadow-[0_80px_160px_-40px_rgba(0,0,0,0.9)] border border-white/20 will-change-transform"
+              {/* Desktop Monitor Mockup */}
+              <div
+                ref={desktopMockupRef}
+                className="absolute top-0 lg:top-auto w-[98%] sm:w-[90%] lg:w-full max-w-[700px] aspect-[16/10] bg-[#0a0a0a] rounded-[1.5rem] lg:rounded-[2.5rem] p-2 lg:p-4 shadow-[0_80px_160px_-40px_rgba(0,0,0,0.9)] border border-white/20"
               >
                 <div className="relative w-full h-full rounded-lg lg:rounded-2xl overflow-hidden bg-black ring-1 ring-white/10">
                   <Image 
-                    src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=1200" 
+                    src="/images/desktop_ss.png" 
                     alt="Desktop Dashboard" 
                     fill 
                     className="object-cover opacity-90"
-                    referrerPolicy="no-referrer"
                   />
-                  {/* Glass Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent pointer-events-none" />
                 </div>
-                {/* Monitor Stand Refined */}
                 <div className="absolute -bottom-8 lg:-bottom-10 left-1/2 -translate-x-1/2 w-32 lg:w-56 h-8 lg:h-10 bg-gradient-to-b from-[#1a1a1a] to-[#0a0a0a] rounded-t-2xl lg:rounded-t-3xl border-x border-t border-white/10" />
                 <div className="absolute -bottom-10 lg:-bottom-12 left-1/2 -translate-x-1/2 w-40 lg:w-64 h-2 bg-black/40 blur-md rounded-full" />
-              </motion.div>
+              </div>
 
-              {/* Mobile Phone Mockup (Idle Float + Scroll Down) */}
-              <motion.div
-                style={{ 
-                  y: currentMobileY,
-                  rotate: currentMobileRotate
-                }}
-                animate={{ y: [0, 20, 0] }}
-                transition={{ 
-                  y: { duration: 5, repeat: Infinity, ease: [0.45, 0, 0.55, 1], delay: 0.5 }
-                }}
-                className="absolute right-[5%] bottom-[15%] lg:bottom-[10%] w-[160px] lg:w-[240px] aspect-[9/19.5] rounded-[2.5rem] lg:rounded-[4rem] p-2 lg:p-3.5 bg-[#0a0a0a] shadow-[0_60px_120px_-25px_rgba(0,0,0,0.95)] border border-white/20 z-30 will-change-transform"
+              {/* Mobile Phone Mockup */}
+              <div
+                ref={mobileMockupRef}
+                className="absolute right-[5%] top-[40%] sm:top-[50%] lg:top-auto lg:bottom-[10%] w-[110px] sm:w-[150px] lg:w-[240px] aspect-[9/19.5] rounded-[1.5rem] sm:rounded-[2rem] lg:rounded-[4rem] p-1 lg:p-3.5 bg-[#0a0a0a] shadow-[0_60px_120px_-25px_rgba(0,0,0,0.95)] border border-white/20 z-30 max-h-[70vh]"
               >
-                {/* Dynamic Island */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-20 lg:w-32 h-5 lg:h-8 bg-[#0a0a0a] rounded-b-[1rem] lg:rounded-b-[2rem] z-40 border-x border-b border-white/5" />
-                
-                <div className="relative w-full h-full rounded-[2.2rem] lg:rounded-[3.5rem] overflow-hidden bg-black ring-1 ring-white/10">
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-16 sm:w-20 lg:w-32 h-4 sm:h-5 lg:h-8 bg-[#0a0a0a] rounded-b-[0.75rem] sm:rounded-b-[1rem] lg:rounded-b-[2rem] z-40 border-x border-b border-white/5" />
+                <div className="relative w-full h-full rounded-[1.3rem] sm:rounded-[1.8rem] lg:rounded-[3.5rem] overflow-hidden bg-black ring-1 ring-white/10">
                   <Image 
-                    src="https://images.unsplash.com/photo-1553413077-190dd305871c?auto=format&fit=crop&q=80&w=800" 
+                    src="/images/mobile_ss.png" 
                     alt="Mobile App" 
                     fill 
                     className="object-cover opacity-90"
-                    referrerPolicy="no-referrer"
                   />
-                  {/* Glass Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent pointer-events-none" />
                 </div>
-                
-                {/* Side Buttons */}
-                <div className="absolute -left-[2px] top-24 lg:top-32 w-[2px] lg:w-[3px] h-8 lg:h-12 bg-white/10 rounded-r-sm" />
-                <div className="absolute -right-[2px] top-32 lg:top-40 w-[2px] lg:w-[3px] h-12 lg:h-20 bg-white/10 rounded-l-sm" />
-              </motion.div>
+                <div className="absolute -left-[2px] top-16 sm:top-24 lg:top-32 w-[2px] lg:w-[3px] h-6 sm:h-8 lg:h-12 bg-white/10 rounded-r-sm" />
+                <div className="absolute -right-[2px] top-24 sm:top-32 lg:top-40 w-[2px] lg:w-[3px] h-8 sm:h-12 lg:h-20 bg-white/10 rounded-l-sm" />
+              </div>
 
             </div>
-          </motion.div>
+          </div>
 
         </div>
 
         {/* Scroll Down Indicator */}
-        <motion.div
-          style={{ opacity: currentHeroOpacity }}
-          className="absolute bottom-12 left-12 flex items-center gap-4 text-white/30 cursor-pointer hover:text-white transition-colors group z-40"
+        <div
+          ref={scrollIndicatorRef}
+          className="absolute bottom-6 lg:bottom-12 left-6 lg:left-12 flex items-center gap-3 lg:gap-4 text-white/30 cursor-pointer hover:text-white transition-colors group z-40 pointer-events-auto"
           onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
         >
-          <div className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center group-hover:border-white transition-colors bg-white/5 backdrop-blur-sm">
-            <ArrowDown className="w-5 h-5 animate-bounce" />
+          <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-full border border-white/20 flex items-center justify-center group-hover:border-white transition-colors bg-white/5 backdrop-blur-sm">
+            <ArrowDown className="w-4 h-4 lg:w-5 lg:h-5 animate-bounce" />
           </div>
-          <span className="text-sm font-bold uppercase tracking-[0.4em]">Scroll down</span>
-        </motion.div>
+          <span className="text-[10px] lg:text-sm font-bold uppercase tracking-[0.4em]">Scroll down</span>
+        </div>
       </div>
     </section>
   );

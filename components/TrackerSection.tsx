@@ -362,7 +362,7 @@ export default function TrackerSection() {
           <div ref={quoteRef} className="absolute z-30 flex items-center justify-center px-6 pointer-events-none will-change-transform">
             <div className="relative max-w-4xl">
               {/* Glassmorphism container */}
-              <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] p-10 md:p-16 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.5)]">
+              <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl md:rounded-[2.5rem] p-6 sm:p-10 md:p-16 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.5)]">
                 {/* Quote mark */}
                 <div className="absolute -top-6 left-10 text-8xl font-black text-blue-400/30 leading-none select-none">&ldquo;</div>
                 
@@ -386,32 +386,32 @@ export default function TrackerSection() {
           </div>
 
           {/* ═══ SCENE 3: Feature Cards ═══ */}
-          <div ref={featuresContainerRef} className="absolute inset-0 z-30 flex items-center justify-center pointer-events-none opacity-0 p-4 md:p-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 max-w-5xl w-full">
+          <div ref={featuresContainerRef} className="absolute inset-x-0 top-[10%] bottom-8 z-30 flex items-start md:items-center justify-center pointer-events-auto overflow-y-auto hide-scrollbar opacity-0 p-4 md:p-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 md:gap-6 max-w-5xl w-full my-auto pb-6 md:pb-0">
               {FEATURES.map((feature, i) => (
                 <div
                   key={feature.title}
                   ref={(el) => { featuresRef.current[i] = el; }}
                   className="will-change-transform"
                 >
-                  <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-2xl md:rounded-3xl p-6 md:p-8 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] hover:bg-white/10 transition-colors duration-500 group h-full">
+                  <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-2xl md:rounded-3xl p-4 sm:p-5 md:p-8 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] hover:bg-white/10 transition-colors duration-500 group h-full">
                     {/* Icon */}
-                    <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-gradient-to-br from-blue-500/30 to-indigo-500/20 border border-blue-400/20 flex items-center justify-center mb-5 md:mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-blue-500/10">
-                      <feature.icon className="w-6 h-6 md:w-7 md:h-7 text-blue-300" />
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-gradient-to-br from-blue-500/30 to-indigo-500/20 border border-blue-400/20 flex items-center justify-center mb-3 sm:mb-4 md:mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-blue-500/10">
+                      <feature.icon className="w-5 h-5 md:w-7 md:h-7 text-blue-300" />
                     </div>
                     
                     {/* Title */}
-                    <h3 className="text-lg md:text-xl font-bold text-white mb-2 md:mb-3 tracking-tight leading-tight">
+                    <h3 className="text-base sm:text-lg md:text-xl font-bold text-white mb-1.5 md:mb-3 tracking-tight leading-tight">
                       {feature.title}
                     </h3>
                     
                     {/* Description */}
-                    <p className="text-sm md:text-base text-white/50 leading-relaxed font-medium">
+                    <p className="text-xs sm:text-sm md:text-base text-white/50 leading-relaxed font-medium">
                       {feature.description}
                     </p>
                     
                     {/* Bottom accent */}
-                    <div className="mt-5 md:mt-6 h-1 w-12 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full opacity-60 group-hover:w-20 group-hover:opacity-100 transition-all duration-500" />
+                    <div className="mt-4 md:mt-6 h-1 w-12 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full opacity-60 group-hover:w-20 group-hover:opacity-100 transition-all duration-500" />
                   </div>
                 </div>
               ))}
