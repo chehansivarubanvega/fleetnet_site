@@ -74,7 +74,7 @@ export default function Footer() {
           className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 pb-20 border-b border-white/10 mb-16"
         >
           <div>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-4">
+            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight mb-4">
               Ready to transform <br className="hidden md:block" />
               <span className="text-white/40">your operations?</span>
             </h2>
@@ -158,15 +158,15 @@ export default function Footer() {
             <ul className="space-y-6 text-white/60 font-medium">
               <li className="flex items-start gap-4 hover:text-white transition-colors">
                 <MapPin className="w-5 h-5 text-red-500/80 shrink-0 mt-1" />
-                <span>123 Fleet Way, Tech City, <br />Global Operations Center</span>
+                <span>Bay 1-5, Trace Expert City, <br />Tripoli Square, Colombo 10,</span>
               </li>
               <li className="flex items-center gap-4 hover:text-white transition-colors">
                 <Phone className="w-5 h-5 text-red-500/80 shrink-0" />
-                <span>+1 (555) 000-1234</span>
+                <span>+94 (77) 0576272</span>
               </li>
               <li className="flex items-center gap-4 hover:text-white transition-colors group cursor-pointer">
                 <Mail className="w-5 h-5 text-red-500/80 shrink-0" />
-                <span className="group-hover:underline underline-offset-4 pointer-events-auto">contact@fleetnet.global</span>
+                <span className="group-hover:underline underline-offset-4 pointer-events-auto">info@vega.lk</span>
               </li>
             </ul>
           </div>

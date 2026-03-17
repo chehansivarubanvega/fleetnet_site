@@ -3,7 +3,7 @@
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ChevronDown, Globe, Menu, Phone, Search, X } from 'lucide-react';
+import { ChevronDown, Menu, Phone, Search, X } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -38,16 +38,14 @@ const navItems = [
   
   {
     label: 'Smart Operations',
-    href: '#',
+    href: '/smart-operations',
     children: [
-      { label: 'Live Map', href: '#', description: 'Real-time visibility of your entire fleet.' },
-      { label: 'Dashboard', href: '#', description: 'KPI overview and operational insights.' },
-      { label: 'Maintenance', href: '#', description: 'Scheduled and predictive service planning.' },
-      { label: 'Driver Performance', href: '#', description: 'Behavior scoring and compliance tracking.' },
+      { label: 'Live Map', href: '/smart-operations#live-map', description: 'Real-time visibility of your entire fleet.' },
+      { label: 'Dashboard', href: '/smart-operations#dashboard', description: 'KPI overview and operational insights.' },
+      { label: 'Maintenance', href: '/smart-operations#maintenance', description: 'Scheduled and predictive service planning.' },
+      { label: 'Driver Performance', href: '/smart-operations#driver-performance', description: 'Behavior scoring and compliance tracking.' },
     ],
   },
-  { label: 'Support & Service', href: '#' },
-  { label: 'Community', href: '#' },
 ];
 
 export default function Navbar() {
@@ -95,11 +93,11 @@ export default function Navbar() {
   return (
     <header
       ref={headerRef}
-      className="fixed left-0 right-0 z-50 px-4 sm:px-6 lg:px-8 font-[family-name:var(--font-outfit)]"
+      className="fixed left-0 right-0 z-50 px-4 sm:px-6 lg:px-8 font-[family-name:var(--font-outfit)] pt-6"
     >
       <div 
         ref={navContainerRef}
-        className="mx-auto max-w-7xl rounded-full border border-transparent transition-all overflow-visible px-6 md:px-8"
+        className="mx-auto max-w-7xl rounded-full border border-transparent transition-all overflow-visible px-6 md:px-8 py-3"
       >
         <div className="flex justify-between items-center gap-4 relative">
           
@@ -176,14 +174,14 @@ export default function Navbar() {
 
           {/* Right Actions */}
           <div className="hidden lg:flex items-center shrink-0 space-x-2 xl:space-x-4">
-            <button className="text-white/80 transition-colors duration-300 hover:text-white p-2">
+            {/* <button className="text-white/80 transition-colors duration-300 hover:text-white p-2">
               <Search className="w-4.5 h-4.5" />
             </button>
             <button className="text-white/80 transition-colors duration-300 hover:text-white p-2 flex items-center gap-1 uppercase text-xs font-bold tracking-widest">
               <Globe className="w-4.5 h-4.5" />
               <span>EN</span>
               <ChevronDown className="w-3 h-3 opacity-60 ml-0.5" />
-            </button>
+            </button> */}
             <Link
               href="#"
               className="relative flex items-center gap-2 px-6 py-2.5 rounded-full font-bold text-white overflow-hidden group shadow-[0_0_20px_rgba(239,68,68,0.4)] transition-all duration-300 hover:shadow-[0_0_30px_rgba(239,68,68,0.6)] hover:scale-105 active:scale-95"
@@ -211,17 +209,37 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Drawer */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0, y: -20 }}
-            animate={{ opacity: 1, height: 'auto', y: 0 }}
-            exit={{ opacity: 0, height: 0, y: -20 }}
-            className="lg:hidden bg-[#0a0a0a]/95 backdrop-blur-3xl mt-4 rounded-3xl shadow-[0_30px_60px_rgba(0,0,0,0.8)] border border-white/10 overflow-hidden mx-4 relative"
+            initial={{ opacity: 0, x: '100%' }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: '100%' }}
+            transition={{ duration: 0.28, ease: 'easeOut' }}
+            className="lg:hidden fixed inset-y-0 right-0 w-full max-w-sm bg-[#020617]/95 backdrop-blur-3xl shadow-[0_30px_80px_rgba(0,0,0,0.9)] border-l border-white/10 z-40"
           >
-            <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-red-600 via-orange-500 to-red-600" />
-            <div className="px-6 py-8 space-y-6">
+            {/* Drawer header (logo + close) */}
+            <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-white/10">
+              <Link href="/" className="flex items-center gap-3" onClick={() => setMobileMenuOpen(false)}>
+                <div className="relative h-8 w-32">
+                  <Image
+                    src="/images/fleetnet_logo.png"
+                    alt="FleetNET GLOBAL Logo"
+                    fill
+                    className="object-contain object-left brightness-0 invert"
+                  />
+                </div>
+              </Link>
+              <button
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-2 rounded-full border border-white/10 text-white/80 hover:text-white hover:border-white/40 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="px-6 py-6 space-y-6 overflow-y-auto h-[calc(100vh-72px)]">
               {navItems.map((item) => (
                 <div key={item.label} className="space-y-3">
                   <div className="text-xs font-black text-red-500 uppercase tracking-[0.2em]">

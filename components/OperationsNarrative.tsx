@@ -104,7 +104,6 @@ export default function OperationsNarrative() {
   const scene1Ref = useRef<HTMLDivElement>(null);
   const scene2Ref = useRef<HTMLDivElement>(null);
   const scene3Ref = useRef<HTMLDivElement>(null);
-  const iconRef   = useRef<HTMLDivElement>(null);
   const text1Ref  = useRef<HTMLDivElement>(null);
   const text2Ref  = useRef<HTMLDivElement>(null);
   const text3Ref  = useRef<HTMLDivElement>(null);
@@ -116,7 +115,6 @@ export default function OperationsNarrative() {
     // ─── Initial states ──────────────────────────────────────────────────────
     gsap.set([scene2Ref.current, scene3Ref.current], { autoAlpha: 0, y: 30 });
     gsap.set(scene1Ref.current, { autoAlpha: 1, y: 0 });
-    gsap.set(iconRef.current,   { autoAlpha: 1, scale: 1, y: 0 });
     gsap.set(cardsRef.current,  { autoAlpha: 0, y: 24 });
 
     // ─── Background colour transition ────────────────────────────────────────
@@ -146,12 +144,17 @@ export default function OperationsNarrative() {
         pin: true,
         scrub: 1,
         anticipatePin: 1,
+        // Snap to each scene breakpoint so we don't jump
+        snap: {
+          snapTo: [0, 0.33, 0.66, 1],
+          duration: 0.6,
+          ease: 'power2.inOut',
+        },
       },
     });
 
-    // SCENE 1 — logo exits, feature tiles stagger in
-    tl.to(iconRef.current, { y: -50, autoAlpha: 0, scale: 0.85, duration: 0.8, ease: 'power2.inOut' }, 0)
-      .to(cardsRef.current, { autoAlpha: 1, y: 0, stagger: 0.12, duration: 1.4, ease: 'power2.out' }, 0.3)
+    // SCENE 1 — feature tiles stagger in
+    tl.to(cardsRef.current, { autoAlpha: 1, y: 0, stagger: 0.12, duration: 1.4, ease: 'power2.out' }, 0.3)
       .to({}, { duration: 2.5 })
 
       // EXIT scene 1
@@ -198,27 +201,6 @@ export default function OperationsNarrative() {
         }}
       />
 
-      {/* ─────────────────────────────────────────────────────────────────────
-          LOGO MARK — shown before Scene 1 kicks in
-      ───────────────────────────────────────────────────────────────────── */}
-      <div
-        ref={iconRef}
-        className="absolute inset-0 flex items-center justify-center z-30 pointer-events-none"
-      >
-        <div className="flex flex-col items-center gap-5">
-          <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl border border-white/10 bg-white/[0.04] flex items-center justify-center p-4 shadow-[0_0_60px_rgba(59,130,246,0.12)]">
-            <Image
-              src="/images/FLEETnet app icon.png"
-              alt="FleetNet"
-              width={90}
-              height={90}
-              className="w-full h-full object-contain"
-            />
-          </div>
-          <p className="text-white/25 text-[10px] tracking-[0.4em] uppercase font-bold">Fleet Operations</p>
-        </div>
-      </div>
-
       {/* ═══════════════════════════════════════════════════════════════════
           SCENE 1 — Command Center
       ═══════════════════════════════════════════════════════════════════ */}
@@ -233,7 +215,7 @@ export default function OperationsNarrative() {
             <p className="text-white/30 text-[10px] tracking-[0.35em] uppercase font-bold mb-5">
               Command Center
             </p>
-            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-[4rem] xl:text-[5rem] font-black text-white leading-[1.02] tracking-tight mb-6">
+            <h2 className="text-3xl sm:text-5xl md:text-6xl lg:text-[4rem] xl:text-[5rem] font-black text-white leading-[1.02] tracking-tight mb-6">
               Built to run<br />
               <em className="not-italic text-white/30">everything.</em>
             </h2>
@@ -310,7 +292,7 @@ export default function OperationsNarrative() {
           </div>
 
           {/* Stats row */}
-          <div className="grid grid-cols-4 gap-2 md:gap-3 shrink-0">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 md:gap-3 shrink-0">
             {[
               { label: 'Total Trips',   value: '1,284',    color: '#f97316' },
               { label: 'Distance',      value: '48,320 km', color: '#fbbf24' },
@@ -419,20 +401,20 @@ export default function OperationsNarrative() {
             {LIVE_METRICS.map((m) => (
               <div
                 key={m.label}
-                className="rounded-lg border p-4 md:p-5 flex flex-col gap-3"
+                className="rounded-xl border p-4 md:p-5 flex flex-col gap-3 shadow-[0_18px_45px_rgba(15,23,42,0.7)]"
                 style={{
-                  background: `${m.color}07`,
-                  borderColor: `${m.color}18`,
+                  background: `linear-gradient(135deg, ${m.color}33, #020617)`,
+                  borderColor: `${m.color}55`,
                 }}
               >
                 <div className="flex items-start justify-between">
-                  <p className="text-[9px] md:text-[10px] text-white/35 uppercase tracking-widest font-bold leading-snug flex-1 pr-1">
+                  <p className="text-[9px] md:text-[10px] text-slate-100/80 uppercase tracking-widest font-bold leading-snug flex-1 pr-1">
                     {m.label}
                   </p>
                   {m.delta && (
                     <span
-                      className="text-[8px] font-bold px-1.5 py-0.5 rounded-full shrink-0"
-                      style={{ background: `${m.color}18`, color: m.color }}
+                      className="text-[8px] font-bold px-1.5 py-0.5 rounded-full shrink-0 bg-black/40"
+                      style={{ color: m.color }}
                     >
                       {m.delta}
                     </span>
@@ -456,8 +438,8 @@ export default function OperationsNarrative() {
 
           {/* System HUD panel */}
           <div
-            className="flex-1 rounded-lg border border-amber-500/10 relative overflow-hidden min-h-0"
-            style={{ background: 'rgba(249,115,22,0.018)' }}
+            className="flex-1 rounded-2xl border border-amber-500/35 relative overflow-hidden min-h-0 shadow-[0_24px_80px_rgba(15,23,42,0.9)]"
+            style={{ background: 'radial-gradient(circle at top left, rgba(251,191,36,0.22), rgba(15,23,42,0.98))' }}
           >
             {/* Dot grid */}
             <div
@@ -468,16 +450,16 @@ export default function OperationsNarrative() {
               }}
             />
 
-            <div className="relative z-10 p-4 md:p-6 h-full flex flex-col overflow-y-auto">
+            <div className="relative z-10 p-4 md:p-6 h-full flex flex-col overflow-y-auto text-slate-100">
               {/* Status bar */}
               <div className="flex items-center justify-between mb-5 shrink-0">
                 <div className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-pulse" />
-                  <span className="font-mono text-[9px] md:text-[10px] text-amber-400/50 uppercase tracking-widest">
+                  <div className="w-1.5 h-1.5 bg-amber-300 rounded-full animate-pulse" />
+                  <span className="font-mono text-[9px] md:text-[10px] text-amber-200/80 uppercase tracking-widest">
                     System Online
                   </span>
                 </div>
-                <span className="font-mono text-[9px] md:text-[10px] text-white/15 uppercase tracking-widest">
+                <span className="font-mono text-[9px] md:text-[10px] text-slate-300/60 uppercase tracking-widest">
                   FleetNet OS v4.2
                 </span>
               </div>
@@ -500,16 +482,15 @@ export default function OperationsNarrative() {
                 ].map((panel) => (
                   <div
                     key={panel.title}
-                    className="rounded-md border border-amber-500/[0.08] p-3 md:p-4 flex flex-col gap-2.5"
-                    style={{ background: 'rgba(249,115,22,0.025)' }}
+                    className="rounded-xl border border-amber-500/[0.3] p-3 md:p-4 flex flex-col gap-2.5 bg-black/30"
                   >
-                    <p className="text-[9px] md:text-[10px] uppercase tracking-widest font-bold text-amber-400/40">
+                    <p className="text-[9px] md:text-[10px] uppercase tracking-widest font-bold text-amber-200/80">
                       {panel.title}
                     </p>
                     {panel.items.map((item) => (
                       <div key={item} className="flex items-center gap-2">
-                        <div className="w-1 h-1 rounded-full bg-amber-500/30 shrink-0" />
-                        <span className="text-[9px] md:text-xs text-white/40">{item}</span>
+                        <div className="w-1 h-1 rounded-full bg-amber-300/70 shrink-0" />
+                        <span className="text-[9px] md:text-xs text-slate-100/80">{item}</span>
                       </div>
                     ))}
                   </div>

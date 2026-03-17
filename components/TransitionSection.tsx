@@ -84,6 +84,25 @@ export default function TransitionSection() {
       ease: "power3.out"
     });
 
+    // Pin + snap this whole section so it behaves like a full \"scene\"
+    if (sectionRef.current) {
+      gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top top",
+          end: "+=1200",
+          pin: true,
+          scrub: 1,
+          anticipatePin: 1,
+          snap: {
+            snapTo: [0, 1],
+            duration: 0.6,
+            ease: "power2.inOut",
+          },
+        },
+      });
+    }
+
   }, { scope: sectionRef });
 
   return (

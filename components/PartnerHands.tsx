@@ -47,6 +47,12 @@ export default function PartnerHands() {
         pin: true,
         scrub: 1, // Smooth scrubbing
         anticipatePin: 1,
+        // Snap to key phases: hands in, text, logos
+        snap: {
+          snapTo: [0, 0.4, 0.75, 1],
+          duration: 0.6,
+          ease: 'power2.inOut',
+        },
         onUpdate: (self) => {
           // Keep the premium background color interpolation tied directly to scroll progress
           const p = self.progress;

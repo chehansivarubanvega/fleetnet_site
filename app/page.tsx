@@ -1,12 +1,11 @@
-
-import FluidBackground from '@/components/FluidBackground';
-import Footer from '@/components/Footer';
-import Hero from '@/components/Hero';
-import Navbar from '@/components/Navbar';
-import OperationsNarrative from '@/components/OperationsNarrative';
-import PartnerHands from '@/components/PartnerHands';
-import TrackerSection from '@/components/TrackerSection';
-import TransitionSection from '@/components/TransitionSection';
+import FluidBackground from "@/components/FluidBackground";
+import Footer from "@/components/Footer";
+import Hero from "@/components/Hero";
+import Navbar from "@/components/Navbar";
+import OperationsNarrative from "@/components/OperationsNarrative";
+import PartnerHands from "@/components/PartnerHands";
+import TrackerSection from "@/components/TrackerSection";
+import TransitionSection from "@/components/TransitionSection";
 
 export default function Home() {
   return (
@@ -18,10 +17,6 @@ export default function Home() {
       <OperationsNarrative />
       <TrackerSection />
       <PartnerHands />
-      
-     
-
-
 
       <Footer />
     </main>

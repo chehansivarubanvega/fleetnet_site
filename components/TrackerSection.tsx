@@ -6,32 +6,30 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { BatteryCharging, Cpu, Download, Wifi } from 'lucide-react';
 import { useRef } from 'react';
 
-gsap.registerPlugin(ScrollTrigger);
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 const FEATURES = [
   {
     icon: Cpu,
     title: 'Multi-Sensor Extensibility',
     description: 'Go beyond location. Our device features multiple ports to connect a wide range of sensors—from fuel level and temperature monitors to door sensors and driver ID readers.',
-    direction: 'left' as const,
   },
   {
     icon: Wifi,
     title: 'High-Gain GPS & Cellular Antenna',
     description: 'Maintain a rock-solid connection even in challenging environments. Our high-gain internal antennas ensure data keeps flowing reliably.',
-    direction: 'right' as const,
   },
   {
     icon: BatteryCharging,
     title: 'Intelligent Power Management',
     description: 'Features a deep-sleep mode and an internal backup battery to prevent draining your vehicle\'s power while ensuring the device reports tampering or disconnect events.',
-    direction: 'left' as const,
   },
   {
     icon: Download,
     title: 'Over-the-Air (OTA) Updates',
     description: 'Your hardware gets better over time. We push firmware updates remotely, deploying new features and security patches with zero vehicle downtime.',
-    direction: 'right' as const,
   },
 ];
 
@@ -47,26 +45,36 @@ export default function TrackerSection() {
   const bgRevealRef = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {
+    if (!sectionRef.current) return;
+
     // Initial States
     gsap.set(deviceRef.current, { scale: 0, opacity: 0, rotation: -15 });
     gsap.set(ringsRef.current, { scale: 0, opacity: 0 });
     gsap.set(headlineRef.current, { opacity: 0, y: 60 });
     gsap.set(subtitleRef.current, { opacity: 0, y: 40 });
     gsap.set(quoteRef.current, { opacity: 0, scale: 0.8, y: 40 });
-    gsap.set(featuresRef.current, { opacity: 0, y: 80 });
+    gsap.set(featuresRef.current, { opacity: 0, y: 60, scale: 0.9 });
+    gsap.set(featuresContainerRef.current, { opacity: 0 });
 
     const mainTl = gsap.timeline({
       scrollTrigger: {
         trigger: sectionRef.current,
         start: "top top",
-        end: "+=4000",
+        end: "+=4500",
         pin: true,
-        scrub: 1.5,
+        scrub: 1.2,
         anticipatePin: 1,
+        // Snap across the three main scenes of this section
+        snap: {
+          snapTo: [0, 0.33, 0.66, 1],
+          duration: 0.6,
+          ease: "power2.inOut",
+        },
       }
     });
 
     // ═══════════════════════════════════════════
+    
     // SCENE 0: Cinematic Circular Mask Reveal
     // ═══════════════════════════════════════════
     mainTl.to(bgRevealRef.current, {
@@ -75,15 +83,13 @@ export default function TrackerSection() {
       ease: "power2.inOut"
     }, "scene0")
     
-    // Hold briefly to emphasize the reveal
-    .to({}, { duration: 0.2 });
+    .to({}, { duration: 0.5 }); // Hold 
 
     // ═══════════════════════════════════════════
     // SCENE 1: The Reveal — Device + Headline
     // ═══════════════════════════════════════════
-    mainTl.addLabel("scene1", "scene0+=0.8");
+    mainTl.addLabel("scene1", "scene0+=1.5");
 
-    // Device scales in with elastic feel
     mainTl.to(deviceRef.current, {
       scale: 1,
       opacity: 1,
@@ -91,24 +97,18 @@ export default function TrackerSection() {
       duration: 1.5,
       ease: "elastic.out(1, 0.6)"
     }, "scene1")
-
-    // Signal rings pulse outward
     .to(ringsRef.current, {
       scale: 1,
       opacity: 1,
       duration: 1,
       ease: "power2.out"
     }, "scene1+=0.4")
-
-    // Headline staggered reveal
     .to(headlineRef.current, {
       opacity: 1,
       y: 0,
       duration: 0.8,
       ease: "power3.out"
     }, "scene1+=0.6")
-
-    // Headline character animation
     .to('.tracker-headline-char', {
       opacity: 1,
       y: 0,
@@ -117,8 +117,6 @@ export default function TrackerSection() {
       duration: 0.15,
       ease: "power2.out"
     }, "scene1+=0.7")
-
-    // Subtitle
     .to(subtitleRef.current, {
       opacity: 1,
       y: 0,
@@ -126,106 +124,81 @@ export default function TrackerSection() {
       ease: "power3.out"
     }, "scene1+=1.2");
 
-    // Hold Scene 1
-    mainTl.to({}, { duration: 0.8 });
+    mainTl.to({}, { duration: 1.5 }); // Hold scene 1
 
     // ═══════════════════════════════════════════
     // SCENE 2: The Quote — Cinematic
     // ═══════════════════════════════════════════
+    mainTl.addLabel("scene2");
 
-    // Device shrinks and rises
     mainTl.to(deviceRef.current, {
-      scale: 0.3,
-      y: -250,
-      opacity: 0.3,
-      duration: 1,
-      ease: "power4.inOut"
+      scale: 0.4,
+      y: -200,
+      opacity: 0,
+      duration: 1.2,
+      ease: "power3.in"
     }, "scene2")
-
     .to(ringsRef.current, {
       scale: 2,
       opacity: 0,
-      duration: 0.8,
-      ease: "power2.in"
+      duration: 1,
     }, "scene2")
-
-    // Fade out headline
     .to(headlineRef.current, {
       opacity: 0,
-      y: -40,
-      duration: 0.5
+      y: -80,
+      duration: 0.8
     }, "scene2")
-
     .to(subtitleRef.current, {
       opacity: 0,
-      y: -30,
-      duration: 0.4
+      y: -80,
+      duration: 0.7
     }, "scene2")
-
-    // Quote enters
     .to(quoteRef.current, {
       opacity: 1,
       scale: 1,
       y: 0,
       duration: 1.2,
       ease: "expo.out"
-    }, "scene2+=0.4")
-
-    // Quote text clip-path reveal
+    }, "scene2+=0.5")
     .to('.quote-text-reveal', {
       clipPath: "inset(0% 0% 0% 0%)",
       stagger: 0.15,
-      duration: 0.6,
+      duration: 0.8,
       ease: "power3.out"
-    }, "scene2+=0.6");
+    }, "scene2+=0.7");
 
-    // Hold Scene 2
-    mainTl.to({}, { duration: 0.8 });
+    mainTl.to({}, { duration: 1.8 }); // Hold scene 2
 
     // ═══════════════════════════════════════════
-    // SCENE 3: The Features — Staggered Cards
+    // SCENE 3: The Features — Sequential Pop
     // ═══════════════════════════════════════════
+    mainTl.addLabel("scene3");
 
-    // Fade out device remnant and quote
-    mainTl.to(deviceRef.current, {
+    // Fade out Quote
+    mainTl.to(quoteRef.current, {
       opacity: 0,
-      scale: 0,
-      duration: 0.5,
-      ease: "power2.in"
+      y: -80,
+      duration: 0.8,
+      ease: "power3.in"
     }, "scene3")
-
-    .to(quoteRef.current, {
-      opacity: 0,
-      y: -60,
-      scale: 0.9,
-      duration: 0.6,
-      ease: "power2.in"
-    }, "scene3")
-
-    // Features container becomes visible
     .to(featuresContainerRef.current, {
       opacity: 1,
-      duration: 0.3
-    }, "scene3+=0.3");
+      duration: 0.5
+    }, "scene3+=0.5");
 
-    // Each feature card enters from alternating sides
+    // Sequential cards entry (Staggered pop)
     featuresRef.current.forEach((card, i) => {
-      if (!card) return;
-      const fromX = FEATURES[i].direction === 'left' ? -120 : 120;
-      
-      gsap.set(card, { x: fromX, opacity: 0, y: 40 });
-      
       mainTl.to(card, {
-        x: 0,
-        y: 0,
         opacity: 1,
-        duration: 0.8,
-        ease: "back.out(1.4)"
-      }, `scene3+=${0.3 + i * 0.25}`);
+        y: 0,
+        scale: 1,
+        duration: 1,
+        ease: "back.out(1.2)"
+      }, `scene3+=${0.7 + i * 0.6}`);
     });
 
-    // Final hold
-    mainTl.to({}, { duration: 0.8 });
+    // Final Hold before unpinning
+    mainTl.to({}, { duration: 2 });
 
   }, { scope: sectionRef });
 
@@ -244,7 +217,7 @@ export default function TrackerSection() {
   return (
     <section
       ref={sectionRef}
-      className="relative w-full min-h-screen overflow-hidden z-10"
+      className="relative w-full h-screen overflow-hidden z-10 font-[family-name:var(--font-outfit)]"
     >
       {/* Cinematic Background Reveal Layer */}
       <div 
@@ -253,12 +226,10 @@ export default function TrackerSection() {
         style={{ clipPath: 'circle(0% at 50% 50%)' }}
       />
       
-      <div className="absolute inset-0 flex items-center justify-center">
+      <div className="absolute inset-0 flex items-center justify-center p-6 md:p-12">
         <div className="relative w-full h-full flex items-center justify-center">
 
           {/* ═══ SCENE 1: Device + Headline ═══ */}
-
-          {/* Signal Rings (behind device) */}
           <div ref={ringsRef} className="absolute z-10 pointer-events-none will-change-transform">
             <div className="relative w-[500px] h-[500px] md:w-[600px] md:h-[600px] flex items-center justify-center">
               {[1, 2, 3].map((ring) => (
@@ -273,145 +244,77 @@ export default function TrackerSection() {
                   }}
                 />
               ))}
-              {/* Static rings */}
-              {[1, 2, 3, 4].map((ring) => (
-                <div
-                  key={`static-${ring}`}
-                  className="absolute rounded-full border border-blue-500/10"
-                  style={{
-                    width: `${ring * 140}px`,
-                    height: `${ring * 140}px`,
-                  }}
-                />
-              ))}
             </div>
           </div>
 
-          {/* 3D Tracker Device (CSS-rendered) */}
           <div ref={deviceRef} className="absolute z-20 will-change-transform">
-            <div className="relative w-48 h-64 md:w-64 md:h-80 group">
-              {/* Device Body */}
-              <div className="absolute inset-0 rounded-[2rem] bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f3460] border border-white/20 shadow-[0_40px_100px_-20px_rgba(59,130,246,0.4),inset_0_1px_0_rgba(255,255,255,0.1)] overflow-hidden">
-                {/* Surface texture */}
-                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.06] mix-blend-overlay" />
-                
-                {/* Top antenna stub */}
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-3 h-8 md:w-4 md:h-10 bg-gradient-to-t from-[#1a1a2e] to-[#2a2a4e] rounded-full border border-white/15 shadow-lg" />
-                
-                {/* LED Indicators Row */}
-                <div className="absolute top-6 left-1/2 -translate-x-1/2 flex gap-3">
-                  <div className="w-2 h-2 rounded-full bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.8)] animate-pulse" />
-                  <div className="w-2 h-2 rounded-full bg-blue-400 shadow-[0_0_8px_rgba(96,165,250,0.8)] animate-pulse" style={{ animationDelay: '0.3s' }} />
-                  <div className="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.6)]" />
-                </div>
-
-                {/* Central chip/processor visual */}
+            <div className="relative w-48 md:w-64 h-64 md:h-80">
+              <div className="absolute inset-0 rounded-[2.5rem] bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f3460] border border-white/20 shadow-[0_40px_100px_-20px_rgba(59,130,246,0.4)] overflow-hidden">
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                  <div className="w-16 h-16 md:w-20 md:h-20 rounded-xl bg-gradient-to-br from-blue-600/30 to-purple-600/30 border border-white/15 flex items-center justify-center backdrop-blur-sm shadow-inner">
-                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-gradient-to-br from-blue-500/40 to-indigo-500/40 border border-white/10 flex items-center justify-center">
-                      <Cpu className="w-6 h-6 md:w-8 md:h-8 text-blue-300/80" />
-                    </div>
-                  </div>
-                  {/* Chip traces */}
-                  {[0, 90, 180, 270].map((angle) => (
-                    <div
-                      key={angle}
-                      className="absolute top-1/2 left-1/2 w-8 h-[1px] bg-gradient-to-r from-blue-400/40 to-transparent"
-                      style={{
-                        transform: `translate(-50%, -50%) rotate(${angle}deg) translateX(40px)`,
-                        transformOrigin: '0 50%'
-                      }}
-                    />
-                  ))}
+                   <div className="w-16 md:w-24 h-16 md:h-24 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 flex items-center justify-center">
+                      <Cpu className="w-8 md:w-12 h-8 md:h-12 text-blue-400/70" />
+                   </div>
                 </div>
-
-                {/* Port indicators at bottom */}
-                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-4">
-                  <div className="w-6 h-3 rounded-sm bg-white/10 border border-white/15" />
-                  <div className="w-6 h-3 rounded-sm bg-white/10 border border-white/15" />
-                  <div className="w-4 h-3 rounded-sm bg-white/10 border border-white/15" />
-                </div>
-
-                {/* SIM slot line */}
-                <div className="absolute right-3 top-1/3 w-[2px] h-12 bg-white/10 rounded-full" />
               </div>
-
-              {/* Shadow / Glow beneath device */}
-              <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-40 h-4 bg-blue-500/20 rounded-full blur-xl" />
+              <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-48 h-6 bg-blue-500/20 rounded-full blur-2xl" />
             </div>
           </div>
 
-          {/* Headline */}
-          <div ref={headlineRef} className="absolute z-30 bottom-[10%] left-0 right-0 text-center px-6 pointer-events-none will-change-transform">
-            <h2 className="text-4xl md:text-7xl font-black text-white leading-[0.95] mb-4 tracking-tight uppercase italic">
-              {splitHeadline("The Engine of Your Data")}
+          <div ref={headlineRef} className="absolute z-30 bottom-[12%] left-0 right-0 text-center px-6 pointer-events-none">
+            <h2 className="text-3xl sm:text-5xl md:text-7xl font-black text-white leading-tight uppercase italic mb-2">
+              {splitHeadline("The Engine of Data")}
             </h2>
-            <p className="text-lg md:text-2xl font-bold text-blue-300/70 tracking-[0.2em] uppercase">
+            <p className="text-sm md:text-2xl font-bold text-blue-300/60 uppercase tracking-[0.3em]">
               {splitHeadline("The 4G Tracker")}
             </p>
           </div>
 
-          {/* Subtitle */}
-          <div ref={subtitleRef} className="absolute z-30 bottom-[3%] left-0 right-0 text-center px-6 pointer-events-none">
-            <p className="text-sm md:text-base text-white/40 max-w-2xl mx-auto font-medium">
-              Engineered in partnership with Vega Innovation Sri Lanka, our 4G tracker is the heart of our system.
+          <div ref={subtitleRef} className="absolute z-30 bottom-[4%] left-0 right-0 text-center px-6 pointer-events-none opacity-50">
+            <p className="text-[10px] md:text-sm font-bold uppercase tracking-[0.2em] text-white/40">
+              Partnering with Vega Innovation Sri Lanka
             </p>
           </div>
 
           {/* ═══ SCENE 2: Cinematic Quote ═══ */}
-          <div ref={quoteRef} className="absolute z-30 flex items-center justify-center px-6 pointer-events-none will-change-transform">
-            <div className="relative max-w-4xl">
-              {/* Glassmorphism container */}
-              <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl md:rounded-[2.5rem] p-6 sm:p-10 md:p-16 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.5)]">
-                {/* Quote mark */}
-                <div className="absolute -top-6 left-10 text-8xl font-black text-blue-400/30 leading-none select-none">&ldquo;</div>
-                
-                <blockquote className="relative z-10">
-                  <p
-                    className="quote-text-reveal text-2xl md:text-4xl font-bold text-white leading-snug mb-8 italic"
-                    style={{ clipPath: "inset(0% 100% 0% 0%)" }}
-                  >
-                    This is not off-the-shelf hardware; it&apos;s a core piece of our integrated solution.
+          <div ref={quoteRef} className="absolute z-40 flex items-center justify-center px-6 w-full max-w-5xl pointer-events-none">
+            <div className="relative w-full bg-white/[0.03] backdrop-blur-3xl border border-white/10 rounded-[2rem] md:rounded-[4rem] p-8 md:p-20 shadow-2xl overflow-hidden">
+               <div className="absolute -top-10 -left-6 text-[15rem] font-black text-blue-500/[0.05] leading-none select-none">&ldquo;</div>
+               <blockquote className="relative z-10 text-center">
+                  <p className="quote-text-reveal text-xl md:text-5xl font-black text-white leading-[1.15] mb-12 italic tracking-tight" style={{ clipPath: "inset(0% 100% 0% 0%)" }}>
+                    &ldquo;This is not off-the-shelf hardware; it&apos;s a core piece of our integrated solution.&rdquo;
                   </p>
-                  <div
-                    className="quote-text-reveal flex items-center gap-4"
-                    style={{ clipPath: "inset(0% 100% 0% 0%)" }}
-                  >
-                    <div className="w-12 h-[2px] bg-blue-400" />
-                    <span className="text-blue-300/70 text-sm font-bold tracking-[0.3em] uppercase">Built for Reliability</span>
+                  <div className="quote-text-reveal inline-flex items-center gap-4 bg-blue-500/10 px-6 py-2 rounded-full border border-blue-500/20" style={{ clipPath: "inset(0% 100% 0% 0%)" }}>
+                    <span className="text-blue-400 text-[10px] md:text-xs font-black uppercase tracking-[0.3em]">Built for Reliability</span>
                   </div>
-                </blockquote>
-              </div>
+               </blockquote>
             </div>
           </div>
 
           {/* ═══ SCENE 3: Feature Cards ═══ */}
-          <div ref={featuresContainerRef} className="absolute inset-x-0 top-[10%] bottom-8 z-30 flex items-start md:items-center justify-center pointer-events-auto overflow-y-auto hide-scrollbar opacity-0 p-4 md:p-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 md:gap-6 max-w-5xl w-full my-auto pb-6 md:pb-0">
+          <div 
+            ref={featuresContainerRef} 
+            className="absolute inset-x-0 top-[100px] bottom-0 z-50 flex flex-col items-center justify-center pointer-events-none px-3 sm:px-6 pb-4 sm:pb-6"
+          >
+            <div className="grid grid-cols-2 gap-2 sm:gap-3 md:gap-8 max-w-6xl w-full">
               {FEATURES.map((feature, i) => (
                 <div
                   key={feature.title}
                   ref={(el) => { featuresRef.current[i] = el; }}
                   className="will-change-transform"
                 >
-                  <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-2xl md:rounded-3xl p-4 sm:p-5 md:p-8 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] hover:bg-white/10 transition-colors duration-500 group h-full">
-                    {/* Icon */}
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-gradient-to-br from-blue-500/30 to-indigo-500/20 border border-blue-400/20 flex items-center justify-center mb-3 sm:mb-4 md:mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-blue-500/10">
-                      <feature.icon className="w-5 h-5 md:w-7 md:h-7 text-blue-300" />
+                  <div className="bg-[#050505]/90 backdrop-blur-2xl border border-white/10 rounded-xl sm:rounded-2xl md:rounded-[2.5rem] p-3 sm:p-5 md:p-10 shadow-2xl relative overflow-hidden group h-full">
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent pointer-events-none" />
+                    <div className="relative z-10 flex flex-col h-full">
+                      <div className="w-8 h-8 sm:w-12 sm:h-12 md:w-20 md:h-20 rounded-lg sm:rounded-xl md:rounded-3xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mb-2 sm:mb-3 md:mb-6 flex-shrink-0">
+                        <feature.icon className="w-4 h-4 sm:w-6 sm:h-6 md:w-10 md:h-10 text-blue-400" />
+                      </div>
+                      <h3 className="text-[14px] leading-snug sm:text-lg md:text-3xl font-black text-white mb-1.5 sm:mb-3 tracking-tight">
+                        {feature.title}
+                      </h3>
+                      <p className="text-[12px] leading-relaxed sm:text-sm md:text-xl text-white/70 font-medium">
+                        {feature.description}
+                      </p>
                     </div>
-                    
-                    {/* Title */}
-                    <h3 className="text-base sm:text-lg md:text-xl font-bold text-white mb-1.5 md:mb-3 tracking-tight leading-tight">
-                      {feature.title}
-                    </h3>
-                    
-                    {/* Description */}
-                    <p className="text-xs sm:text-sm md:text-base text-white/50 leading-relaxed font-medium">
-                      {feature.description}
-                    </p>
-                    
-                    {/* Bottom accent */}
-                    <div className="mt-4 md:mt-6 h-1 w-12 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full opacity-60 group-hover:w-20 group-hover:opacity-100 transition-all duration-500" />
                   </div>
                 </div>
               ))}
