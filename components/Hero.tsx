@@ -254,7 +254,7 @@ export default function Hero() {
               className="text-lg md:text-2xl lg:text-3xl text-white/70 max-w-4xl leading-relaxed font-medium"
             >
               FleetNET honors the organizations rewriting the rules of
-              logistics—locally rooted, community-loved, often underrepresented
+              logistics locally rooted, community-loved, often underrepresented
               or overlooked, but driven by mission and built with care.
             </p>
           </div>
