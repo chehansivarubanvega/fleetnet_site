@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
+import SmoothScroll from '@/components/providers/SmoothScroll';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -19,7 +20,11 @@ export const metadata: Metadata = {
 export default function RootLayout({children}: {children: React.ReactNode}) {
   return (
     <html lang="en" suppressHydrationWarning className={`${inter.variable} font-sans`}>
-      <body suppressHydrationWarning className="antialiased">{children}</body>
+      <body suppressHydrationWarning className="antialiased">
+        <SmoothScroll>
+          {children}
+        </SmoothScroll>
+      </body>
     </html>
   );
 }

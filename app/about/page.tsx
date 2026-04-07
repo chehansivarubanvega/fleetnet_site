@@ -7,13 +7,11 @@ import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import {
-    Award,
-    Calendar,
-    Globe,
-    MapPin,
-    ShieldCheck,
-    Sparkles,
-    Users
+  Award,
+  Compass,
+  ShieldCheck,
+  Sparkles,
+  Users
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useRef } from 'react';
@@ -22,12 +20,6 @@ if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-const STATS = [
-  { label: 'Headquarters', value: 'Colombo, Sri Lanka', icon: MapPin },
-  { label: 'Founded', value: '2020', icon: Calendar },
-  { label: 'Team Size', value: '50+ Professionals', icon: Users },
-  { label: 'Global Reach', value: '25+ Countries', icon: Globe },
-];
 
 const STORY_STEPS = [
   {
@@ -42,8 +34,8 @@ const STORY_STEPS = [
   },
   {
     tag: 'Chapter 03',
-    title: 'Global Impact',
-    body: 'Today, FleetNET GLOBAL supports thousands of vehicles across 25+ countries while staying committed to Sri Lankan engineering excellence and a partnership-first culture.'
+    title: 'Scale & Impact',
+    body: 'Today, FleetNET GLOBAL supports thousands of vehicles while staying committed to Sri Lankan engineering excellence and a partnership-first culture.'
   }
 ];
 
@@ -59,9 +51,9 @@ const VALUES = [
     icon: ShieldCheck
   },
   {
-    title: 'Global Vision, Local Roots',
-    description: 'Sri Lankan ingenuity powers our global roadmap, while we continue to invest in local talent and long-term partnerships.',
-    icon: Globe
+    title: 'Future Vision, Local Roots',
+    description: 'Sri Lankan ingenuity powers our roadmap, while we continue to invest in local talent and long-term partnerships.',
+    icon: Compass
   },
   {
     title: 'Customer-Centric Partnership',
@@ -253,7 +245,7 @@ export default function AboutPage() {
           <div className="gsap-reveal">
             <p className="text-sm uppercase tracking-[0.4em] text-primary font-bold mb-4">Our Story</p>
             <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-6 leading-tight">
-              Founded in 2020 in the heart of Colombo, Sri Lanka
+              Founded in 2025 in the heart of Colombo, Sri Lanka
             </h2>
             <div className="space-y-6 text-slate-600 text-lg leading-relaxed">
               <p>
@@ -263,12 +255,10 @@ export default function AboutPage() {
               <p>
                 Our founders, with decades of combined experience in automotive technology, IoT systems,
                 and enterprise software, recognized that true innovation required controlling the entire
-                technology stack—from the hardware sensors to the cloud analytics platform.
+                technology stack from the hardware sensors to the cloud analytics platform.
               </p>
               <p>
-                Today, we&apos;re proud to serve thousands of vehicles across 25+ countries, while maintaining
-                our commitment to Sri Lankan engineering excellence and our partnership-first approach to
-                customer success.
+                Today, we&apos;re proud to serve thousands of vehicles, while maintaining our commitment to Sri Lankan engineering excellence and our partnership-first approach to customer success.
               </p>
             </div>
           </div>
@@ -290,7 +280,7 @@ export default function AboutPage() {
                 <p className="font-semibold text-slate-900">Why it matters</p>
                 <p>
                   Controlling the entire stack lets us deliver reliable data, faster innovation cycles,
-                  and a consistent operator experience across every market.
+                  and a consistent operator experience.
                 </p>
               </div>
               <div className="flex items-center gap-3 text-primary font-semibold">
@@ -298,26 +288,6 @@ export default function AboutPage() {
                 Engineering-first. Partner-led.
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Stats */}
-      <section className="relative z-10 py-32">
-        <div className="max-w-6xl mx-auto px-6 gsap-stagger-group">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {STATS.map((stat) => (
-              <div
-                key={stat.label}
-                className="gsap-stagger-item rounded-3xl border border-white/10 bg-black/40 backdrop-blur-3xl px-8 py-10 text-white shadow-2xl hover:bg-white/5 transition-colors group"
-              >
-                <div className="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
-                  <stat.icon className="w-7 h-7" />
-                </div>
-                <p className="text-xs uppercase tracking-[0.3em] text-white/50 font-bold mb-2">{stat.label}</p>
-                <p className="text-2xl font-black text-white leading-snug tracking-tight">{stat.value}</p>
-              </div>
-            ))}
           </div>
         </div>
       </section>
@@ -368,12 +338,12 @@ export default function AboutPage() {
                          </div>
                       </div>
                     )}
-                    {index === 2 && (
-                       <div className="absolute right-[-10%] top-[-10%] opacity-30 pointer-events-none">
-                         <div className="w-80 h-80 rounded-full bg-gradient-to-tr from-red-600/40 to-transparent blur-3xl animate-pulse" />
-                         <Globe className="w-80 h-80 text-white/10 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-[spin_40s_linear_infinite]" />
-                       </div>
-                    )}
+                     {index === 2 && (
+                        <div className="absolute right-[-10%] top-[-10%] opacity-30 pointer-events-none">
+                          <div className="w-80 h-80 rounded-full bg-gradient-to-tr from-red-600/40 to-transparent blur-3xl animate-pulse" />
+                          <Compass className="w-80 h-80 text-white/10 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-[spin_40s_linear_infinite]" />
+                        </div>
+                     )}
 
                     <div className="relative z-10">
                       <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary mb-8">
