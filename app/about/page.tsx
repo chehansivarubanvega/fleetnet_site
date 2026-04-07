@@ -1,25 +1,18 @@
 'use client';
 
-import FluidBackground from '@/components/FluidBackground';
 import Footer from '@/components/Footer';
 import Navbar from '@/components/Navbar';
-import { useGSAP } from '@gsap/react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import {
   Award,
   Compass,
   ShieldCheck,
   Sparkles,
-  Users
+  Users,
+  Target,
+  ArrowRight
 } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import { useRef } from 'react';
-
-if (typeof window !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger);
-}
-
 
 const STORY_STEPS = [
   {
@@ -62,410 +55,386 @@ const VALUES = [
   },
 ];
 
-export default function AboutPage() {
-  const mainRef = useRef<HTMLDivElement>(null);
-  const storyRef = useRef<HTMLDivElement>(null);
-  const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
+function StoryScroll() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"]
+  });
 
-  useGSAP(() => {
-    // Background Global Interpolation
-    const tlBg = gsap.timeline({
-      scrollTrigger: {
-        trigger: mainRef.current,
-        start: 'top top',
-        end: 'bottom bottom',
-        scrub: true,
-      }
-    });
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 70,
+    damping: 25,
+    restDelta: 0.001
+  });
 
-    const root = document.documentElement;
+  // Step 1
+  const step1Opacity = useTransform(smoothProgress, [0, 0.15, 0.25, 0.35], [0, 1, 1, 0]);
+  const step1Y = useTransform(smoothProgress, [0, 0.35], ["15%", "-15%"]);
+  
+  // Step 2
+  const step2Opacity = useTransform(smoothProgress, [0.3, 0.45, 0.6, 0.7], [0, 1, 1, 0]);
+  const step2Y = useTransform(smoothProgress, [0.3, 0.7], ["15%", "-15%"]);
 
-    tlBg.to(root, { 
-      '--bg-base': '#1e293b',
-      '--bg-color-1': 'rgba(15, 23, 42, 0.8)',
-      '--bg-color-2': 'rgba(239, 68, 68, 0.3)',
-      duration: 1
-    })
-    .to(root, {
-      '--bg-base': '#050505',
-      '--bg-color-1': 'rgba(239, 68, 68, 0.6)',
-      '--bg-color-2': 'rgba(153, 27, 27, 0.5)',
-      '--bg-color-3': 'rgba(69, 10, 10, 0.8)',
-      duration: 1
-    })
-    .to(root, {
-      '--bg-base': '#0f172a',
-      '--bg-color-1': 'rgba(56, 189, 248, 0.3)',
-      '--bg-color-2': 'rgba(14, 165, 233, 0.2)',
-      duration: 1
-    })
-    .to(root, {
-      '--bg-base': '#0a0a0a',
-      '--bg-color-1': 'rgba(239, 68, 68, 0.5)',
-      duration: 1
-    });
+  // Step 3
+  const step3Opacity = useTransform(smoothProgress, [0.65, 0.8, 1], [0, 1, 1]);
+  const step3Y = useTransform(smoothProgress, [0.65, 1], ["15%", "0%"]);
 
-    // Story Reel pinned timeline
-    if (storyRef.current && stepRefs.current.length) {
-      const steps = stepRefs.current;
-      
-      gsap.set(steps, { autoAlpha: 0, y: 80, scale: 0.95 });
-      gsap.set(steps[0], { autoAlpha: 1, y: 0, scale: 1 });
-
-      const tlStory = gsap.timeline({
-        scrollTrigger: {
-          trigger: storyRef.current,
-          start: 'top top',
-          end: '+=2500',
-          scrub: true,
-          pin: true,
-          anticipatePin: 1,
-        }
-      });
-
-      // Chapter 1 -> 2
-      tlStory.to(steps[0], { autoAlpha: 0, y: -80, scale: 0.95, duration: 1, ease: 'power2.inOut' }, 1)
-             .to(steps[1], { autoAlpha: 1, y: 0, scale: 1, duration: 1, ease: 'power2.out' }, 1.3)
-      // Chapter 2 -> 3
-             .to(steps[1], { autoAlpha: 0, y: -80, scale: 0.95, duration: 1, ease: 'power2.inOut' }, 3)
-             .to(steps[2], { autoAlpha: 1, y: 0, scale: 1, duration: 1, ease: 'power2.out' }, 3.3)
-             .to({}, { duration: 1 });
-    }
-
-    // Generic Reveals
-    const reveals = gsap.utils.toArray('.gsap-reveal');
-    reveals.forEach((el: any) => {
-      gsap.fromTo(el, 
-        { autoAlpha: 0, y: 50 },
-        { 
-          autoAlpha: 1, 
-          y: 0, 
-          duration: 0.8, 
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: el,
-            start: 'top 85%',
-            toggleActions: 'play none none reverse'
-          }
-        }
-      );
-    });
-
-    // Stagger Groups
-    const staggerGroups = gsap.utils.toArray('.gsap-stagger-group');
-    staggerGroups.forEach((group: any) => {
-      const items = group.querySelectorAll('.gsap-stagger-item');
-      gsap.fromTo(items,
-        { autoAlpha: 0, y: 40 },
-        {
-          autoAlpha: 1,
-          y: 0,
-          duration: 0.8,
-          stagger: 0.15,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: group,
-            start: 'top 85%',
-            toggleActions: 'play none none reverse'
-          }
-        }
-      );
-    });
-
-  }, { scope: mainRef });
+  // Progress Bar Line
+  const lineWidth = useTransform(smoothProgress, [0, 1], ["0%", "100%"]);
 
   return (
-    <main ref={mainRef} className="min-h-screen relative overflow-hidden transition-colors duration-700">
-      <FluidBackground />
+    <section ref={containerRef} className="relative h-[400vh] bg-[#050505]">
+      <div className="sticky top-0 h-screen w-full flex flex-col justify-center overflow-hidden">
+        
+        {/* Background Ambient Layers */}
+        <div className="absolute inset-0 pointer-events-none">
+           <motion.div 
+             className="absolute top-1/4 left-1/4 w-[40vw] h-[40vw] bg-primary/10 rounded-full blur-[140px] opacity-30"
+           />
+           <motion.div 
+             className="absolute bottom-1/4 right-1/4 w-[30vw] h-[30vw] bg-red-500/10 rounded-full blur-[140px] opacity-20"
+           />
+        </div>
+
+        <div className="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-[0.8fr_1.2fr] gap-16 relative z-10">
+          
+          {/* Sticky Context Sidebar */}
+          <div className="space-y-6 text-white self-center">
+            <p className="text-xs uppercase tracking-[0.5em] text-primary font-black">Our Journey</p>
+            <h2 className="text-5xl md:text-7xl font-black leading-[0.9] tracking-tighter">
+              A story told in<br/><span className="text-white/20 italic">LAYERS.</span>
+            </h2>
+            <p className="text-xl text-white/50 leading-relaxed font-medium">
+              We built FleetNET GLOBAL by listening to operators first and engineering every layer of the
+              platform for clarity, speed, and trust.
+            </p>
+            
+            {/* Timeline Progress */}
+            <div className="pt-8">
+               <div className="h-[2px] w-full bg-white/10 rounded-full overflow-hidden">
+                 <motion.div 
+                    style={{ width: lineWidth }}
+                    className="h-full bg-primary"
+                 />
+               </div>
+            </div>
+          </div>
+
+          {/* Sequential Floating Panels */}
+          <div className="relative min-h-[400px] flex items-center justify-center">
+            
+            {/* Chapter 1 */}
+            <motion.div 
+              style={{ opacity: step1Opacity, y: step1Y }}
+              className="absolute w-full rounded-[2rem] border border-white/5 bg-white/[0.02] backdrop-blur-2xl p-10 md:p-14"
+            >
+              <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary mb-8">
+                <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                <p className="text-xs uppercase tracking-[0.3em] font-black">{STORY_STEPS[0].tag}</p>
+              </div>
+              <h3 className="text-4xl md:text-5xl font-black text-white mb-6 leading-tight tracking-tight">{STORY_STEPS[0].title}</h3>
+              <p className="text-white/50 text-xl md:text-2xl leading-relaxed font-medium">{STORY_STEPS[0].body}</p>
+            </motion.div>
+
+            {/* Chapter 2 */}
+            <motion.div 
+              style={{ opacity: step2Opacity, y: step2Y }}
+              className="absolute w-full rounded-[2rem] border border-white/5 bg-white/[0.02] backdrop-blur-2xl p-10 md:p-14 pointer-events-none"
+            >
+              <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary mb-8">
+                <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                <p className="text-xs uppercase tracking-[0.3em] font-black">{STORY_STEPS[1].tag}</p>
+              </div>
+              <h3 className="text-4xl md:text-5xl font-black text-white mb-6 leading-tight tracking-tight">{STORY_STEPS[1].title}</h3>
+              <p className="text-white/50 text-xl md:text-2xl leading-relaxed font-medium">{STORY_STEPS[1].body}</p>
+            </motion.div>
+
+            {/* Chapter 3 */}
+            <motion.div 
+              style={{ opacity: step3Opacity, y: step3Y }}
+              className="absolute w-full rounded-[2rem] border border-white/5 bg-white/[0.02] backdrop-blur-2xl p-10 md:p-14 pointer-events-none"
+            >
+              <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary mb-8">
+                <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                <p className="text-xs uppercase tracking-[0.3em] font-black">{STORY_STEPS[2].tag}</p>
+              </div>
+              <h3 className="text-4xl md:text-5xl font-black text-white mb-6 leading-tight tracking-tight">{STORY_STEPS[2].title}</h3>
+              <p className="text-white/50 text-xl md:text-2xl leading-relaxed font-medium">{STORY_STEPS[2].body}</p>
+            </motion.div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+export default function AboutPage() {
+  return (
+    <main className="min-h-screen bg-[#050505] text-white selection:bg-primary/30 selection:text-white">
       <Navbar />
 
       {/* Hero */}
-      <section className="relative z-10 pt-36 pb-24 overflow-hidden">
+      <section className="relative z-10 pt-48 pb-32 overflow-hidden bg-[#050505]">
         <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-0 right-0 w-full h-[100%] bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:100px_100px] opacity-30" />
           <motion.div
-            className="absolute -top-32 -right-24 w-[28rem] h-[28rem] rounded-full bg-primary/20 blur-[120px]"
-            animate={{ x: [0, -40, 0], y: [0, 40, 0] }}
-            transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
-          />
-          <motion.div
-            className="absolute bottom-[-10rem] left-[-6rem] w-[24rem] h-[24rem] rounded-full bg-red-500/20 blur-[120px]"
-            animate={{ x: [0, 30, 0], y: [0, -30, 0] }}
-            transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.2 }}
+            transition={{ duration: 2 }}
+            className="absolute top-1/4 -right-24 w-[30vw] h-[30vw] rounded-full bg-primary blur-[160px]"
           />
         </div>
 
-        <div className="max-w-6xl mx-auto px-6">
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
           <motion.p
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-xs md:text-sm text-white/60 uppercase tracking-[0.5em] font-bold mb-6"
+            className="text-xs md:text-sm text-primary uppercase tracking-[0.8em] font-black mb-8 flex items-center gap-4"
           >
-            About FleetNET GLOBAL
+            <span className="w-8 h-px bg-primary" />
+            About FleetNET
           </motion.p>
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.1 }}
-            className="text-5xl md:text-7xl lg:text-8xl font-black text-white leading-[0.95] tracking-tight"
+            className="text-6xl md:text-[8vw] font-black text-white leading-[0.9] tracking-tighter"
           >
-            Driven by Innovation.
-            <span className="block text-white/70">Engineered in Sri Lanka.</span>
+            DRIVEN BY <span className="text-primary italic">INNOVATION.</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="mt-8 text-lg md:text-2xl text-white/75 max-w-3xl leading-relaxed"
+            className="mt-12 text-xl md:text-3xl text-white/50 max-w-4xl leading-tight font-medium"
           >
-            FleetNET GLOBAL was founded with a singular mission: to challenge the conventions of fleet
-            management. We saw an opportunity to build a more integrated, intelligent, and intuitive
-            solution by controlling both the hardware and software experience. Our story is one of
-            innovation, partnership, and unwavering commitment to excellence.
+            FleetNET GLOBAL was founded to challenge the conventions of fleet management. We saw an opportunity to build an integrated, intelligent solution by controlling both the hardware and software experience.
           </motion.p>
+          
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="mt-10 flex flex-wrap gap-4"
+            className="mt-16 flex flex-wrap gap-6"
           >
-            <button className="px-8 py-4 bg-white text-slate-900 rounded-full font-bold shadow-xl hover:scale-[1.03] transition-transform">
+            <button className="px-10 py-4 bg-white text-black font-black uppercase tracking-[0.2em] text-sm hover:bg-primary transition-colors rounded-full shadow-[0_0_30px_rgba(255,255,255,0.05)]">
               Partner With Us
             </button>
-            <button className="px-8 py-4 border border-white/40 text-white rounded-full font-bold hover:bg-white/10 transition-colors">
+            <button className="px-10 py-4 bg-transparent border-2 border-white/10 text-white font-black uppercase tracking-[0.2em] text-sm hover:border-white transition-all rounded-full">
               Join Our Mission
             </button>
           </motion.div>
         </div>
       </section>
 
-      {/* Story Intro */}
-      <section className="relative z-20 bg-white py-24 rounded-t-[4rem] shadow-[0_-20px_60px_-15px_rgba(0,0,0,0.5)]">
-        <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-12 items-start">
-          <div className="gsap-reveal">
-            <p className="text-sm uppercase tracking-[0.4em] text-primary font-bold mb-4">Our Story</p>
-            <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-6 leading-tight">
-              Founded in 2025 in the heart of Colombo, Sri Lanka
+      {/* Origin Story Spec */}
+      <section className="relative z-20 bg-[#050505] py-24 border-t border-white/5">
+        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-16 items-start">
+          <motion.div 
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            <p className="text-sm uppercase tracking-[0.5em] text-white/30 font-black mb-6">Origin Specification</p>
+            <h2 className="text-4xl md:text-6xl font-black text-white mb-8 leading-[0.95] tracking-tight">
+              FOUNDED IN COLOMBO,<br/><span className="text-white/20">SRI LANKA.</span>
             </h2>
-            <div className="space-y-6 text-slate-600 text-lg leading-relaxed">
+            <div className="space-y-6 text-white/50 text-xl leading-relaxed font-medium max-w-2xl">
               <p>
                 FleetNET GLOBAL emerged from a simple observation: existing fleet management solutions
                 were fragmented, unreliable, and failed to deliver the insights modern businesses needed.
               </p>
               <p>
-                Our founders, with decades of combined experience in automotive technology, IoT systems,
-                and enterprise software, recognized that true innovation required controlling the entire
-                technology stack from the hardware sensors to the cloud analytics platform.
-              </p>
-              <p>
-                Today, we&apos;re proud to serve thousands of vehicles, while maintaining our commitment to Sri Lankan engineering excellence and our partnership-first approach to customer success.
+                Our founders recognized that true innovation required controlling the entire
+                technology stack—from hardware sensors to the cloud analytics platform.
               </p>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="gsap-reveal relative rounded-3xl border border-slate-200 p-8 shadow-xl bg-gradient-to-br from-white to-slate-50">
-            <div className="absolute -top-6 -right-6 w-24 h-24 rounded-full bg-primary/10 blur-2xl" />
-            <div className="space-y-6">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
-                  <Award className="w-6 h-6" />
+          <motion.div 
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="relative rounded-3xl border border-white/10 bg-white/[0.02] p-10 backdrop-blur-md"
+          >
+            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 blur-[60px] rounded-full pointer-events-none" />
+            <div className="space-y-8 relative z-10">
+              <div className="flex items-start gap-6">
+                <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-primary shrink-0">
+                  <Award className="w-8 h-8" />
                 </div>
                 <div>
-                  <p className="text-xs uppercase tracking-[0.3em] text-slate-400 font-bold">Purpose</p>
-                  <p className="text-lg font-semibold text-slate-900">Integrated hardware + software</p>
+                  <p className="text-xs uppercase tracking-[0.4em] text-white/30 font-black mb-2">Purpose</p>
+                  <p className="text-2xl font-bold text-white tracking-tight">Integrated Architecture</p>
                 </div>
               </div>
-              <div className="h-px bg-slate-200" />
-              <div className="space-y-3 text-slate-600">
-                <p className="font-semibold text-slate-900">Why it matters</p>
-                <p>
-                  Controlling the entire stack lets us deliver reliable data, faster innovation cycles,
-                  and a consistent operator experience.
+              <div className="h-px bg-white/10" />
+              <div className="space-y-3 text-white/50 font-medium">
+                <p className="font-bold text-white uppercase text-sm tracking-widest">Why it matters</p>
+                <p className="leading-relaxed">
+                  Controlling the entire stack lets us deliver uncompromised data reliability, rapid innovation cycles,
+                  and a seamless operator experience.
                 </p>
               </div>
-              <div className="flex items-center gap-3 text-primary font-semibold">
+              <div className="flex items-center gap-4 text-primary font-black uppercase tracking-[0.2em] text-xs">
                 <span className="w-10 h-[2px] bg-primary" />
                 Engineering-first. Partner-led.
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* Storytelling Reel */}
-      <section ref={storyRef} className="relative z-10 min-h-[220vh]">
-        <div className="sticky top-0 h-screen flex items-center">
-          <div className="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-[0.8fr_1.2fr] gap-16 items-center">
-            
-            <div className="space-y-6 text-white z-20">
-              <p className="text-xs uppercase tracking-[0.5em] text-primary font-black">Our Journey</p>
-              <h2 className="text-5xl md:text-7xl font-black leading-[0.9] tracking-tighter">
-                A story told in layers.
-              </h2>
-              <p className="text-xl text-white/60 leading-relaxed font-light">
-                We built FleetNET GLOBAL by listening to operators first and engineering every layer of the
-                platform for clarity, speed, and trust.
-              </p>
-              <div className="flex items-center gap-4 text-white/50 text-sm font-bold uppercase tracking-widest pt-4">
-                <span className="w-16 h-[2px] bg-primary" />
-                 Scroll to reveal
-              </div>
-            </div>
-
-            <div className="relative min-h-[450px]">
-              {STORY_STEPS.map((step, index) => (
-                <div
-                  key={step.title}
-                  ref={(el) => { stepRefs.current[index] = el; }}
-                  className="absolute inset-x-0 top-0"
-                >
-                  <div className="relative rounded-[3rem] border border-white/10 bg-[#0a0a0a]/80 backdrop-blur-2xl p-10 md:p-14 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.8)] overflow-hidden group">
-                    
-                    {/* Abstract Visual Elements */}
-                    {index === 0 && (
-                      <div className="absolute -right-20 -top-20 opacity-20 pointer-events-none group-hover:opacity-40 transition-opacity duration-1000">
-                         <div className="w-96 h-96 border-[1px] border-red-500/50 rounded-full flex items-center justify-center animate-[spin_30s_linear_infinite]">
-                            <div className="w-64 h-64 border-[2px] border-orange-500/30 rounded-full animate-[spin_15s_linear_infinite_reverse] border-dashed" />
-                         </div>
-                      </div>
-                    )}
-                    {index === 1 && (
-                      <div className="absolute right-0 top-10 opacity-30 pointer-events-none group-hover:scale-110 transition-transform duration-1000">
-                         <div className="relative w-64 h-64 transform -skew-x-12 rotate-[-15deg]">
-                            <div className="absolute inset-0 border-[2px] border-red-500/40 rounded-2xl translate-y-[-2rem] bg-black/40 backdrop-blur flex items-center justify-center"><div className="w-20 h-1 bg-red-500/50 rounded-full" /></div>
-                            <div className="absolute inset-0 border-[2px] border-orange-500/40 rounded-2xl bg-black/40 backdrop-blur flex items-center justify-center"><div className="w-20 h-1 bg-orange-500/50 rounded-full" /></div>
-                            <div className="absolute inset-0 border-[2px] border-yellow-500/40 rounded-2xl translate-y-[2rem] bg-black/40 backdrop-blur flex items-center justify-center"><div className="w-20 h-1 bg-yellow-500/50 rounded-full" /></div>
-                         </div>
-                      </div>
-                    )}
-                     {index === 2 && (
-                        <div className="absolute right-[-10%] top-[-10%] opacity-30 pointer-events-none">
-                          <div className="w-80 h-80 rounded-full bg-gradient-to-tr from-red-600/40 to-transparent blur-3xl animate-pulse" />
-                          <Compass className="w-80 h-80 text-white/10 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-[spin_40s_linear_infinite]" />
-                        </div>
-                     )}
-
-                    <div className="relative z-10">
-                      <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary mb-8">
-                        <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                        <p className="text-xs uppercase tracking-[0.3em] font-black">{step.tag}</p>
-                      </div>
-                      <h3 className="text-4xl md:text-5xl font-black text-white mb-6 leading-tight tracking-tight">{step.title}</h3>
-                      <p className="text-white/70 text-xl md:text-2xl leading-relaxed max-w-xl font-light">{step.body}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-          </div>
-        </div>
-      </section>
+      <StoryScroll />
 
       {/* Core Values */}
-      <section className="relative z-20 bg-white py-32 rounded-y-[4rem]">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="max-w-3xl gsap-reveal">
-            <p className="text-sm uppercase tracking-[0.4em] text-primary font-bold mb-4">Our Principles</p>
-            <h2 className="text-4xl md:text-6xl font-black text-slate-900 mb-6 leading-[1.1] tracking-tight">
-              These values guide every solution we build.
+      <section className="relative z-20 py-32 bg-[#050505] border-t border-white/5">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="max-w-3xl mb-24">
+            <span className="text-primary font-black uppercase tracking-[0.6em] text-sm mb-4 block flex items-center gap-4">
+               <Target className="w-5 h-5" /> Our Principles
+            </span>
+            <h2 className="text-5xl md:text-7xl font-black mb-8 leading-[0.95] tracking-tighter text-white">
+              GUIDING EVERY <span className="text-white/20">SOLUTION.</span>
             </h2>
           </div>
 
-          <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-8 gsap-stagger-group">
-            {VALUES.map((value) => (
-              <div
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-white/5 border border-white/5 rounded-3xl overflow-hidden">
+            {VALUES.map((value, index) => (
+              <motion.div
                 key={value.title}
-                className="gsap-stagger-item rounded-[2.5rem] border border-slate-100 bg-white p-10 shadow-xl hover:shadow-2xl transition-all duration-300"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                className="group relative bg-[#0a0a0a] p-10 lg:p-16 hover:bg-white/[0.02] transition-all duration-500 overflow-hidden"
               >
-                <div className="w-16 h-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-8">
-                  <value.icon className="w-8 h-8" />
+                {/* Glow effect on hover */}
+                <div className="absolute -inset-24 bg-primary/20 blur-[120px] rounded-full opacity-0 group-hover:opacity-100 transition-all duration-700 pointer-events-none" />
+                
+                <div className="relative z-10">
+                  <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-10 text-primary group-hover:scale-110 group-hover:border-primary/30 transition-all duration-500">
+                    <value.icon className="w-8 h-8" />
+                  </div>
+                  
+                  <h3 className="text-3xl font-black mb-6 tracking-tight group-hover:translate-x-2 transition-transform duration-500">
+                    {value.title}
+                  </h3>
+                  
+                  <p className="text-white/50 text-lg leading-relaxed font-medium">
+                    {value.description}
+                  </p>
                 </div>
-                <h3 className="text-2xl font-black text-slate-900 mb-4 tracking-tight">{value.title}</h3>
-                <p className="text-slate-600 leading-relaxed text-lg">{value.description}</p>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
       {/* Experts */}
-      <section className="relative z-10 py-32">
-        <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          <div className="text-white gsap-reveal">
-            <p className="text-xs uppercase tracking-[0.4em] text-white/60 font-black mb-4">Built By Experts</p>
-            <h2 className="text-5xl md:text-6xl font-black leading-tight mb-8 tracking-tight">
-              Built by Experts, For Experts
+      <section className="relative z-10 py-32 bg-[#050505]">
+        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="text-white"
+          >
+            <p className="text-xs uppercase tracking-[0.6em] text-white/40 font-black mb-6">Execution</p>
+            <h2 className="text-5xl md:text-7xl font-black leading-[0.9] mb-8 tracking-tighter">
+              BUILT BY <br/><span className="italic text-primary">EXPERTS.</span>
             </h2>
-            <p className="text-xl text-white/70 leading-relaxed mb-10 font-light">
+            <p className="text-xl text-white/50 leading-relaxed mb-10 font-medium max-w-xl">
               Our team combines decades of experience in fleet management, IoT hardware development, and
               enterprise software engineering. The result is a platform that feels intentional at every
               level and evolves with your operations.
             </p>
-            <div className="flex items-center gap-4 text-white/80 font-bold uppercase tracking-widest text-sm">
+            <div className="flex items-center gap-4 text-white/40 font-black uppercase tracking-widest text-xs">
               <span className="w-12 h-[2px] bg-primary" />
               Engineering depth. Operational empathy.
             </div>
-          </div>
+          </motion.div>
 
-          <div className="gsap-reveal rounded-[3rem] border border-white/10 bg-black/40 backdrop-blur-3xl p-12 text-white shadow-2xl relative overflow-hidden group">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 blur-[80px] rounded-full group-hover:bg-primary/20 transition-colors duration-700" />
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="rounded-[3rem] border border-white/5 bg-white/[0.02] p-12 text-white relative overflow-hidden group"
+          >
+            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 blur-[80px] rounded-full group-hover:bg-primary/20 transition-colors duration-700 pointer-events-none" />
             
-            <div className="flex items-center gap-5 mb-10 relative z-10">
-              <div className="w-16 h-16 rounded-2xl bg-white/10 text-white flex items-center justify-center shadow-inner">
+            <div className="flex items-center gap-6 mb-12 relative z-10">
+              <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 text-white flex items-center justify-center">
                 <Sparkles className="w-8 h-8" />
               </div>
               <div>
-                <p className="text-xs uppercase tracking-[0.4em] text-white/50 font-black mb-1">Capabilities</p>
-                <p className="text-2xl font-bold tracking-tight">Hardware-to-Cloud</p>
+                <p className="text-xs uppercase tracking-[0.4em] text-primary font-black mb-1">Capabilities</p>
+                <p className="text-3xl font-black tracking-tight">Hardware-to-Cloud</p>
               </div>
             </div>
-            <ul className="space-y-6 text-white/70 text-lg relative z-10">
-              <li className="flex items-center gap-4">
-                <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center flex-shrink-0">
+            
+            <ul className="space-y-8 text-white/50 text-xl font-medium relative z-10">
+              <li className="flex items-center gap-6">
+                <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center flex-shrink-0">
                   <span className="w-2 h-2 rounded-full bg-primary" />
                 </div>
-                Fleet-grade IoT hardware design & manufacturing
+                Fleet-grade IoT hardware design & manufacturing.
               </li>
-              <li className="flex items-center gap-4">
-                <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center flex-shrink-0">
+              <li className="flex items-center gap-6">
+                <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center flex-shrink-0">
                   <span className="w-2 h-2 rounded-full bg-primary" />
                 </div>
-                Enterprise analytics & AI-driven optimization
+                Enterprise analytics & AI-driven optimization.
               </li>
-              <li className="flex items-center gap-4">
-                <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center flex-shrink-0">
+              <li className="flex items-center gap-6">
+                <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center flex-shrink-0">
                   <span className="w-2 h-2 rounded-full bg-primary" />
                 </div>
-                Deployment, onboarding, & long-term support
+                Deployment, onboarding, & long-term support.
               </li>
             </ul>
-          </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* Join Our Mission CTA */}
-      <section className="relative z-20 py-32 bg-primary overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10" />
-        <div className="absolute -top-40 -left-40 w-96 h-96 bg-white/10 blur-[100px] rounded-full" />
-        <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-black/20 blur-[100px] rounded-full" />
+      {/* Premium CTA */}
+      <section className="py-40 bg-[#050505] relative overflow-hidden border-t border-white/5">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white/[0.02] text-[20vw] font-black uppercase leading-none select-none pointer-events-none">
+          FLEETNET
+        </div>
         
-        <div className="max-w-5xl mx-auto px-6 text-center relative z-10 gsap-reveal">
-          <h2 className="text-5xl md:text-7xl font-black text-white mb-8 tracking-tighter">
-            Join Our Mission
-          </h2>
-          <p className="text-xl md:text-2xl text-white/90 mb-12 max-w-2xl mx-auto font-light leading-relaxed">
-            Whether you&apos;re looking to transform your fleet operations or join our growing team, we&apos;d love
-            to hear from you.
-          </p>
-          <div className="flex flex-wrap justify-center gap-6">
-            <button className="px-12 py-5 bg-white text-primary rounded-full font-black text-lg hover:scale-105 transition-transform shadow-2xl">
-              Contact FleetNET
-            </button>
-            <button className="px-12 py-5 bg-transparent border-2 border-white/40 text-white rounded-full font-black text-lg hover:bg-white/10 transition-colors">
-              Explore Careers
-            </button>
-          </div>
+        <div className="max-w-5xl mx-auto px-6 text-center relative z-10">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="flex flex-col items-center"
+          >
+             <div className="w-px h-24 bg-gradient-to-b from-transparent via-primary to-transparent mb-12" />
+             <h2 className="text-5xl md:text-8xl font-black mb-10 leading-[0.9] tracking-tighter text-white">
+               READY TO <span className="text-primary italic">OPTIMIZE?</span>
+             </h2>
+             <p className="text-xl md:text-2xl text-white/50 mb-12 max-w-2xl font-medium">
+               Whether you're looking to transform your fleet operations or join our mission, we're ready to engineer the future together.
+             </p>
+             <div className="flex flex-wrap justify-center gap-6">
+                <button className="px-12 py-5 bg-white text-black font-black uppercase tracking-[0.2em] text-sm hover:bg-primary transition-all shadow-[0_0_40px_rgba(255,255,255,0.1)] rounded-full border border-white hover:border-primary">
+                  Contact FleetNET
+                </button>
+                <button className="px-12 py-5 bg-transparent border-2 border-white/10 text-white font-black uppercase tracking-[0.2em] text-sm hover:border-white transition-all rounded-full">
+                  Explore Careers
+                </button>
+             </div>
+          </motion.div>
         </div>
       </section>
 
