@@ -7,7 +7,6 @@ import { ArrowDown } from "lucide-react";
 import Image from "next/image";
 import { useRef } from "react";
 
-// Register plugins
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
@@ -16,7 +15,6 @@ export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Scene Refs
   const heroTextRef = useRef<HTMLDivElement>(null);
   const heroLinesRef = useRef<HTMLHeadingElement>(null);
   const heroSubRef = useRef<HTMLParagraphElement>(null);
@@ -38,7 +36,6 @@ export default function Hero() {
     () => {
       if (!sectionRef.current) return;
 
-      // 1. Initial State Setup
       gsap.set([heroLinesRef.current, heroSubRef.current, heroBtnRef.current], {
         opacity: 1,
         y: 0,
@@ -57,14 +54,12 @@ export default function Hero() {
         ],
         {
           opacity: 0,
-          y: 60,
+          y: 80,
           clipPath: "inset(100% -20% -20% -20%)",
         },
       );
-      // The "Scroll down" indicator starts visible because the user *needs* to scroll to advance
       gsap.set(scrollIndicatorRef.current, { opacity: 1 });
 
-      // Idle animations for mockups
       gsap.to(desktopMockupRef.current, {
         y: -15,
         duration: 3,
@@ -81,61 +76,61 @@ export default function Hero() {
         delay: 0.5,
       });
 
-      // 2. SCRUBBED MASTER TIMELINE (PINNED)
-      // This pins the `.hero-sticky-container` to the screen.
-      // The user must scroll `end: "+=3000"` pixels to complete the animation before the page unpins.
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top top",
-          end: "+=2500", // Distance to scroll
+          end: "+=2500",
           pin: true,
-          scrub: 1, // Smooth scrubbing
+          scrub: 0.8,
           anticipatePin: 1,
-          // Two main states: intro hero and mission copy
-          snap: {
-            snapTo: [0, 0.5, 1],
-            duration: 0.6,
-            ease: "power2.inOut",
-          },
         },
       });
 
-      // PHASE 1: Hold the initial scene briefly so it doesn't instantly vanish on tiny scroll
-      tl.to({}, { duration: 0.2 })
+      tl.to({}, { duration: 0.3 })
 
-        // PHASE 2: Exit Scene 1 (Hero Text & Mockups scale down)
-        .to([heroBtnRef.current, heroSubRef.current, heroLinesRef.current], {
+        .to(scrollIndicatorRef.current, {
           opacity: 0,
-          y: -40,
-          duration: 1,
-          stagger: 0.1,
+          y: 20,
+          duration: 0.3,
           ease: "power2.in",
         })
+
         .to(
-          mockupsRef.current,
+          [heroBtnRef.current, heroSubRef.current, heroLinesRef.current],
           {
-            scale: 0.8, // Scale down but don't disappear completely to keep hardware context
             opacity: 0,
-            rotate: 5,
-            x: 100, // Move slightly offscreen right
-            duration: 2,
-            ease: "power2.inOut",
+            y: -60,
+            duration: 1.2,
+            stagger: 0.12,
+            ease: "power3.in",
           },
           "<",
         )
+        .to(
+          mockupsRef.current,
+          {
+            scale: 0.75,
+            opacity: 0,
+            rotate: 3,
+            x: 120,
+            duration: 1.8,
+            ease: "power3.inOut",
+          },
+          "<0.1",
+        )
 
-        // PHASE 3: Enter Scene 2 (Mission Text) sequentially
+        .to({}, { duration: 0.15 })
+
         .to(
           missionBadgeRef.current,
           {
             opacity: 1,
             y: 0,
             clipPath: "inset(-20% -20% -20% -20%)",
-            duration: 1,
-            ease: "power2.out",
+            duration: 1.2,
+            ease: "power3.out",
           },
-          "-=0.2",
         )
         .to(
           missionLine1Ref.current,
@@ -143,10 +138,10 @@ export default function Hero() {
             opacity: 1,
             y: 0,
             clipPath: "inset(-20% -20% -20% -20%)",
-            duration: 1,
-            ease: "power2.out",
+            duration: 1.2,
+            ease: "power3.out",
           },
-          "-=0.4",
+          "-=0.8",
         )
         .to(
           missionLine2Ref.current,
@@ -154,10 +149,10 @@ export default function Hero() {
             opacity: 1,
             y: 0,
             clipPath: "inset(-20% -20% -20% -20%)",
-            duration: 1,
-            ease: "power2.out",
+            duration: 1.2,
+            ease: "power3.out",
           },
-          "-=0.4",
+          "-=0.8",
         )
         .to(
           missionSubRef.current,
@@ -165,14 +160,13 @@ export default function Hero() {
             opacity: 1,
             y: 0,
             clipPath: "inset(-20% -20% -20% -20%)",
-            duration: 1,
-            ease: "power2.out",
+            duration: 1.2,
+            ease: "power3.out",
           },
-          "-=0.4",
+          "-=0.8",
         )
 
-        // PHASE 4: Final Hold before unpinning allows proceeding to next section
-        .to({}, { duration: 0.5 });
+        .to({}, { duration: 0.6 });
     },
     { scope: sectionRef },
   );
@@ -187,7 +181,7 @@ export default function Hero() {
         className="hero-sticky-container h-screen w-full overflow-hidden flex items-center bg-black/5"
       >
         <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 w-full h-full flex items-center">
-          {/* SCENE 1: Hero Text (Left Aligned) */}
+          {/* SCENE 1: Hero Text */}
           <div
             ref={heroTextRef}
             className="absolute top-[18%] sm:top-[12%] lg:top-1/2 lg:-translate-y-1/2 left-6 lg:left-12 right-6 lg:right-auto w-auto lg:w-1/2 z-30 pointer-events-auto"
@@ -217,7 +211,7 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* SCENE 2: Mission Text (Centered) */}
+          {/* SCENE 2: Mission Text */}
           <div
             ref={missionTextRef}
             className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 z-30 pointer-events-none"
@@ -259,18 +253,16 @@ export default function Hero() {
             </p>
           </div>
 
-          {/* MOCKUPS (Right Aligned) */}
+          {/* MOCKUPS */}
           <div
             ref={mockupsRef}
             className="absolute right-0 top-[42%] sm:top-[46%] lg:top-0 bottom-0 w-full lg:w-1/2 flex items-start lg:items-center justify-center pointer-events-none z-20"
           >
             <div className="relative w-full h-full flex items-start lg:items-center justify-center p-4 lg:p-12 scale-[0.9] sm:scale-100 lg:scale-100">
-              {/* Desktop Laptop Mockup */}
               <div
                 ref={desktopMockupRef}
                 className="absolute top-0 lg:top-auto w-[105%] sm:w-[95%] lg:w-full max-w-[880px] aspect-[16/10]"
               >
-                {/* Laptop mockup (includes screen content) */}
                 <Image
                   src="/images/tr.png"
                   alt="Laptop mockup"
@@ -280,12 +272,10 @@ export default function Hero() {
                 />
               </div>
 
-              {/* Mobile Phone Mockup */}
               <div
                 ref={mobileMockupRef}
                 className="absolute right-[2%] top-[44%] sm:top-[50%] lg:top-auto lg:bottom-[8%] w-[130px] sm:w-[190px] lg:w-[260px] aspect-[9/19.5] z-30 max-h-[70vh]"
               >
-                {/* Phone mockup (includes screen content) */}
                 <Image
                   src="/images/iphone_mockup.svg"
                   alt="iPhone mockup"

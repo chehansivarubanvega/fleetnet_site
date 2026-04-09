@@ -24,8 +24,8 @@ export default function PartnerHands() {
   const sectionRef = useRef<HTMLElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   
-  const leftHandRef = useRef<HTMLImageElement>(null);
-  const rightHandRef = useRef<HTMLImageElement>(null);
+  const leftHandRef = useRef<HTMLDivElement>(null);
+  const rightHandRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
   const logosRef = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -38,26 +38,17 @@ export default function PartnerHands() {
     gsap.set(textRef.current, { opacity: 0, y: 30 });
     gsap.set(logosRef.current, { opacity: 0, y: 40, scale: 0.9 });
 
-    // 2. SCRUBBED MASTER TIMELINE (PINNED)
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: sectionRef.current,
         start: 'top top',
-        end: '+=2500', // The user must scroll 2500px to complete the sequence
+        end: '+=2500',
         pin: true,
-        scrub: 1, // Smooth scrubbing
+        scrub: 0.8,
         anticipatePin: 1,
-        // Snap to key phases: hands in, text, logos
-        snap: {
-          snapTo: [0, 0.4, 0.75, 1],
-          duration: 0.6,
-          ease: 'power2.inOut',
-        },
         onUpdate: (self) => {
-          // Keep the premium background color interpolation tied directly to scroll progress
           const p = self.progress;
           if (containerRef.current) {
-             // Interplate from off-white to a dark dramatic blue/black
             const r = Math.round(gsap.utils.interpolate(245, 5, p));
             const g = Math.round(gsap.utils.interpolate(245, 5, p));
             const b = Math.round(gsap.utils.interpolate(245, 10, p));
@@ -67,34 +58,30 @@ export default function PartnerHands() {
       }
     });
 
-    // PHASE 1: Hands slide in
     tl.to([leftHandRef.current, rightHandRef.current], {
       xPercent: 0,
       yPercent: 0,
-      ease: 'power2.inOut',
-      duration: 2
+      ease: 'power3.inOut',
+      duration: 2.5,
     })
-    
-    // PHASE 2: Text fades up
+
     .to(textRef.current, {
       opacity: 1,
       y: 0,
-      duration: 1.5,
-      ease: 'power2.out'
-    }, "-=0.5") // Slightly overlap with hands finishing
+      duration: 1.8,
+      ease: 'power3.out',
+    }, '-=1')
 
-    // PHASE 3: Logos stagger in
     .to(logosRef.current, {
       opacity: 1,
       y: 0,
       scale: 1,
-      stagger: 0.2, // Staggering requires scroll distance, so we give it time
+      stagger: 0.15,
       duration: 2,
-      ease: 'back.out(1.2)' // Gentle bounce
-    }, "-=0.5")
-    
-    // PHASE 4: Final Hold before unpinning allows proceeding to next section
-    .to({}, { duration: 0.5 });
+      ease: 'power2.out',
+    }, '-=0.8')
+
+    .to({}, { duration: 0.6 });
 
   }, { scope: sectionRef });
 
@@ -152,24 +139,32 @@ export default function PartnerHands() {
         */}
         <div className="absolute inset-0 pointer-events-none z-30 overflow-hidden">
           {/* Left Hand: Anchored middle-left */}
-          <Image 
+          <div
             ref={leftHandRef}
-            src="/images/hand1.avif" 
-            alt="Left hand reaching" 
-            width={800}
-            height={600}
             className="absolute top-[10%] md:top-[12%] -left-[2vw] w-[65vw] md:w-[45vw] max-w-[800px] h-auto will-change-transform drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
-          />
+          >
+            <Image 
+              src="/images/hand1.avif" 
+              alt="Left hand reaching" 
+              width={800}
+              height={600}
+              className="w-full h-auto"
+            />
+          </div>
           
           {/* Right Hand: Anchored middle-right */}
-          <Image 
+          <div
             ref={rightHandRef}
-            src="/images/hand2.avif" 
-            alt="Right hand reaching" 
-            width={900}
-            height={600}
             className="absolute bottom-[10%] md:bottom-[15%] -right-[2vw] w-[70vw] md:w-[50vw] max-w-[900px] h-auto will-change-transform drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
-          />
+          >
+            <Image 
+              src="/images/hand2.avif" 
+              alt="Right hand reaching" 
+              width={900}
+              height={600}
+              className="w-full h-auto"
+            />
+          </div>
         </div>
       </div>
     </section>

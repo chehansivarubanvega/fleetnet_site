@@ -6,7 +6,9 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Image from 'next/image';
 import { useRef } from 'react';
 
-gsap.registerPlugin(ScrollTrigger);
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 const CARDS = [
   {
@@ -59,58 +61,51 @@ const CARDS = [
 export default function TransitionSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const headingRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
 
   useGSAP(() => {
-    const cards = cardsRef.current;
-    
-    // Simple staggered reveal as the section scrolls into view
-    gsap.set(cards, { 
-      opacity: 0,
-      y: 50
-    });
+    if (!sectionRef.current) return;
 
-    gsap.to(cards, {
+    const cards = cardsRef.current.filter(Boolean);
+
+    gsap.set(headingRef.current, { opacity: 0, y: 40 });
+    gsap.set(cards, { opacity: 0, y: 60, scale: 0.95 });
+
+    const tl = gsap.timeline({
       scrollTrigger: {
         trigger: sectionRef.current,
-        start: "top 80%", // Start revealing when the section is 20% into the viewport
-        end: "bottom 80%",
-        toggleActions: "play none none reverse"
+        start: 'top 70%',
+        end: 'top 10%',
+        scrub: 0.8,
       },
-      opacity: 1,
-      y: 0,
-      stagger: 0.1,
-      duration: 0.8,
-      ease: "power3.out"
     });
 
-    // Pin + snap this whole section so it behaves like a full \"scene\"
-    if (sectionRef.current) {
-      gsap.timeline({
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top top",
-          end: "+=1200",
-          pin: true,
-          scrub: 1,
-          anticipatePin: 1,
-          snap: {
-            snapTo: [0, 1],
-            duration: 0.6,
-            ease: "power2.inOut",
-          },
-        },
-      });
-    }
-
+    tl.to(headingRef.current, {
+      opacity: 1,
+      y: 0,
+      duration: 1,
+      ease: 'power3.out',
+    }).to(
+      cards,
+      {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        stagger: 0.06,
+        duration: 0.8,
+        ease: 'power2.out',
+      },
+      '-=0.4',
+    );
   }, { scope: sectionRef });
 
   return (
-    <section 
-      ref={sectionRef} 
-      className="relative min-h-screen w-full flex flex-col items-center justify-center overflow-hidden z-10 py-32 px-6"
+    <section
+      ref={sectionRef}
+      className="relative w-full flex flex-col items-center justify-center overflow-hidden z-10 py-32 px-6"
     >
-      <div className="max-w-7xl mx-auto text-center mb-20 text-white z-20">
+      <div ref={headingRef} className="max-w-7xl mx-auto text-center mb-20 text-white z-20">
         <h2 className="text-5xl md:text-7xl font-black tracking-tight mb-6">
           Visibility. Control. Insight.
         </h2>
@@ -119,7 +114,7 @@ export default function TransitionSection() {
         </p>
       </div>
 
-      <div 
+      <div
         ref={containerRef}
         className="relative w-full max-w-7xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 z-20"
       >
@@ -130,10 +125,9 @@ export default function TransitionSection() {
             className="group relative w-full aspect-[4/3] rounded-3xl overflow-hidden bg-black/40 border border-white/10 shadow-2xl will-change-transform transform transition-all duration-300 hover:scale-[1.02] hover:border-white/30"
           >
             <div className="relative w-full h-full p-8 md:p-10 flex flex-col justify-between">
-              {/* Image Background */}
               <div className="absolute inset-0 z-0">
-                <Image 
-                  src={card.image} 
+                <Image
+                  src={card.image}
                   alt={card.title}
                   fill
                   className="object-cover opacity-40 mix-blend-luminosity group-hover:opacity-60 transition-opacity duration-500"
@@ -142,7 +136,6 @@ export default function TransitionSection() {
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/60 to-transparent" />
               </div>
 
-              {/* Top Section: Checkmark */}
               <div className="relative z-10">
                 <div className="w-12 h-12 rounded-full bg-red-600/90 flex items-center justify-center shadow-[0_0_30px_rgba(220,38,38,0.4)] border flex-shrink-0 group-hover:bg-red-500 transition-colors">
                   <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -150,8 +143,7 @@ export default function TransitionSection() {
                   </svg>
                 </div>
               </div>
-              
-              {/* Bottom Section: Content */}
+
               <div className="relative z-10 mt-auto">
                 <h3 className="text-2xl md:text-3xl font-bold text-white mb-3 tracking-tight group-hover:text-red-400 transition-colors">
                   {card.title}

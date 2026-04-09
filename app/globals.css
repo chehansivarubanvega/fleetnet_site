@@ -7,11 +7,11 @@
 
 @layer base {
   html {
-    scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
   }
   body {
     @apply text-white bg-[#020617];
+    overscroll-behavior: none;
   }
 }
 
