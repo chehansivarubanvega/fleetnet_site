@@ -122,16 +122,13 @@ export default function Hero() {
 
         .to({}, { duration: 0.15 })
 
-        .to(
-          missionBadgeRef.current,
-          {
-            opacity: 1,
-            y: 0,
-            clipPath: "inset(-20% -20% -20% -20%)",
-            duration: 1.2,
-            ease: "power3.out",
-          },
-        )
+        .to(missionBadgeRef.current, {
+          opacity: 1,
+          y: 0,
+          clipPath: "inset(-20% -20% -20% -20%)",
+          duration: 1.2,
+          ease: "power3.out",
+        })
         .to(
           missionLine1Ref.current,
           {
@@ -247,9 +244,9 @@ export default function Hero() {
               style={{ opacity: 0 }}
               className="text-lg md:text-2xl lg:text-3xl text-white/70 max-w-4xl leading-relaxed font-medium"
             >
-              FleetNET honors the organizations rewriting the rules of
-              logistics locally rooted, community-loved, often underrepresented
-              or overlooked, but driven by mission and built with care.
+              FleetNET honors the organizations rewriting the rules of logistics
+              locally rooted, community loved, often underrepresented or
+              overlooked, but driven by mission and built with care.
             </p>
           </div>
 
