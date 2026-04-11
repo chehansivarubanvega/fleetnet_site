@@ -1,6 +1,7 @@
 import FluidBackground from "@/components/FluidBackground";
 import Footer from "@/components/Footer";
 import Hero from "@/components/Hero";
+import Modules from "@/components/Modules";
 import Navbar from "@/components/Navbar";
 import OperationsNarrative from "@/components/OperationsNarrative";
 import PartnerHands from "@/components/PartnerHands";
@@ -15,6 +16,7 @@ export default function Home() {
       <Hero />
       <TransitionSection />
       <OperationsNarrative />
+      <Modules />
       <TrackerSection />
       <PartnerHands />
 

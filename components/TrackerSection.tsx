@@ -11,26 +11,30 @@ const FEATURES = [
   {
     icon: Cpu,
     title: 'Surgical Processing',
-    specs: 'Cortex-M4 / 6-axis IMU / ARM Architecture',
-    description: 'High-performance processing unit designed for sub-second telemetry analysis and edge computation.',
+    specs: 'Cortex-M4  ·  6-axis IMU  ·  ARM Architecture',
+    description:
+      'High-performance processing unit designed for sub-second telemetry analysis and edge computation across harsh environments.',
   },
   {
     icon: Wifi,
     title: 'Enterprise Connectivity',
-    specs: '4G CAT-M1 / NB-IoT / Dual Antenna Grid',
-    description: 'Redundant global handshake protocols ensuring 99.9% uptime in the most demanding terrains.',
+    specs: '4G CAT-M1  ·  NB-IoT  ·  Dual Antenna',
+    description:
+      'Redundant global handshake protocols ensuring 99.9% uptime in the most demanding terrains and remote corridors.',
   },
   {
     icon: BatteryCharging,
     title: 'Power Intelligence',
-    specs: '800mAh Backup / Intelligent Isolation',
-    description: 'Automotive-grade power management with deep-sleep modes and tamper-resistant housing.',
+    specs: '800mAh Backup  ·  Intelligent Isolation',
+    description:
+      'Automotive-grade power management with deep-sleep modes, tamper-resistant housing, and weeks of standby life.',
   },
   {
     icon: Download,
     title: 'OTA Agility',
-    specs: 'Encrypted Updates / Remote Diagnostics',
-    description: 'Cloud-synced firmware architecture allowing for remote feature deployments and security patches.',
+    specs: 'Encrypted Updates  ·  Remote Diagnostics',
+    description:
+      'Cloud-synced firmware architecture allowing remote feature deployments, security patches, and fleet-wide rollouts.',
   },
 ];
 
@@ -55,32 +59,36 @@ export default function TrackerSection() {
   });
 
   // ── Intro ──
-  const introProgress = useTransform(scrollYProgress, [0, 0.10], [0, 1]);
+  const introProgress = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
   const deviceScale = useTransform(introProgress, [0, 1], [0.5, 1]);
   const focalPointOpacity = useTransform(introProgress, [0, 0.6], [1, 0]);
   const focalPointScale = useTransform(introProgress, [0, 0.3], [1, 1.5]);
-  const introTextOpacity = useTransform(scrollYProgress, [0, 0.05, 0.13], [0, 1, 0]);
-  const introTextY = useTransform(scrollYProgress, [0, 0.05, 0.13], [20, 0, -20]);
+
+  // ── Section heading ──
+  const headingOpacity = useTransform(scrollYProgress, [0, 0.05, 0.12, 0.16], [0, 1, 1, 0]);
+  const headingY = useTransform(scrollYProgress, [0, 0.05, 0.12, 0.16], [30, 0, 0, -40]);
 
   // ── Canvas frame progression ──
   const currentFrame = useTransform(scrollYProgress, [0.08, 0.95], [0, TOTAL_FRAMES - 1]);
 
-  // ── Card transitions with CROSSFADING overlap ──
+  // ── Card transitions with crossfade ──
   const card1Opacity = useTransform(scrollYProgress, [0.12, 0.19, 0.33, 0.40], [0, 1, 1, 0]);
   const card2Opacity = useTransform(scrollYProgress, [0.36, 0.43, 0.56, 0.63], [0, 1, 1, 0]);
   const card3Opacity = useTransform(scrollYProgress, [0.59, 0.66, 0.79, 0.86], [0, 1, 1, 0]);
   const card4Opacity = useTransform(scrollYProgress, [0.82, 0.89, 1.0, 1.0], [0, 1, 1, 1]);
 
-  // ── Bi-directional Y: slide up on enter, slide further up on exit ──
-  const card1Y = useTransform(scrollYProgress, [0.12, 0.19, 0.33, 0.40], [25, 0, 0, -25]);
-  const card2Y = useTransform(scrollYProgress, [0.36, 0.43, 0.56, 0.63], [25, 0, 0, -25]);
-  const card3Y = useTransform(scrollYProgress, [0.59, 0.66, 0.79, 0.86], [25, 0, 0, -25]);
-  const card4Y = useTransform(scrollYProgress, [0.82, 0.89, 1.0], [25, 0, 0]);
+  const card1Y = useTransform(scrollYProgress, [0.12, 0.19, 0.33, 0.40], [30, 0, 0, -30]);
+  const card2Y = useTransform(scrollYProgress, [0.36, 0.43, 0.56, 0.63], [30, 0, 0, -30]);
+  const card3Y = useTransform(scrollYProgress, [0.59, 0.66, 0.79, 0.86], [30, 0, 0, -30]);
+  const card4Y = useTransform(scrollYProgress, [0.82, 0.89, 1.0], [30, 0, 0]);
 
   const cardOpacities = [card1Opacity, card2Opacity, card3Opacity, card4Opacity];
   const cardYs = [card1Y, card2Y, card3Y, card4Y];
 
-  // ── Canvas sizing (absolute transform to avoid DPR compounding on resize) ──
+  // ── Progress indicator ──
+  const progressWidth = useTransform(scrollYProgress, [0.12, 0.95], ['0%', '100%']);
+
+  // ── Canvas sizing ──
   const sizeCanvas = useCallback(() => {
     const canvas = canvasRef.current;
     const wrapper = canvasWrapperRef.current;
@@ -96,26 +104,29 @@ export default function TrackerSection() {
   }, []);
 
   // ── Canvas drawing ──
-  const drawFrame = useCallback((idx: number) => {
-    const canvas = canvasRef.current;
-    if (!canvas || images.length === 0) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    const img = images[idx];
-    if (!img || !img.complete || img.naturalWidth === 0) return;
+  const drawFrame = useCallback(
+    (idx: number) => {
+      const canvas = canvasRef.current;
+      if (!canvas || images.length === 0) return;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+      const img = images[idx];
+      if (!img || !img.complete || img.naturalWidth === 0) return;
 
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const cw = canvas.width / dpr;
-    const ch = canvas.height / dpr;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const cw = canvas.width / dpr;
+      const ch = canvas.height / dpr;
 
-    ctx.clearRect(0, 0, cw, ch);
-    const scale = Math.min(cw / img.naturalWidth, ch / img.naturalHeight);
-    const w = img.naturalWidth * scale;
-    const h = img.naturalHeight * scale;
-    const x = (cw - w) / 2;
-    const y = (ch - h) / 2;
-    ctx.drawImage(img, x, y, w, h);
-  }, [images]);
+      ctx.clearRect(0, 0, cw, ch);
+      const scale = Math.min(cw / img.naturalWidth, ch / img.naturalHeight);
+      const w = img.naturalWidth * scale;
+      const h = img.naturalHeight * scale;
+      const x = (cw - w) / 2;
+      const y = (ch - h) / 2;
+      ctx.drawImage(img, x, y, w, h);
+    },
+    [images],
+  );
 
   useMotionValueEvent(currentFrame, 'change', (latest) => {
     const next = Math.max(0, Math.min(TOTAL_FRAMES - 1, Math.floor(latest)));
@@ -141,15 +152,26 @@ export default function TrackerSection() {
   }, [sizeCanvas, drawFrame]);
 
   return (
-    <div ref={containerRef} className="relative h-[500vh] bg-[#050505] -mt-px" id="tracker-section">
-      <div className="sticky top-0 h-screen w-full overflow-hidden bg-[#050505] transform-gpu">
-        <div className="h-full w-full flex flex-col lg:flex-row items-stretch">
+    <div
+      ref={containerRef}
+      className="relative h-[500vh] bg-[#0a0a0a] -mt-px font-[family-name:var(--font-outfit)]"
+      id="tracker-section"
+    >
+      <div className="sticky top-0 h-screen w-full overflow-hidden bg-[#0a0a0a] transform-gpu">
+        {/* Scroll progress bar */}
+        <div className="absolute top-0 left-0 right-0 h-[2px] z-50">
+          <motion.div
+            style={{ width: progressWidth }}
+            className="h-full bg-gradient-to-r from-orange-500 to-orange-400"
+          />
+        </div>
 
+        <div className="h-full w-full flex flex-col lg:flex-row items-stretch max-w-[1600px] mx-auto">
           {/* Left: Device Canvas */}
-          <div className="relative w-full lg:w-1/2 shrink-0 h-[35vh] lg:h-full flex items-center justify-center p-4 sm:p-6 lg:p-12">
+          <div className="relative w-full lg:w-[55%] shrink-0 h-[40vh] xs:h-[45vh] lg:h-full flex items-center justify-center p-4 sm:p-8 lg:p-16">
             <div
               ref={canvasWrapperRef}
-              className="relative w-full max-w-[320px] sm:max-w-md lg:max-w-3xl aspect-square flex items-center justify-center"
+              className="relative w-full max-w-[300px] sm:max-w-md lg:max-w-2xl aspect-square flex items-center justify-center"
             >
               <motion.div
                 style={{ scale: deviceScale, opacity: introProgress }}
@@ -158,36 +180,44 @@ export default function TrackerSection() {
                 <canvas ref={canvasRef} className="w-full h-full" />
               </motion.div>
 
-              <div className="absolute inset-0 bg-blue-500/5 rounded-full blur-[80px] lg:blur-[120px] pointer-events-none" />
+              {/* Ambient glow */}
+              <div className="absolute inset-0 bg-orange-500/5 rounded-full blur-[100px] lg:blur-[140px] pointer-events-none" />
 
+              {/* Focal point */}
               <motion.div
                 style={{ opacity: focalPointOpacity, scale: focalPointScale }}
                 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-white rounded-full shadow-[0_0_50px_#fff] z-50 pointer-events-none"
               />
 
+              {/* Loading spinner */}
               {!isLoaded && (
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-8 h-8 sm:w-10 sm:h-10 border-2 border-white/10 border-t-blue-500 rounded-full animate-spin" />
+                  <div className="w-10 h-10 border-2 border-white/10 border-t-orange-500 rounded-full animate-spin" />
                 </div>
               )}
             </div>
           </div>
 
-          {/* Right: Feature Cards */}
-          <div className="relative w-full lg:w-1/2 flex-1 lg:flex-none lg:h-full flex flex-col justify-center px-5 sm:px-8 lg:px-20 border-t lg:border-t-0 lg:border-l border-white/[0.05] overflow-hidden">
-            <div className="relative w-full max-w-xl h-[50vh] sm:h-[300px] lg:h-[360px]">
-
-              {/* Intro Title */}
+          {/* Right: Content */}
+          <div className="relative w-full lg:w-[45%] flex-1 lg:flex-none lg:h-full flex flex-col justify-start lg:justify-center pt-8 lg:pt-0 px-6 sm:px-10 lg:px-16 xl:px-20 overflow-hidden">
+            <div className="relative w-full max-w-lg h-[45vh] xs:h-[40vh] sm:h-[340px] lg:h-[420px]">
+              {/* Section heading (shows first, fades out) */}
               <motion.div
-                style={{ opacity: introTextOpacity, y: introTextY }}
+                style={{ opacity: headingOpacity, y: headingY }}
                 className="absolute inset-0 flex flex-col justify-center"
               >
-                <h2 className="text-3xl sm:text-4xl lg:text-7xl xl:text-8xl font-sans font-light tracking-[0.15em] sm:tracking-[0.25em] text-white uppercase mb-3 sm:mb-4">
-                  HARDWARE
+                <span className="text-orange-400 text-xs font-bold uppercase tracking-[0.3em] mb-4 flex items-center gap-2.5">
+                  <span className="w-2 h-2 bg-orange-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(249,115,22,0.6)]" />
+                  Hardware
+                </span>
+                <h2 className="text-3xl xs:text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black text-white leading-[1.1] sm:leading-[1] tracking-tight mb-4 sm:mb-5">
+                  Purpose-built
+                  <br />
+                  <span className="text-white/25">for fleets.</span>
                 </h2>
-                <p className="text-blue-400 font-mono tracking-widest uppercase text-[10px] sm:text-xs font-bold flex items-center gap-2 sm:gap-3">
-                  <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
-                  INITIALIZING CORE-SENSORS
+                <p className="text-[13px] sm:text-base lg:text-lg text-white/40 leading-relaxed font-medium max-w-md">
+                  Military-grade hardware engineered for the demands of
+                  commercial fleet operations — from long-haul to last-mile.
                 </p>
               </motion.div>
 
@@ -196,38 +226,51 @@ export default function TrackerSection() {
                 <motion.div
                   key={feature.title}
                   style={{ opacity: cardOpacities[i], y: cardYs[i] }}
-                  className="absolute inset-0 flex flex-col justify-center"
+                  className="absolute inset-0 flex flex-col justify-start lg:justify-center"
                 >
-                  <div className="bg-white/[0.02] backdrop-blur-xl border border-white/5 rounded-2xl sm:rounded-[2rem] p-5 sm:p-8 lg:p-10 shadow-2xl">
-                    <div className="flex items-center gap-4 sm:gap-6 mb-4 sm:mb-6 lg:mb-8">
-                      <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-xl sm:rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shrink-0">
-                        <feature.icon className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-blue-400" />
+                  <div className="rounded-2xl sm:rounded-3xl border border-white/[0.06] bg-white/[0.02] p-5 sm:p-8 lg:p-10 shadow-2xl">
+                    {/* Card header */}
+                    <div className="flex items-start gap-4 sm:gap-5 mb-5 sm:mb-6">
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-orange-500/10 border border-orange-500/15 flex items-center justify-center shrink-0">
+                        <feature.icon className="w-6 h-6 sm:w-7 sm:h-7 text-orange-400" />
                       </div>
-                      <div className="min-w-0">
-                        <h3 className="text-lg sm:text-2xl lg:text-3xl xl:text-4xl font-sans font-light tracking-[0.05em] sm:tracking-[0.1em] text-white uppercase truncate">
+                      <div className="min-w-0 pt-0.5">
+                        <h3 className="text-lg sm:text-2xl lg:text-3xl font-bold text-white tracking-tight leading-tight mb-1">
                           {feature.title}
                         </h3>
-                        <p className="text-[8px] sm:text-[10px] lg:text-xs font-mono text-blue-400/60 uppercase tracking-widest mt-0.5 sm:mt-1 truncate">
+                        <p className="text-[10px] sm:text-sm text-orange-400/60 font-medium">
                           {feature.specs}
                         </p>
                       </div>
                     </div>
-                    <p className="text-sm sm:text-base lg:text-lg text-white/50 leading-relaxed font-sans font-extralight tracking-wide">
+
+                    {/* Card body */}
+                    <p className="text-[13px] sm:text-base lg:text-lg text-white/50 leading-relaxed font-medium">
                       {feature.description}
                     </p>
+
+                    {/* Feature step indicator */}
+                    <div className="flex items-center gap-2 mt-6 sm:mt-8">
+                      {FEATURES.map((_, j) => (
+                        <div
+                          key={j}
+                          className={`h-1 rounded-full transition-all duration-500 ${
+                            j === i
+                              ? 'w-8 bg-orange-500'
+                              : 'w-2 bg-white/10'
+                          }`}
+                        />
+                      ))}
+                      <span className="ml-auto text-xs text-white/25 font-medium">
+                        {i + 1} / {FEATURES.length}
+                      </span>
+                    </div>
                   </div>
                 </motion.div>
               ))}
-
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Background Glows */}
-      <div className="absolute inset-0 pointer-events-none -z-10 overflow-hidden">
-        <div className="absolute top-[20%] right-[-10%] w-[60%] h-[60%] bg-blue-900/10 rounded-full blur-[150px]" />
-        <div className="absolute bottom-[10%] left-[-10%] w-[40%] h-[40%] bg-indigo-900/10 rounded-full blur-[150px]" />
       </div>
     </div>
   );

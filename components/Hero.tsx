@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ArrowDown } from "lucide-react";
 import Image from "next/image";
 import { useRef } from "react";
+import HeroMission from "./HeroMission";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -37,11 +38,11 @@ export default function Hero() {
       if (!sectionRef.current) return;
 
       gsap.set([heroLinesRef.current, heroSubRef.current, heroBtnRef.current], {
-        opacity: 1,
+        autoAlpha: 1,
         y: 0,
       });
       gsap.set(mockupsRef.current, {
-        opacity: 1,
+        autoAlpha: 1,
         scale: 1,
         rotate: 0,
       });
@@ -53,7 +54,7 @@ export default function Hero() {
           missionSubRef.current,
         ],
         {
-          opacity: 0,
+          autoAlpha: 0,
           y: 80,
           clipPath: "inset(100% -20% -20% -20%)",
         },
@@ -90,7 +91,7 @@ export default function Hero() {
       tl.to({}, { duration: 0.3 })
 
         .to(scrollIndicatorRef.current, {
-          opacity: 0,
+          autoAlpha: 0,
           y: 20,
           duration: 0.3,
           ease: "power2.in",
@@ -99,7 +100,7 @@ export default function Hero() {
         .to(
           [heroBtnRef.current, heroSubRef.current, heroLinesRef.current],
           {
-            opacity: 0,
+            autoAlpha: 0,
             y: -60,
             duration: 1.2,
             stagger: 0.12,
@@ -111,7 +112,7 @@ export default function Hero() {
           mockupsRef.current,
           {
             scale: 0.75,
-            opacity: 0,
+            autoAlpha: 0,
             rotate: 3,
             x: 120,
             duration: 1.8,
@@ -123,7 +124,7 @@ export default function Hero() {
         .to({}, { duration: 0.15 })
 
         .to(missionBadgeRef.current, {
-          opacity: 1,
+          autoAlpha: 1,
           y: 0,
           clipPath: "inset(-20% -20% -20% -20%)",
           duration: 1.2,
@@ -132,7 +133,7 @@ export default function Hero() {
         .to(
           missionLine1Ref.current,
           {
-            opacity: 1,
+            autoAlpha: 1,
             y: 0,
             clipPath: "inset(-20% -20% -20% -20%)",
             duration: 1.2,
@@ -143,7 +144,7 @@ export default function Hero() {
         .to(
           missionLine2Ref.current,
           {
-            opacity: 1,
+            autoAlpha: 1,
             y: 0,
             clipPath: "inset(-20% -20% -20% -20%)",
             duration: 1.2,
@@ -154,7 +155,7 @@ export default function Hero() {
         .to(
           missionSubRef.current,
           {
-            opacity: 1,
+            autoAlpha: 1,
             y: 0,
             clipPath: "inset(-20% -20% -20% -20%)",
             duration: 1.2,
@@ -181,12 +182,12 @@ export default function Hero() {
           {/* SCENE 1: Hero Text */}
           <div
             ref={heroTextRef}
-            className="absolute top-[18%] sm:top-[12%] lg:top-1/2 lg:-translate-y-1/2 left-6 lg:left-12 right-6 lg:right-auto w-auto lg:w-1/2 z-30 pointer-events-auto"
+            className="absolute top-[22%] sm:top-[15%] lg:top-1/2 lg:-translate-y-1/2 left-6 lg:left-12 right-6 lg:right-auto w-auto lg:w-1/2 z-30 pointer-events-auto"
           >
             <div className="text-left">
               <h1
                 ref={heroLinesRef}
-                className="text-[2.5rem] sm:text-6xl md:text-[80px] lg:text-[120px] font-black text-white leading-[0.95] lg:leading-[0.9] mb-3 sm:mb-6 lg:mb-8 tracking-tighter drop-shadow-2xl"
+                className="text-[2.25rem] xs:text-[2.75rem] sm:text-6xl md:text-[80px] lg:text-[120px] font-black text-white leading-[0.95] lg:leading-[0.9] mb-4 sm:mb-6 lg:mb-8 tracking-tighter drop-shadow-2xl"
               >
                 Revolution <br />
                 in your <br />
@@ -201,7 +202,7 @@ export default function Hero() {
               </p>
               <button
                 ref={heroBtnRef}
-                className="px-6 py-3 lg:px-10 lg:py-5 bg-white text-black rounded-full font-bold hover:scale-105 transition-transform shadow-[0_0_30px_rgba(255,255,255,0.2)] text-sm md:text-base lg:text-lg uppercase tracking-wider"
+                className="px-7 py-3.5 lg:px-10 lg:py-5 bg-white text-black rounded-full font-bold hover:scale-105 transition-transform shadow-[0_0_30px_rgba(255,255,255,0.2)] text-xs sm:text-base lg:text-lg uppercase tracking-wider"
               >
                 Request a Demo
               </button>
@@ -209,53 +210,20 @@ export default function Hero() {
           </div>
 
           {/* SCENE 2: Mission Text */}
-          <div
-            ref={missionTextRef}
-            className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 z-30 pointer-events-none"
-          >
-            <div
-              ref={missionBadgeRef}
-              style={{ opacity: 0 }}
-              className="inline-flex items-center px-8 py-3 rounded-full border border-white/20 bg-black/40 backdrop-blur-2xl mb-12 shadow-2xl"
-            >
-              <span className="text-red-400 text-xs md:text-sm font-bold tracking-[0.3em] uppercase">
-                The industry favors the legacy, not the efficient.
-              </span>
-            </div>
-
-            <h2
-              ref={missionLine1Ref}
-              style={{ opacity: 0 }}
-              className="text-4xl md:text-7xl lg:text-[90px] font-black text-white leading-[1] mb-2 max-w-5xl tracking-tight drop-shadow-2xl"
-            >
-              We&apos;re changing that.
-            </h2>
-
-            <h2
-              ref={missionLine2Ref}
-              style={{ opacity: 0 }}
-              className="text-4xl md:text-7xl lg:text-[90px] font-black text-white leading-[1] mb-10 max-w-5xl tracking-tight drop-shadow-2xl"
-            >
-              One optimized route at a time.
-            </h2>
-
-            <p
-              ref={missionSubRef}
-              style={{ opacity: 0 }}
-              className="text-lg md:text-2xl lg:text-3xl text-white/70 max-w-4xl leading-relaxed font-medium"
-            >
-              FleetNET honors the organizations rewriting the rules of logistics
-              locally rooted, community-loved, often underrepresented or
-              overlooked, but driven by mission and built with care.
-            </p>
-          </div>
+          <HeroMission
+            missionTextRef={missionTextRef}
+            missionBadgeRef={missionBadgeRef}
+            missionLine1Ref={missionLine1Ref}
+            missionLine2Ref={missionLine2Ref}
+            missionSubRef={missionSubRef}
+          />
 
           {/* MOCKUPS */}
           <div
             ref={mockupsRef}
-            className="absolute right-0 top-[42%] sm:top-[46%] lg:top-0 bottom-0 w-full lg:w-1/2 flex items-start lg:items-center justify-center pointer-events-none z-20"
+            className="absolute right-0 top-[48%] sm:top-[52%] lg:top-0 bottom-0 w-full lg:w-1/2 flex items-start lg:items-center justify-center pointer-events-none z-20"
           >
-            <div className="relative w-full h-full flex items-start lg:items-center justify-center p-4 lg:p-12 scale-[0.9] sm:scale-100 lg:scale-100">
+            <div className="relative w-full h-full flex items-start lg:items-center justify-center p-4 lg:p-12 scale-[0.85] xs:scale-[0.9] sm:scale-100 lg:scale-100">
               <div
                 ref={desktopMockupRef}
                 className="absolute top-0 lg:top-auto w-[105%] sm:w-[95%] lg:w-full max-w-[880px] aspect-[16/10]"
