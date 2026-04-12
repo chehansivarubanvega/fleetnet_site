@@ -32,57 +32,75 @@ export default function PartnerHands() {
   useGSAP(() => {
     if (!sectionRef.current) return;
 
-    // 1. Initial setups: Hands start offscreen horizontally
-    gsap.set(leftHandRef.current, { xPercent: -100, yPercent: -50 });
-    gsap.set(rightHandRef.current, { xPercent: 100, yPercent: 50 });
-    gsap.set(textRef.current, { opacity: 0, y: 30 });
-    gsap.set(logosRef.current, { opacity: 0, y: 40, scale: 0.9 });
+    const mm = gsap.matchMedia();
 
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: sectionRef.current,
-        start: 'top top',
-        end: '+=2500',
-        pin: true,
-        scrub: 0.8,
-        anticipatePin: 1,
-        onUpdate: (self) => {
-          const p = self.progress;
-          if (containerRef.current) {
-            const r = Math.round(gsap.utils.interpolate(245, 5, p));
-            const g = Math.round(gsap.utils.interpolate(245, 5, p));
-            const b = Math.round(gsap.utils.interpolate(245, 10, p));
-            containerRef.current.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
-          }
-        }
-      }
-    });
+    mm.add(
+      {
+        isMobile: '(max-width: 767px)',
+        isDesktop: '(min-width: 768px)',
+      },
+      (context) => {
+        const { isMobile } = context.conditions as any;
 
-    tl.to([leftHandRef.current, rightHandRef.current], {
-      xPercent: 0,
-      yPercent: 0,
-      ease: 'power3.inOut',
-      duration: 2.5,
-    })
+        // 1. Initial setups: Hands start offscreen horizontally
+        gsap.set(leftHandRef.current, { xPercent: -100, yPercent: -50 });
+        gsap.set(rightHandRef.current, { xPercent: 100, yPercent: 50 });
+        gsap.set(textRef.current, { opacity: 0, y: 30 });
+        gsap.set(logosRef.current, { opacity: 0, y: 40, scale: 0.9 });
 
-    .to(textRef.current, {
-      opacity: 1,
-      y: 0,
-      duration: 1.8,
-      ease: 'power3.out',
-    }, '-=1')
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: 'top top',
+            end: isMobile ? '+=1200' : '+=2500',
+            pin: true,
+            scrub: 0.8,
+            anticipatePin: 1,
+            onUpdate: (self) => {
+              const p = self.progress;
+              if (containerRef.current) {
+                const r = Math.round(gsap.utils.interpolate(245, 5, p));
+                const g = Math.round(gsap.utils.interpolate(245, 5, p));
+                const b = Math.round(gsap.utils.interpolate(245, 10, p));
+                containerRef.current.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+              }
+            },
+          },
+        });
 
-    .to(logosRef.current, {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      stagger: 0.15,
-      duration: 2,
-      ease: 'power2.out',
-    }, '-=0.8')
+        tl.to([leftHandRef.current, rightHandRef.current], {
+          xPercent: 0,
+          yPercent: 0,
+          ease: 'power3.inOut',
+          duration: 2.5,
+        })
+          .to(
+            textRef.current,
+            {
+              opacity: 1,
+              y: 0,
+              duration: 1.8,
+              ease: 'power3.out',
+            },
+            '-=1',
+          )
+          .to(
+            logosRef.current,
+            {
+              opacity: 1,
+              y: 0,
+              scale: 1,
+              stagger: 0.15,
+              duration: 2,
+              ease: 'power2.out',
+            },
+            '-=0.8',
+          )
+          .to({}, { duration: 0.6 });
+      },
+    );
 
-    .to({}, { duration: 0.6 });
-
+    return () => mm.revert();
   }, { scope: sectionRef });
 
   return (

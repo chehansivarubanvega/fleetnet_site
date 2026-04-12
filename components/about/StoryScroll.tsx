@@ -44,8 +44,12 @@ export default function StoryScroll() {
   const lineWidth = useTransform(smoothProgress, [0, 1], ["0%", "100%"]);
 
   return (
-    <section ref={containerRef} className="relative h-[400vh] bg-[#050505]">
-      <div className="sticky top-0 h-screen w-full flex flex-col justify-center overflow-hidden">
+    <section 
+      ref={containerRef} 
+      className="relative md:h-[400vh] h-auto bg-[#050505] py-20 md:py-0"
+    >
+      {/* Desktop Sticky Container */}
+      <div className="hidden md:flex sticky top-0 h-screen w-full flex-col justify-center overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
            <motion.div 
              className="absolute top-1/4 left-1/4 w-[40vw] h-[40vw] bg-primary/10 rounded-full blur-[140px] opacity-30"
@@ -93,6 +97,51 @@ export default function StoryScroll() {
           </div>
         </div>
       </div>
+
+      {/* Mobile Sequential Layout */}
+      <div className="flex md:hidden flex-col px-6 relative z-10">
+        <div className="mb-12 text-center">
+          <p className="text-[10px] uppercase tracking-[0.5em] text-primary font-black mb-4">Our Journey</p>
+          <h2 className="text-4xl xs:text-5xl font-black leading-[0.95] tracking-tighter text-white mb-6">
+            A story told in<br/><span className="text-white/20 italic">LAYERS.</span>
+          </h2>
+          <p className="text-[15px] sm:text-base text-white/50 leading-relaxed font-medium px-2">
+            We built FleetNET GLOBAL by listening to operators first and engineering every layer of the
+            platform for clarity, speed, and trust.
+          </p>
+        </div>
+
+        <div className="relative space-y-6">
+          {/* Vertical Timeline Line */}
+          <div className="absolute left-6 top-8 bottom-8 w-px bg-gradient-to-b from-primary via-primary/20 to-transparent" />
+
+          {STORY_STEPS.map((step, i) => (
+            <motion.div 
+              key={i}
+              initial={{ opacity: 0, x: -10 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: i * 0.1 }}
+              className="relative pl-12"
+            >
+              <div className="absolute left-[21px] top-6 w-2 h-2 rounded-full bg-primary shadow-[0_0_10px_rgba(249,115,22,0.8)] z-10" />
+              
+              <div className="rounded-2xl border border-white/5 bg-white/[0.03] p-6 xs:p-8 backdrop-blur-md overflow-hidden relative group">
+                <div className="absolute -top-12 -right-12 w-24 h-24 bg-primary/5 blur-[40px] rounded-full pointer-events-none" />
+                
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary mb-4">
+                  <p className="text-[10px] uppercase tracking-[0.2em] font-black">{step.tag}</p>
+                </div>
+                
+                <h3 className="text-2xl xs:text-3xl font-black text-white mb-4 tracking-tight leading-tight">{step.title}</h3>
+                <p className="text-white/50 text-[14px] xs:text-base leading-relaxed font-medium">{step.body}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      <div className="absolute inset-0 opacity-[0.04] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]" />
     </section>
   );
 }

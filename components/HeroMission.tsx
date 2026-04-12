@@ -25,7 +25,7 @@ export default function HeroMission({
       <div
         ref={missionBadgeRef}
         style={{ opacity: 0 }}
-        className="inline-flex items-center px-8 py-3 rounded-full border border-white/20 bg-black/40 backdrop-blur-2xl mb-12 shadow-2xl"
+        className="inline-flex items-center px-8 py-3 rounded-full border border-white/20 bg-black/40 backdrop-blur-2xl mb-8 sm:mb-12 shadow-2xl"
       >
         <span className="text-red-400 text-xs md:text-sm font-bold tracking-[0.3em] uppercase">
           The industry favors the legacy, not the efficient.
@@ -43,7 +43,7 @@ export default function HeroMission({
       <h2
         ref={missionLine2Ref}
         style={{ opacity: 0 }}
-        className="text-4xl md:text-7xl lg:text-[90px] font-black text-white leading-[1] mb-10 max-w-5xl tracking-tight drop-shadow-2xl"
+        className="text-4xl md:text-7xl lg:text-[90px] font-black text-white leading-[1] mb-6 sm:mb-10 max-w-5xl tracking-tight drop-shadow-2xl"
       >
         One optimized route at a time.
       </h2>

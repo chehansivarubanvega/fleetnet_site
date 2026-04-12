@@ -36,134 +36,143 @@ export default function Hero() {
     () => {
       if (!sectionRef.current) return;
 
-      gsap.set([heroLinesRef.current, heroSubRef.current], {
-        autoAlpha: 1,
-        y: 0,
-      });
-      gsap.set(mockupsRef.current, {
-        autoAlpha: 1,
-        scale: 1,
-        rotate: 0,
-      });
-      gsap.set(
-        [
-          missionBadgeRef.current,
-          missionLine1Ref.current,
-          missionLine2Ref.current,
-          missionSubRef.current,
-        ],
+      const mm = gsap.matchMedia();
+
+      mm.add(
         {
-          autoAlpha: 0,
-          y: 80,
-          clipPath: "inset(100% -20% -20% -20%)",
+          isMobile: "(max-width: 767px)",
+          isDesktop: "(min-width: 768px)",
+        },
+        (context) => {
+          const { isMobile } = context.conditions as any;
+
+          gsap.set([heroLinesRef.current, heroSubRef.current], {
+            autoAlpha: 1,
+            y: 0,
+          });
+          gsap.set(mockupsRef.current, {
+            autoAlpha: 1,
+            scale: 1,
+            rotate: 0,
+          });
+          gsap.set(
+            [
+              missionBadgeRef.current,
+              missionLine1Ref.current,
+              missionLine2Ref.current,
+              missionSubRef.current,
+            ],
+            {
+              autoAlpha: 0,
+              y: 80,
+              clipPath: "inset(100% -20% -20% -20%)",
+            },
+          );
+          gsap.set(scrollIndicatorRef.current, { opacity: 1 });
+
+          gsap.to(desktopMockupRef.current, {
+            y: -15,
+            duration: 3,
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut",
+          });
+          gsap.to(mobileMockupRef.current, {
+            y: 20,
+            duration: 2.5,
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut",
+            delay: 0.5,
+          });
+
+          const tl = gsap.timeline({
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top top",
+              end: isMobile ? "+=1200" : "+=2500",
+              pin: true,
+              scrub: 0.8,
+              anticipatePin: 1,
+            },
+          });
+
+          tl.to({}, { duration: 0.3 })
+            .to(scrollIndicatorRef.current, {
+              autoAlpha: 0,
+              y: 20,
+              duration: 0.3,
+              ease: "power2.in",
+            })
+            .to(
+              [heroSubRef.current, heroLinesRef.current],
+              {
+                autoAlpha: 0,
+                y: -60,
+                duration: 1.2,
+                stagger: 0.12,
+                ease: "power3.in",
+              },
+              "<",
+            )
+            .to(
+              mockupsRef.current,
+              {
+                scale: 0.75,
+                autoAlpha: 0,
+                rotate: 3,
+                x: 120,
+                duration: 1.8,
+                ease: "power3.inOut",
+              },
+              "<0.1",
+            )
+            .to({}, { duration: 0.15 })
+            .to(missionBadgeRef.current, {
+              autoAlpha: 1,
+              y: 0,
+              clipPath: "inset(-20% -20% -20% -20%)",
+              duration: 1.2,
+              ease: "power3.out",
+            })
+            .to(
+              missionLine1Ref.current,
+              {
+                autoAlpha: 1,
+                y: 0,
+                clipPath: "inset(-20% -20% -20% -20%)",
+                duration: 1.2,
+                ease: "power3.out",
+              },
+              "-=0.8",
+            )
+            .to(
+              missionLine2Ref.current,
+              {
+                autoAlpha: 1,
+                y: 0,
+                clipPath: "inset(-20% -20% -20% -20%)",
+                duration: 1.2,
+                ease: "power3.out",
+              },
+              "-=0.8",
+            )
+            .to(
+              missionSubRef.current,
+              {
+                autoAlpha: 1,
+                y: 0,
+                clipPath: "inset(-20% -20% -20% -20%)",
+                duration: 1.2,
+                ease: "power3.out",
+              },
+              "-=0.8",
+            )
+            .to({}, { duration: 0.6 });
         },
       );
-      gsap.set(scrollIndicatorRef.current, { opacity: 1 });
 
-      gsap.to(desktopMockupRef.current, {
-        y: -15,
-        duration: 3,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-      });
-      gsap.to(mobileMockupRef.current, {
-        y: 20,
-        duration: 2.5,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-        delay: 0.5,
-      });
-
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top top",
-          end: "+=2500",
-          pin: true,
-          scrub: 0.8,
-          anticipatePin: 1,
-        },
-      });
-
-      tl.to({}, { duration: 0.3 })
-
-        .to(scrollIndicatorRef.current, {
-          autoAlpha: 0,
-          y: 20,
-          duration: 0.3,
-          ease: "power2.in",
-        })
-
-        .to(
-          [heroSubRef.current, heroLinesRef.current],
-          {
-            autoAlpha: 0,
-            y: -60,
-            duration: 1.2,
-            stagger: 0.12,
-            ease: "power3.in",
-          },
-          "<",
-        )
-        .to(
-          mockupsRef.current,
-          {
-            scale: 0.75,
-            autoAlpha: 0,
-            rotate: 3,
-            x: 120,
-            duration: 1.8,
-            ease: "power3.inOut",
-          },
-          "<0.1",
-        )
-
-        .to({}, { duration: 0.15 })
-
-        .to(missionBadgeRef.current, {
-          autoAlpha: 1,
-          y: 0,
-          clipPath: "inset(-20% -20% -20% -20%)",
-          duration: 1.2,
-          ease: "power3.out",
-        })
-        .to(
-          missionLine1Ref.current,
-          {
-            autoAlpha: 1,
-            y: 0,
-            clipPath: "inset(-20% -20% -20% -20%)",
-            duration: 1.2,
-            ease: "power3.out",
-          },
-          "-=0.8",
-        )
-        .to(
-          missionLine2Ref.current,
-          {
-            autoAlpha: 1,
-            y: 0,
-            clipPath: "inset(-20% -20% -20% -20%)",
-            duration: 1.2,
-            ease: "power3.out",
-          },
-          "-=0.8",
-        )
-        .to(
-          missionSubRef.current,
-          {
-            autoAlpha: 1,
-            y: 0,
-            clipPath: "inset(-20% -20% -20% -20%)",
-            duration: 1.2,
-            ease: "power3.out",
-          },
-          "-=0.8",
-        )
-
-        .to({}, { duration: 0.6 });
+      return () => mm.revert();
     },
     { scope: sectionRef },
   );

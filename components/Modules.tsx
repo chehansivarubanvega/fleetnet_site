@@ -129,7 +129,7 @@ export default function Modules() {
   return (
     <section
       ref={sectionRef}
-      className="relative w-full bg-[#0a0a0a] py-20 sm:py-36 lg:py-44 font-[family-name:var(--font-outfit)]"
+      className="relative w-full bg-[#0a0a0a] py-12 sm:py-36 lg:py-44 font-[family-name:var(--font-outfit)]"
     >
       <div className="max-w-7xl mx-auto px-6">
         {/* Section heading */}

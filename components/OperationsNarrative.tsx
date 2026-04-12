@@ -96,7 +96,7 @@ export default function OperationsNarrative() {
       className="relative w-full bg-[#0a0a0a] font-[family-name:var(--font-outfit)]"
     >
       {/* Main content — no separate gradient div, transition is handled by TransitionSection's bottom fade */}
-      <div className="max-w-4xl mx-auto px-6 pt-24 sm:pt-28 lg:pt-36 pb-28 md:pb-36 lg:pb-44 text-center">
+      <div className="max-w-4xl mx-auto px-6 pt-16 sm:pt-28 lg:pt-36 pb-16 md:pb-36 lg:pb-44 text-center">
         {/* Heading */}
         <h2
           ref={headingRef}

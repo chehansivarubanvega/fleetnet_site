@@ -55,7 +55,7 @@ export default function Footer() {
   return (
     <footer 
       ref={containerRef}
-      className="relative bg-black text-white pt-24 pb-12 overflow-hidden font-[family-name:var(--font-outfit)]"
+      className="relative bg-black text-white pt-16 sm:pt-24 pb-10 sm:pb-12 overflow-hidden font-[family-name:var(--font-outfit)]"
     >
       {/* Subtle Top Gradient to separate from previous sections smoothly */}
       <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />

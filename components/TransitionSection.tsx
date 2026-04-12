@@ -84,7 +84,7 @@ export default function TransitionSection() {
       className="relative w-full overflow-hidden bg-[#fafaf8] font-[family-name:var(--font-outfit)]"
     >
       {/* Top content area */}
-      <div className="relative z-10 max-w-4xl mx-auto px-6 pt-32 sm:pt-36 lg:pt-44 pb-12 md:pb-16 text-center">
+      <div className="relative z-10 max-w-4xl mx-auto px-6 pt-20 sm:pt-36 lg:pt-44 pb-10 md:pb-16 text-center">
         <h2
           ref={headingRef}
           className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-[68px] font-black text-[#1a1a1a] leading-[1.05] tracking-tight mb-6 md:mb-8"
