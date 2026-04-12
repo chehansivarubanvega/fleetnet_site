@@ -154,24 +154,25 @@ export default function TrackerSection() {
   return (
     <div
       ref={containerRef}
-      className="relative h-[300vh] md:h-[500vh] bg-[#0a0a0a] -mt-px font-[family-name:var(--font-outfit)]"
+      className="relative h-[200vh] lg:h-[500vh] bg-[#0a0a0a] -mt-px font-[family-name:var(--font-outfit)]"
       id="tracker-section"
     >
       <div className="sticky top-0 h-screen w-full overflow-hidden bg-[#0a0a0a] transform-gpu">
         {/* Scroll progress bar */}
-        <div className="absolute top-0 left-0 right-0 h-[2px] z-50">
+        <div className="absolute top-0 left-0 right-0 h-[2px] z-[100]">
           <motion.div
             style={{ width: progressWidth }}
             className="h-full bg-gradient-to-r from-orange-500 to-orange-400"
           />
         </div>
 
-        <div className="h-full w-full flex flex-col lg:flex-row items-center lg:items-stretch max-w-[1600px] mx-auto justify-center lg:justify-start">
-          {/* Left: Device Canvas */}
-          <div className="relative w-full lg:w-[55%] shrink-0 h-[40vh] xs:h-[45vh] lg:h-full flex items-center justify-center p-4 sm:p-8 lg:p-16">
+        <div className="h-full w-full flex flex-col lg:flex-row items-center lg:items-stretch max-w-[1600px] mx-auto">
+          
+          {/* Left/Top (Hardware): Takes up top 50vh on mobile, left 55% on desktop */}
+          <div className="relative w-full h-[45vh] xs:h-[50vh] lg:h-full lg:w-[55%] flex items-center justify-center p-6 sm:p-8 lg:p-16 z-0">
             <div
               ref={canvasWrapperRef}
-              className="relative w-full max-w-[280px] sm:max-w-md lg:max-w-2xl aspect-square flex items-center justify-center"
+              className="relative w-full max-w-[280px] xs:max-w-[320px] sm:max-w-[400px] lg:max-w-2xl aspect-square flex items-center justify-center translate-y-4 lg:translate-y-0"
             >
               <motion.div
                 style={{ scale: deviceScale, opacity: introProgress }}
@@ -180,8 +181,8 @@ export default function TrackerSection() {
                 <canvas ref={canvasRef} className="w-full h-full" />
               </motion.div>
 
-              {/* Ambient glow - Enlarged for mobile depth */}
-              <div className="absolute inset-[-50%] bg-orange-500/[0.07] rounded-full blur-[120px] lg:blur-[140px] pointer-events-none" />
+              {/* Ambient glow - Apple style deep glow */}
+              <div className="absolute inset-[-40%] bg-orange-500/[0.12] rounded-full blur-[80px] lg:blur-[140px] pointer-events-none mix-blend-screen" />
 
               {/* Focal point */}
               <motion.div
@@ -198,26 +199,28 @@ export default function TrackerSection() {
             </div>
           </div>
 
-          {/* Right: Content */}
-          <div className="relative w-full lg:w-[45%] flex-none lg:h-full flex flex-col justify-center pt-0 px-6 sm:px-10 lg:px-16 xl:px-20 overflow-visible">
-            <div className="relative w-full max-w-lg min-h-[30vh] sm:min-h-0 h-auto sm:h-[340px] lg:h-[420px]">
+          {/* Right/Bottom (Content): Takes up bottom 50vh on mobile, right 45% on desktop */}
+          <div className="relative w-full h-[55vh] xs:h-[50vh] lg:h-full lg:w-[45%] flex flex-col justify-start lg:justify-center px-4 sm:px-10 lg:px-16 xl:px-20 z-20">
+            
+            <div className="relative w-full max-w-lg mx-auto lg:mx-0 h-full lg:h-[420px] flex items-start lg:items-center">
+              
               {/* Section heading (shows first, fades out) */}
               <motion.div
                 style={{ opacity: headingOpacity, y: headingY }}
-                className="absolute inset-0 flex flex-col justify-center"
+                className="absolute inset-x-0 top-0 lg:inset-0 flex flex-col justify-start lg:justify-center items-center lg:items-start text-center lg:text-left z-20"
               >
-                <span className="text-orange-400 text-[10px] xs:text-xs font-bold uppercase tracking-[0.3em] mb-4 flex items-center gap-2.5">
-                  <span className="w-1.5 h-1.5 xs:w-2 xs:h-2 bg-orange-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(249,115,22,0.6)]" />
+                <span className="text-orange-400 text-[10px] xs:text-xs font-bold uppercase tracking-[0.3em] mb-4 flex items-center justify-center lg:justify-start gap-2.5 drop-shadow-[0_0_10px_rgba(249,115,22,0.8)]">
+                  <span className="w-2 h-2 bg-orange-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(249,115,22,0.6)]" />
                   Hardware
                 </span>
-                <h2 className="text-3xl xs:text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black text-white leading-[1.1] sm:leading-[1] tracking-tight mb-4 sm:mb-5">
+                <h2 className="text-4xl xs:text-5xl lg:text-7xl font-black text-white leading-[1.0] tracking-tighter mb-4 lg:mb-5">
                   Purpose-built
                   <br />
-                  <span className="text-white/25">for fleets.</span>
+                  <span className="text-white/20">for fleets.</span>
                 </h2>
-                <p className="text-[13px] sm:text-base lg:text-lg text-white/40 leading-relaxed font-medium max-w-md">
+                <p className="text-[13px] xs:text-[14px] sm:text-base lg:text-lg text-white/50 leading-relaxed font-medium max-w-[280px] lg:max-w-sm mx-auto lg:mx-0">
                   Military-grade hardware engineered for the demands of
-                  commercial fleet operations — from long-haul to last-mile.
+                  commercial fleet operations.
                 </p>
               </motion.div>
 
@@ -226,47 +229,43 @@ export default function TrackerSection() {
                 <motion.div
                   key={feature.title}
                   style={{ opacity: cardOpacities[i], y: cardYs[i] }}
-                  className="absolute inset-0 flex flex-col justify-center"
+                  className="absolute inset-x-0 top-0 lg:inset-0 flex flex-col justify-start lg:justify-center z-10"
                 >
-                  <div className="rounded-2xl sm:rounded-3xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-2xl p-5 xs:p-7 sm:p-8 lg:p-10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden relative group">
-                    {/* Subtle internal glow */}
-                    <div className="absolute -top-24 -right-24 w-48 h-48 bg-orange-500/[0.08] blur-[60px] rounded-full pointer-events-none" />
-
-                    {/* Card header */}
-                    <div className="flex items-start gap-4 sm:gap-5 mb-5 xs:mb-7">
-                      <div className="w-11 h-11 xs:w-13 xs:h-13 sm:w-14 sm:h-14 rounded-xl bg-orange-500/10 border border-orange-500/15 flex items-center justify-center shrink-0">
-                        <feature.icon className="w-5 h-5 xs:w-6 xs:h-6 sm:w-7 sm:h-7 text-orange-400" />
+                  <div className="w-full">
+                    {/* Minimal/Clean Text Layout instead of Glassy Boxes for perfect mobile legibility */}
+                    <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
+                      
+                      {/* Icon */}
+                      <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-2xl bg-orange-500/10 border border-orange-500/15 flex items-center justify-center shadow-[inset_0_0_20px_rgba(249,115,22,0.05)] mb-4">
+                        <feature.icon className="w-5 h-5 lg:w-7 lg:h-7 text-orange-400 drop-shadow-[0_0_8px_rgba(249,115,22,0.5)]" />
                       </div>
-                      <div className="min-w-0 pt-0.5">
-                        <h3 className="text-lg xs:text-xl sm:text-2xl lg:text-3xl font-bold text-white tracking-tight leading-tight mb-1.5">
-                          {feature.title}
-                        </h3>
-                        <p className="text-[10px] xs:text-[12px] sm:text-sm text-orange-400/60 font-medium truncate">
-                          {feature.specs}
-                        </p>
+                      
+                      {/* Title & Specs */}
+                      <h3 className="text-2xl xs:text-3xl lg:text-4xl font-black text-white tracking-tight leading-tight mb-2">
+                        {feature.title}
+                      </h3>
+                      <p className="text-[10px] xs:text-[11px] lg:text-sm text-orange-400/80 font-bold tracking-[0.15em] uppercase mb-4 xs:mb-5">
+                        {feature.specs}
+                      </p>
+
+                      {/* Description */}
+                      <p className="text-[14px] xs:text-[15px] lg:text-lg text-white/60 leading-relaxed font-semibold mb-6 lg:mb-8 max-w-[320px] lg:max-w-full mx-auto lg:mx-0">
+                        {feature.description}
+                      </p>
+
+                      {/* Feature step indicator */}
+                      <div className="flex items-center justify-center lg:justify-start gap-2 w-full">
+                        {FEATURES.map((_, j) => (
+                          <div
+                            key={j}
+                            className={`h-1.5 rounded-full transition-all duration-500 ${
+                              j === i
+                                ? 'w-6 lg:w-10 bg-white shadow-[0_0_10px_rgba(255,255,255,0.4)]'
+                                : 'w-2 bg-white/10'
+                            }`}
+                          />
+                        ))}
                       </div>
-                    </div>
-
-                    {/* Card body */}
-                    <p className="text-[13px] xs:text-[15px] sm:text-base lg:text-lg text-white/50 leading-relaxed font-medium">
-                      {feature.description}
-                    </p>
-
-                    {/* Feature step indicator */}
-                    <div className="flex items-center gap-2 mt-6 xs:mt-9">
-                      {FEATURES.map((_, j) => (
-                        <div
-                          key={j}
-                          className={`h-1 rounded-full transition-all duration-500 ${
-                            j === i
-                              ? 'w-7 xs:w-10 bg-orange-500'
-                              : 'w-1.5 xs:w-2.5 bg-white/10'
-                          }`}
-                        />
-                      ))}
-                      <span className="ml-auto text-xs text-white/20 font-medium">
-                        {i + 1} / {FEATURES.length}
-                      </span>
                     </div>
                   </div>
                 </motion.div>

@@ -55,19 +55,20 @@ export default function Hero() {
             scale: 1,
             rotate: 0,
           });
-          gsap.set(
-            [
-              missionBadgeRef.current,
-              missionLine1Ref.current,
-              missionLine2Ref.current,
-              missionSubRef.current,
-            ],
-            {
-              autoAlpha: 0,
-              y: 80,
-              clipPath: "inset(100% -20% -20% -20%)",
-            },
-          );
+
+          const missionItems = [
+            missionBadgeRef.current,
+            missionLine1Ref.current,
+            missionLine2Ref.current,
+            missionSubRef.current,
+          ];
+
+          gsap.set(missionItems, {
+            autoAlpha: 0,
+            y: isMobile ? 30 : 80,
+            clipPath: "inset(100% -20% -20% -20%)",
+          });
+
           gsap.set(scrollIndicatorRef.current, { opacity: 1 });
 
           gsap.to(desktopMockupRef.current, {
@@ -90,7 +91,7 @@ export default function Hero() {
             scrollTrigger: {
               trigger: sectionRef.current,
               start: "top top",
-              end: isMobile ? "+=1200" : "+=2500",
+              end: isMobile ? "+=800" : "+=2500",
               pin: true,
               scrub: 0.8,
               anticipatePin: 1,
@@ -108,7 +109,7 @@ export default function Hero() {
               [heroSubRef.current, heroLinesRef.current],
               {
                 autoAlpha: 0,
-                y: -60,
+                y: isMobile ? -30 : -60,
                 duration: 1.2,
                 stagger: 0.12,
                 ease: "power3.in",
@@ -121,53 +122,21 @@ export default function Hero() {
                 scale: 0.75,
                 autoAlpha: 0,
                 rotate: 3,
-                x: 120,
+                x: isMobile ? 60 : 120,
                 duration: 1.8,
                 ease: "power3.inOut",
               },
               "<0.1",
             )
             .to({}, { duration: 0.15 })
-            .to(missionBadgeRef.current, {
+            .to(missionItems, {
               autoAlpha: 1,
               y: 0,
               clipPath: "inset(-20% -20% -20% -20%)",
-              duration: 1.2,
+              duration: isMobile ? 0.8 : 1.2,
+              stagger: isMobile ? 0.15 : 0.4,
               ease: "power3.out",
             })
-            .to(
-              missionLine1Ref.current,
-              {
-                autoAlpha: 1,
-                y: 0,
-                clipPath: "inset(-20% -20% -20% -20%)",
-                duration: 1.2,
-                ease: "power3.out",
-              },
-              "-=0.8",
-            )
-            .to(
-              missionLine2Ref.current,
-              {
-                autoAlpha: 1,
-                y: 0,
-                clipPath: "inset(-20% -20% -20% -20%)",
-                duration: 1.2,
-                ease: "power3.out",
-              },
-              "-=0.8",
-            )
-            .to(
-              missionSubRef.current,
-              {
-                autoAlpha: 1,
-                y: 0,
-                clipPath: "inset(-20% -20% -20% -20%)",
-                duration: 1.2,
-                ease: "power3.out",
-              },
-              "-=0.8",
-            )
             .to({}, { duration: 0.6 });
         },
       );
