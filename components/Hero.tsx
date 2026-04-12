@@ -19,7 +19,6 @@ export default function Hero() {
   const heroTextRef = useRef<HTMLDivElement>(null);
   const heroLinesRef = useRef<HTMLHeadingElement>(null);
   const heroSubRef = useRef<HTMLParagraphElement>(null);
-  const heroBtnRef = useRef<HTMLButtonElement>(null);
 
   const mockupsRef = useRef<HTMLDivElement>(null);
   const desktopMockupRef = useRef<HTMLDivElement>(null);
@@ -37,7 +36,7 @@ export default function Hero() {
     () => {
       if (!sectionRef.current) return;
 
-      gsap.set([heroLinesRef.current, heroSubRef.current, heroBtnRef.current], {
+      gsap.set([heroLinesRef.current, heroSubRef.current], {
         autoAlpha: 1,
         y: 0,
       });
@@ -98,7 +97,7 @@ export default function Hero() {
         })
 
         .to(
-          [heroBtnRef.current, heroSubRef.current, heroLinesRef.current],
+          [heroSubRef.current, heroLinesRef.current],
           {
             autoAlpha: 0,
             y: -60,
@@ -200,12 +199,6 @@ export default function Hero() {
                 A data-driven platform to monitor assets, optimize fuel
                 consumption, and transition to sustainable mobility.
               </p>
-              <button
-                ref={heroBtnRef}
-                className="px-7 py-3.5 lg:px-10 lg:py-5 bg-white text-black rounded-full font-bold hover:scale-105 transition-transform shadow-[0_0_30px_rgba(255,255,255,0.2)] text-xs sm:text-base lg:text-lg uppercase tracking-wider"
-              >
-                Request a Demo
-              </button>
             </div>
           </div>
 

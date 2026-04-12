@@ -3,7 +3,7 @@
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ChevronDown, Menu, Phone, Search, X } from 'lucide-react';
+import { ChevronDown, LayoutDashboard, Menu, Phone, Search, X } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -132,7 +132,7 @@ export default function Navbar() {
                   {item.children && <ChevronDown className="w-3.5 h-3.5 opacity-60 group-hover:opacity-100 transition-transform duration-300 group-hover:rotate-180" />}
                   
                   {/* Underline Animation */}
-                  <span className="absolute bottom-1 left-3 right-3 h-[2px] bg-red-500 rounded-full scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center shadow-[0_0_10px_rgba(239,68,68,0.8)]" />
+                  <span className="absolute bottom-1 left-3 right-3 h-[2px] bg-orange-500 rounded-full scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center shadow-[0_0_10px_rgba(249,115,22,0.8)]" />
                 </Link>
 
                 {/* Glassmorphic Mega Dropdown */}
@@ -146,7 +146,7 @@ export default function Navbar() {
                         transition={{ duration: 0.2, ease: "easeOut" }}
                         className="absolute top-[calc(100%+12px)] left-1/2 -translate-x-1/2 w-80 bg-black/70 backdrop-blur-2xl rounded-2xl shadow-[0_20px_50px_-20px_rgba(0,0,0,0.8)] border border-white/10 overflow-hidden"
                       >
-                         <div className="absolute inset-0 bg-gradient-to-b from-red-600/10 to-transparent pointer-events-none" />
+                         <div className="absolute inset-0 bg-gradient-to-b from-orange-600/10 to-transparent pointer-events-none" />
                         <div className="p-3 relative z-10">
                           {item.children.map((child) => (
                             <Link
@@ -154,8 +154,8 @@ export default function Navbar() {
                               href={child.href}
                               className="block p-4 rounded-xl hover:bg-white/10 transition-colors group/item relative overflow-hidden"
                             >
-                              <div className="text-sm font-bold text-white group-hover/item:text-red-400 transition-colors flex items-center gap-2">
-                                <span className="w-1.5 h-1.5 rounded-full bg-red-500 opacity-0 group-hover/item:opacity-100 transition-opacity" />
+                              <div className="text-sm font-bold text-white group-hover/item:text-orange-400 transition-colors flex items-center gap-2">
+                                <span className="w-1.5 h-1.5 rounded-full bg-orange-500 opacity-0 group-hover/item:opacity-100 transition-opacity" />
                                 {child.label}
                               </div>
                               <div className="text-[13px] text-white/50 mt-1 ml-3.5 font-medium leading-relaxed">
@@ -173,21 +173,35 @@ export default function Navbar() {
           </nav>
 
           {/* Right Actions */}
-          <div className="hidden lg:flex items-center shrink-0 space-x-2 xl:space-x-4">
-            {/* <button className="text-white/80 transition-colors duration-300 hover:text-white p-2">
-              <Search className="w-4.5 h-4.5" />
-            </button>
-            <button className="text-white/80 transition-colors duration-300 hover:text-white p-2 flex items-center gap-1 uppercase text-xs font-bold tracking-widest">
-              <Globe className="w-4.5 h-4.5" />
-              <span>EN</span>
-              <ChevronDown className="w-3 h-3 opacity-60 ml-0.5" />
-            </button> */}
+          <div className="hidden lg:flex items-center shrink-0 space-x-3 xl:space-x-5">
+            {/* Fleet Console Launcher */}
             <Link
-              href="#"
-              className="relative flex items-center gap-2 px-6 py-2.5 rounded-full font-bold text-white overflow-hidden group shadow-[0_0_20px_rgba(239,68,68,0.4)] transition-all duration-300 hover:shadow-[0_0_30px_rgba(239,68,68,0.6)] hover:scale-105 active:scale-95"
+              href="http://13.202.152.109/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="relative group flex items-center gap-2.5 px-6 py-2.5 bg-black/40 backdrop-blur-md rounded-full border border-orange-500/20 hover:border-orange-500/50 transition-all duration-500 overflow-hidden"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-red-600 to-red-500 group-hover:translate-x-full transition-transform duration-500 ease-out" />
-              <div className="absolute inset-0 bg-gradient-to-l from-red-500 to-red-600 -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out" />
+              {/* Scanning Line Animation */}
+              <div className="absolute inset-x-0 top-0 h-[100%] bg-gradient-to-b from-transparent via-orange-500/10 to-transparent -translate-y-full group-hover:animate-scan pointer-events-none" />
+              
+              {/* Spotlight Effect */}
+              <div className="absolute inset-0 bg-orange-500/0 group-hover:bg-orange-500/[0.03] transition-colors duration-500" />
+              
+              <div className="relative z-10 flex items-center gap-2">
+                 <LayoutDashboard className="w-4 h-4 text-orange-400 group-hover:rotate-12 transition-transform duration-500" />
+                 <span className="uppercase tracking-[0.15em] text-[11px] xl:text-[12px] font-black text-white/90 group-hover:text-white transition-colors">Fleet Console</span>
+              </div>
+
+              {/* Glowing Corner */}
+              <div className="absolute top-0 right-0 w-8 h-8 bg-orange-500/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+            </Link>
+
+            <Link
+              href="#contact"
+              className="relative flex items-center gap-2 px-6 py-2.5 rounded-full font-bold text-white overflow-hidden group shadow-[0_0_20px_rgba(249,115,22,0.4)] transition-all duration-300 hover:shadow-[0_0_30px_rgba(249,115,22,0.6)] hover:scale-105 active:scale-95"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-orange-600 to-orange-500 group-hover:translate-x-full transition-transform duration-500 ease-out" />
+              <div className="absolute inset-0 bg-gradient-to-l from-orange-500 to-orange-600 -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out" />
               <div className="relative z-10 flex items-center gap-2">
                  <Phone className="w-4 h-4" />
                  <span className="uppercase tracking-wider text-sm">Contact</span>
@@ -242,7 +256,7 @@ export default function Navbar() {
             <div className="px-6 py-6 space-y-6 overflow-y-auto h-[calc(100vh-72px)]">
               {navItems.map((item) => (
                 <div key={item.label} className="space-y-3">
-                  <div className="text-xs font-black text-red-500 uppercase tracking-[0.2em]">
+                  <div className="text-xs font-black text-orange-500 uppercase tracking-[0.2em]">
                     {item.label}
                   </div>
                   {item.children ? (
@@ -267,17 +281,24 @@ export default function Navbar() {
                   )}
                 </div>
               ))}
-              <div className="pt-6 border-t border-white/10 flex gap-4">
-                 <button className="flex-1 bg-white/5 border border-white/10 text-white py-3.5 rounded-xl font-bold uppercase tracking-wider text-sm hover:bg-white/10 transition-colors flex items-center justify-center gap-2">
-                    <Search className="w-4 h-4" />
-                    Search
-                 </button>
+              <div className="pt-6 border-t border-white/10 flex flex-col gap-4">
                  <Link
-                   href="#"
-                   className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 to-red-500 shadow-[0_0_20px_rgba(239,68,68,0.4)] text-white py-3.5 rounded-xl font-bold uppercase tracking-wider text-sm"
+                   href="http://13.202.152.109/"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   className="w-full relative group bg-black/40 border border-orange-500/20 text-white py-4 rounded-xl font-bold uppercase tracking-wider text-sm flex items-center justify-center gap-3 overflow-hidden shadow-[0_0_40px_rgba(249,115,22,0.1)]"
                  >
-                   <Phone className="w-4 h-4" />
-                   Contact
+                    <div className="absolute inset-0 bg-gradient-to-r from-orange-500/0 via-orange-500/5 to-orange-500/0 animate-shimmer" />
+                    <LayoutDashboard className="w-5 h-5 text-orange-400" />
+                    Fleet Console
+                 </Link>
+                 <Link
+                   href="#contact"
+                   onClick={() => setMobileMenuOpen(false)}
+                   className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-orange-600 to-orange-500 shadow-[0_0_20px_rgba(249,115,22,0.4)] text-white py-4 rounded-xl font-bold uppercase tracking-wider text-sm"
+                 >
+                    <Phone className="w-4 h-4" />
+                    Contact Support
                  </Link>
               </div>
             </div>

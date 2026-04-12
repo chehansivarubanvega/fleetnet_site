@@ -82,11 +82,16 @@ export default function Footer() {
               Join leading organizations optimizing their fleets with real-time intelligence and sustainable solutions.
             </p>
           </div>
-          <button className="group relative inline-flex items-center gap-3 px-8 py-4 bg-white text-black rounded-full font-bold uppercase tracking-wider overflow-hidden hover:scale-105 transition-transform duration-300 shrink-0">
-            <span className="relative z-10">Get Started</span>
+          <Link 
+            href="http://13.202.152.109/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group relative inline-flex items-center gap-3 px-8 py-4 bg-white text-black rounded-full font-bold uppercase tracking-wider overflow-hidden hover:scale-105 transition-transform duration-300 shrink-0 shadow-[0_0_30px_rgba(255,255,255,0.1)] hover:shadow-[0_0_40px_rgba(255,255,255,0.2)]"
+          >
+            <span className="relative z-10">Launch Console</span>
             <ArrowRight className="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform" />
             <div className="absolute inset-0 bg-gradient-to-r from-gray-200 to-white opacity-0 group-hover:opacity-100 transition-opacity" />
-          </button>
+          </Link>
         </div>
 
         {/* 4-COLUMN GRID */}
@@ -129,7 +134,7 @@ export default function Footer() {
               {['Logistics & Transport', 'Public Transit', 'Construction Fleets', 'Electric Vehicles', 'Cold Chain Logistics'].map((item) => (
                 <li key={item}>
                   <Link href="#" className="group flex items-center text-white/60 hover:text-white transition-colors">
-                    <span className="w-0 overflow-hidden group-hover:w-3 text-red-500 transition-all duration-300 ease-out mr-0 group-hover:mr-2">■</span>
+                    <span className="w-0 overflow-hidden group-hover:w-3 text-orange-500 transition-all duration-300 ease-out mr-0 group-hover:mr-2">■</span>
                     {item}
                   </Link>
                 </li>
@@ -144,28 +149,39 @@ export default function Footer() {
               {['Live Tracking', 'Driver Performance', 'Maintenance Planning', 'Fuel Analytics', 'API Documentation'].map((item) => (
                 <li key={item}>
                   <Link href="#" className="group flex items-center text-white/60 hover:text-white transition-colors">
-                    <span className="w-0 overflow-hidden group-hover:w-3 text-red-500 transition-all duration-300 ease-out mr-0 group-hover:mr-2">■</span>
+                    <span className="w-0 overflow-hidden group-hover:w-3 text-orange-500 transition-all duration-300 ease-out mr-0 group-hover:mr-2">■</span>
                     {item}
                   </Link>
                 </li>
               ))}
+              <li>
+                <Link
+                  href="http://13.202.152.109/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-center text-orange-400 font-bold hover:text-orange-300 transition-colors"
+                >
+                  <span className="w-0 overflow-hidden group-hover:w-3 text-orange-500 transition-all duration-300 ease-out mr-0 group-hover:mr-2">■</span>
+                  Fleet Console
+                </Link>
+              </li>
             </ul>
           </div>
 
           {/* Contact Details */}
-          <div ref={(el) => { columnRefs.current[3] = el; }} className="lg:col-span-3 lg:col-start-10">
+          <div id="contact" ref={(el) => { columnRefs.current[3] = el; }} className="lg:col-span-3 lg:col-start-10 scroll-mt-32">
             <h4 className="text-xs uppercase tracking-[0.2em] font-bold text-white/30 mb-8">Contact</h4>
             <ul className="space-y-6 text-white/60 font-medium">
               <li className="flex items-start gap-4 hover:text-white transition-colors">
-                <MapPin className="w-5 h-5 text-red-500/80 shrink-0 mt-1" />
+                <MapPin className="w-5 h-5 text-orange-500/80 shrink-0 mt-1" />
                 <span>Bay 1-5, Trace Expert City, <br />Tripoli Square, Colombo 10,</span>
               </li>
               <li className="flex items-center gap-4 hover:text-white transition-colors">
-                <Phone className="w-5 h-5 text-red-500/80 shrink-0" />
+                <Phone className="w-5 h-5 text-orange-500/80 shrink-0" />
                 <span>+94 (77) 0576272</span>
               </li>
               <li className="flex items-center gap-4 hover:text-white transition-colors group cursor-pointer">
-                <Mail className="w-5 h-5 text-red-500/80 shrink-0" />
+                <Mail className="w-5 h-5 text-orange-500/80 shrink-0" />
                 <span className="group-hover:underline underline-offset-4 pointer-events-auto">info@vega.lk</span>
               </li>
             </ul>

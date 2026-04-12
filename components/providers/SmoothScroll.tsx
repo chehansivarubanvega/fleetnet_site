@@ -3,6 +3,7 @@
 import { type ReactNode, useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { usePathname } from 'next/navigation';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -10,6 +11,7 @@ if (typeof window !== 'undefined') {
 
 export default function SmoothScroll({ children }: { children: ReactNode }) {
   const lenisRef = useRef<InstanceType<typeof import('lenis').default> | null>(null);
+  const pathname = usePathname();
 
   useEffect(() => {
     let mounted = true;
@@ -46,6 +48,13 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
       lenisRef.current = null;
     };
   }, []);
+
+  // Reset scroll to top on path change
+  useEffect(() => {
+    if (lenisRef.current) {
+      lenisRef.current.scrollTo(0, { immediate: true });
+    }
+  }, [pathname]);
 
   return <>{children}</>;
 }
