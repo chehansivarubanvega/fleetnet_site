@@ -182,7 +182,7 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-4 hover:text-white transition-colors group cursor-pointer">
                 <Mail className="w-5 h-5 text-orange-500/80 shrink-0" />
-                <span className="group-hover:underline underline-offset-4 pointer-events-auto">info@vega.lk</span>
+                <span className="group-hover:underline underline-offset-4 pointer-events-auto">info@fleetnetglobal.com</span>
               </li>
             </ul>
           </div>

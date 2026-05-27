@@ -197,7 +197,7 @@ export default function Navbar() {
             </Link>
 
             <Link
-              href="#contact"
+              href="/contact"
               className="relative flex items-center gap-2 px-6 py-2.5 rounded-full font-bold text-white overflow-hidden group shadow-[0_0_20px_rgba(249,115,22,0.4)] transition-all duration-300 hover:shadow-[0_0_30px_rgba(249,115,22,0.6)] hover:scale-105 active:scale-95"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-orange-600 to-orange-500 group-hover:translate-x-full transition-transform duration-500 ease-out" />
@@ -293,7 +293,7 @@ export default function Navbar() {
                     Fleet Console
                  </Link>
                  <Link
-                   href="#contact"
+                   href="/contact"
                    onClick={() => setMobileMenuOpen(false)}
                    className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-orange-600 to-orange-500 shadow-[0_0_20px_rgba(249,115,22,0.4)] text-white py-4 rounded-xl font-bold uppercase tracking-wider text-sm"
                  >

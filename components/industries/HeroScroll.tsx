@@ -85,7 +85,7 @@ export default function HeroScroll() {
             <div className="max-w-5xl">
                <h2 className="text-3xl xs:text-4xl md:text-[6vw] font-black text-white leading-[0.95] tracking-tight mb-6 md:mb-8 uppercase">
                  INDUSTRY-SPECIFIC<br/>
-                 <span className="text-primary tracking-[0.05em] md:tracking-[1.0em]">INTELLIGENCE</span>
+                 <span className="text-primary tracking-[0.05em] md:tracking-[0.1em]">INTELLIGENCE</span>
                </h2>
                <div className="w-px h-12 md:h-16 bg-gradient-to-b from-primary to-transparent mx-auto mb-6 md:mb-8" />
                <p className="text-[15px] xs:text-base sm:text-lg md:text-3xl text-white/50 max-w-3xl mx-auto font-medium leading-tight tracking-wide">

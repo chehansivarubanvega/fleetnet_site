@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Award, Sparkles, Target } from 'lucide-react';
+import Link from 'next/link';
 
 const VALUES = [
   {
@@ -115,7 +116,7 @@ export default function AboutContent() {
              <h2 className="text-4xl xs:text-5xl md:text-8xl font-black mb-8 md:mb-10 leading-[0.9] tracking-tighter text-white">READY TO <span className="text-primary italic">OPTIMIZE?</span></h2>
              <p className="text-base sm:text-xl md:text-2xl text-white/50 mb-10 md:mb-12 max-w-2xl font-medium">Whether you&apos;re looking to transform your fleet operations or join our mission, we&apos;re ready to engineer the future together.</p>
              <div className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-6">
-                <button className="w-full sm:w-auto px-10 md:px-12 py-4 md:py-5 bg-white text-black font-black uppercase tracking-[0.2em] text-xs md:text-sm hover:bg-primary transition-all shadow-[0_0_40px_rgba(255,255,255,0.1)] rounded-full border border-white hover:border-primary">Contact FleetNET</button>
+                <Link href="/contact" className="w-full sm:w-auto px-10 md:px-12 py-4 md:py-5 bg-white text-black font-black uppercase tracking-[0.2em] text-xs md:text-sm hover:bg-primary transition-all shadow-[0_0_40px_rgba(255,255,255,0.1)] rounded-full border border-white hover:border-primary inline-flex items-center justify-center">Contact FleetNET</Link>
                 <button className="w-full sm:w-auto px-10 md:px-12 py-4 md:py-5 bg-transparent border-2 border-white/10 text-white font-black uppercase tracking-[0.2em] text-xs md:text-sm hover:border-white transition-all rounded-full">Explore Careers</button>
              </div>
           </motion.div>
