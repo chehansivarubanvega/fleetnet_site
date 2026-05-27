@@ -492,10 +492,16 @@ export default function ContactForm() {
                             checked={formData.consent}
                             onChange={handleCheckboxChange}
                             disabled={isPending}
-                            className="sr-only peer"
+                            className="sr-only"
                           />
-                          <div className="w-5 h-5 mt-0.5 rounded border border-white/15 bg-white/[0.02] flex items-center justify-center text-primary shrink-0 peer-checked:border-primary peer-checked:bg-primary/10 transition-all">
-                            <Check className="w-3.5 h-3.5 scale-0 peer-checked:scale-100 transition-transform stroke-[3]" />
+                          <div className={`w-5 h-5 mt-0.5 rounded border flex items-center justify-center text-primary shrink-0 transition-all ${
+                            formData.consent 
+                              ? 'border-primary bg-primary/10' 
+                              : 'border-white/15 bg-white/[0.02]'
+                          }`}>
+                            <Check className={`w-3.5 h-3.5 transition-all stroke-[3] ${
+                              formData.consent ? 'scale-100 opacity-100' : 'scale-0 opacity-0'
+                            }`} />
                           </div>
                           <span className="text-[13px] text-white/40 font-medium leading-relaxed">
                             I authorize the transmission of this operational diagnostic payload to FleetNET for evaluation under strict security parameters.

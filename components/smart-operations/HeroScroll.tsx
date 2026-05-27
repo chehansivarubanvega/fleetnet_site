@@ -5,7 +5,24 @@ import { useRef } from 'react';
 import { ArrowRight, Phone } from 'lucide-react';
 import Link from 'next/link';
 
+declare global {
+  interface Window {
+    Calendly?: {
+      initPopupWidget: (options: { url: string }) => void;
+    };
+  }
+}
+
 export default function SmartOperationsHeroScroll() {
+  const handleBookDemo = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const bookingUrl = 'https://calendly.com/voltmotive-info/30min';
+    if (window.Calendly) {
+      window.Calendly.initPopupWidget({ url: bookingUrl });
+    } else {
+      window.open(bookingUrl, '_blank', 'noopener,noreferrer');
+    }
+  };
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { scrollYProgress } = useScroll({
@@ -69,7 +86,11 @@ export default function SmartOperationsHeroScroll() {
               <h3 className="text-3xl xs:text-4xl md:text-[5vw] font-black text-white leading-[0.95] tracking-tighter mb-6 md:mb-8 uppercase">OPERATIONAL INTELLIGENCE<br /><span className="text-primary italic text-center">AT FLEET SCALE</span></h3>
               <p className="text-white/50 text-[15px] xs:text-base md:text-2xl max-w-2xl md:max-w-3xl mx-auto font-medium mb-8 md:mb-10 text-center">Activate one connected workflow across every trip, vehicle, and driver.</p>
               <div className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-5">
-                <Link href="#" className="w-full sm:w-auto px-8 md:px-10 py-3.5 md:py-4 bg-white text-black font-black uppercase tracking-[0.2em] text-xs md:text-sm hover:bg-primary transition-colors rounded-full shadow-[0_0_36px_rgba(255,255,255,0.08)] inline-flex items-center justify-center gap-3">
+                <Link 
+                  href="https://calendly.com/voltmotive-info/30min" 
+                  onClick={handleBookDemo}
+                  className="w-full sm:w-auto px-8 md:px-10 py-3.5 md:py-4 bg-white text-black font-black uppercase tracking-[0.2em] text-xs md:text-sm hover:bg-primary transition-colors rounded-full shadow-[0_0_36px_rgba(255,255,255,0.08)] inline-flex items-center justify-center gap-3 cursor-pointer"
+                >
                   <Phone className="w-4 h-4" /> Request a Demo
                 </Link>
                 <Link href="#live-map" className="w-full sm:w-auto px-8 md:px-10 py-3.5 md:py-4 bg-transparent border-2 border-white/10 text-white font-black uppercase tracking-[0.2em] text-xs md:text-sm hover:border-white transition-all rounded-full inline-flex items-center justify-center gap-3">
