@@ -146,7 +146,7 @@ export default function Footer() {
           <div ref={(el) => { columnRefs.current[2] = el; }} className="lg:col-span-2">
             <h4 className="text-xs uppercase tracking-[0.2em] font-bold text-white/30 mb-8">Platform</h4>
             <ul className="space-y-4 font-medium">
-              {['Live Tracking', 'Driver Performance', 'Maintenance Planning', 'Fuel Analytics', 'API Documentation'].map((item) => (
+              {['Live Tracking', 'Driver Performance', 'Maintenance Planning', 'Fuel/Charge Analytics', 'API Documentation'].map((item) => (
                 <li key={item}>
                   <Link href="#" className="group flex items-center text-white/60 hover:text-white transition-colors">
                     <span className="w-0 overflow-hidden group-hover:w-3 text-orange-500 transition-all duration-300 ease-out mr-0 group-hover:mr-2">■</span>

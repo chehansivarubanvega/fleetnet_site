@@ -40,6 +40,16 @@ export async function submitContactForm(prevState: any, formData: FormData): Pro
   const focus = formData.get('focus') as string;
   const message = formData.get('message') as string;
   const consent = formData.get('consent') === 'on';
+  const honeypot = formData.get('fax_number') as string;
+
+  // Honeypot spam-bot filter (Layer 1)
+  if (honeypot && honeypot.trim().length > 0) {
+    // Silent drop: Spam bot believes it succeeded, but we process nothing
+    return {
+      success: true,
+      message: 'Secure data transmission successful. Our operations team has been notified.',
+    };
+  }
 
   // Server-side validation
   const errors: ActionResponse['errors'] = {};
@@ -71,6 +81,38 @@ export async function submitContactForm(prevState: any, formData: FormData): Pro
       message: 'Validation failed. Please correct the errors in the form.',
       errors,
     };
+  }
+
+  // Cloudflare Turnstile Verification (Layer 2)
+  const turnstileSecret = process.env.TURNSTILE_SECRET_KEY;
+  if (turnstileSecret) {
+    const turnstileToken = formData.get('cf-turnstile-response') as string;
+    if (!turnstileToken) {
+      return {
+        success: false,
+        message: 'Security validation missing. Please verify you are human.',
+      };
+    }
+
+    try {
+      const verifyRes = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `secret=${encodeURIComponent(turnstileSecret)}&response=${encodeURIComponent(turnstileToken)}`
+      });
+
+      const verifyData = await verifyRes.json();
+      if (!verifyData.success) {
+        console.error('Turnstile verification failed:', verifyData);
+        return {
+          success: false,
+          message: 'Cryptographic bot validation failed. Please solve the security widget again.',
+        };
+      }
+    } catch (err) {
+      console.error('Turnstile verification request failed:', err);
+      // Fallback: do not block legitimate users if Cloudflare's validation endpoint experiences downtime
+    }
   }
 
   try {

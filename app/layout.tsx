@@ -1,7 +1,7 @@
+import SmoothScroll from '@/components/providers/SmoothScroll';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import SmoothScroll from '@/components/providers/SmoothScroll';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     template: '%s | FleetNET GLOBAL',
   },
   description: 'The command center for your fleet operations. Real-time tracking, maintenance planning, and performance analytics for mission-critical fleets.',
-  keywords: ['Fleet Management', 'IoT Tracking', 'Asset Monitoring', 'Fuel Optimization', 'Sustainable Mobility', 'Fleet Analytics', 'Sri Lanka Automotive Tech'],
+  keywords: ['Fleet Management', 'IoT Tracking', 'Asset Monitoring', 'Fuel/Charge Optimization', 'Sustainable Mobility', 'Fleet Analytics', 'Sri Lanka Automotive Tech'],
   authors: [{ name: 'FleetNET GLOBAL' }],
   creator: 'FleetNET GLOBAL',
   publisher: 'FleetNET GLOBAL',

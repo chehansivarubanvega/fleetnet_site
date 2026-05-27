@@ -99,7 +99,7 @@ export default function TransitionSection() {
           className="text-base sm:text-lg md:text-xl text-[#555] max-w-2xl mx-auto leading-relaxed mb-10 md:mb-12 font-medium"
         >
           Run your fleet reliably, monitor every asset in real time, and
-          optimize every aspect of your operation — vehicles, drivers, fuel,
+          optimize every aspect of your operation — vehicles, drivers, fuel/Charge,
           maintenance, and more. FleetNET turns your everyday data into
           actionable insights that keep your fleet on the move.
         </p>
@@ -187,7 +187,7 @@ export default function TransitionSection() {
             <div className="relative w-full aspect-[16/9.5]">
               <Image
                 src="/images/dashboard_screenshot.png"
-                alt="FleetNET Global Dashboard — real-time fleet monitoring, vehicle tracking, fuel analytics, and maintenance overview"
+                alt="FleetNET Global Dashboard — real-time fleet monitoring, vehicle tracking, fuel/Charge analytics, and maintenance overview"
                 fill
                 className="object-cover object-top"
                 quality={95}

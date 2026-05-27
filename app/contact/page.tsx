@@ -2,6 +2,7 @@ import Navbar from '@/components/Navbar';
 import ContactForm from '@/components/ContactForm';
 import Footer from '@/components/Footer';
 import { Metadata } from 'next';
+import Script from 'next/script';
 
 export const metadata: Metadata = {
   title: 'Secure Operations Desk & Systems Inquiry',
@@ -36,6 +37,10 @@ export default function ContactPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <Script 
+        src="https://challenges.cloudflare.com/turnstile/v0/api.js" 
+        strategy="afterInteractive" 
       />
       <Navbar />
       {/* Visual buffer/spacing block for the absolute sticky Navbar */}

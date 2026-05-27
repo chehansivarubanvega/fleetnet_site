@@ -1,8 +1,15 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { 
-  ArrowRight, HardHat, Truck, Wrench, ShieldCheck, Cpu, Building2, Users, Target 
+import {
+  Building2,
+  Cpu,
+  HardHat,
+  ShieldCheck,
+  Target,
+  Truck,
+  Users,
+  Wrench
 } from 'lucide-react';
 import ShowcaseSection from './ShowcaseSection';
 
@@ -29,7 +36,7 @@ const INDUSTRIES = [
     title: "Public Sector Safety",
     description: "Uncompromising accountability and operational transparency for government and emergency fleets.",
     icon: ShieldCheck,
-    items: ["Audit-grade Reporting", "Fleet Lifecycle Care", "Fuel Waste Mitigation", "Inter-agency Visibility"],
+    items: ["Audit-grade Reporting", "Fleet Lifecycle Care", "Fuel/Charge Waste Mitigation", "Inter-agency Visibility"],
   },
 ];
 

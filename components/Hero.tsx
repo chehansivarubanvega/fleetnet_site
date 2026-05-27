@@ -174,7 +174,7 @@ export default function Hero() {
                 ref={heroSubRef}
                 className="text-sm sm:text-lg md:text-2xl text-white/80 mb-5 lg:mb-10 leading-relaxed font-medium max-w-xl"
               >
-                A data-driven platform to monitor assets, optimize fuel
+                A data-driven platform to monitor assets, optimize fuel/Charge
                 consumption, and transition to sustainable mobility.
               </p>
             </div>

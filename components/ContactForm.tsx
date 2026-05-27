@@ -16,6 +16,7 @@ export default function ContactForm() {
     focus: 'Logistics & Freight',
     message: '',
     consent: false,
+    fax_number: '',
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -29,6 +30,7 @@ export default function ContactForm() {
     data.append('fleetSize', formData.fleetSize);
     data.append('focus', formData.focus);
     data.append('message', formData.message);
+    data.append('fax_number', formData.fax_number);
     if (formData.consent) {
       data.append('consent', 'on');
     }
@@ -42,6 +44,7 @@ export default function ContactForm() {
           ...prev,
           message: '',
           consent: false,
+          fax_number: '',
         }));
       }
     });
@@ -260,6 +263,7 @@ export default function ContactForm() {
                           focus: 'Logistics & Freight',
                           message: '',
                           consent: false,
+                          fax_number: '',
                         });
                       }}
                       className="px-8 py-4 bg-white/5 border border-white/10 text-white/80 rounded-2xl font-bold uppercase tracking-wider text-xs hover:bg-white hover:text-black hover:border-white transition-all duration-300 active:scale-95 cursor-pointer"
@@ -292,6 +296,18 @@ export default function ContactForm() {
 
                     <form onSubmit={handleSubmit} className="space-y-6">
                       
+                      {/* Honeypot field to block simple spam bots (Layer 1) */}
+                      <div className="absolute -top-[9999px] -left-[9999px] h-0 w-0 overflow-hidden pointer-events-none" aria-hidden="true">
+                        <input 
+                          type="text" 
+                          name="fax_number" 
+                          tabIndex={-1} 
+                          autoComplete="off" 
+                          value={formData.fax_number}
+                          onChange={handleInputChange}
+                        />
+                      </div>
+
                       {/* Name field */}
                       <div>
                         <label htmlFor="name" className="block text-[11px] font-black uppercase tracking-[0.2em] text-white/40 mb-2.5">
@@ -491,6 +507,15 @@ export default function ContactForm() {
                           </p>
                         )}
                       </div>
+
+                      {/* Cloudflare Turnstile Widget (Layer 2) */}
+                      {process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && (
+                        <div 
+                          className="cf-turnstile flex justify-center mb-2" 
+                          data-sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+                          data-theme="dark"
+                        />
+                      )}
 
                       {/* Submit button */}
                       <button
