@@ -12,12 +12,30 @@ if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
 }
 
+declare global {
+  interface Window {
+    Calendly?: {
+      initPopupWidget: (options: { url: string }) => void;
+    };
+  }
+}
+
 export default function TransitionSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
   const dashboardRef = useRef<HTMLDivElement>(null);
+
+  const handleBookDemo = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const bookingUrl = 'https://calendly.com/voltmotive-info/30min';
+    if (window.Calendly) {
+      window.Calendly.initPopupWidget({ url: bookingUrl });
+    } else {
+      window.open(bookingUrl, '_blank', 'noopener,noreferrer');
+    }
+  };
 
   useGSAP(
     () => {
@@ -108,7 +126,8 @@ export default function TransitionSection() {
           {/* CTA row */}
           <div className="flex items-center gap-4 sm:gap-6 flex-wrap justify-center">
             <Link
-              href="#"
+              href="https://calendly.com/voltmotive-info/30min"
+              onClick={handleBookDemo}
               className="group inline-flex items-center gap-2.5 px-8 py-4 bg-[#1a1a1a] text-white rounded-full font-bold text-sm md:text-base uppercase tracking-wider hover:bg-[#333] transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-[1.03] active:scale-[0.98]"
             >
               Book a Demo

@@ -1,6 +1,7 @@
 import SmoothScroll from '@/components/providers/SmoothScroll';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import Script from 'next/script';
 import './globals.css';
 
 const inter = Inter({
@@ -69,10 +70,20 @@ export const metadata: Metadata = {
 export default function RootLayout({children}: {children: React.ReactNode}) {
   return (
     <html lang="en" suppressHydrationWarning className={`${inter.variable} font-sans`}>
+      <head>
+        <link 
+          href="https://assets.calendly.com/assets/external/widget.css" 
+          rel="stylesheet" 
+        />
+      </head>
       <body suppressHydrationWarning className="antialiased">
         <SmoothScroll>
           {children}
         </SmoothScroll>
+        <Script 
+          src="https://assets.calendly.com/assets/external/widget.js" 
+          strategy="afterInteractive" 
+        />
       </body>
     </html>
   );
