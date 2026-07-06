@@ -26,7 +26,7 @@ interface Section {
 const SECTIONS: Section[] = [
   { id: 'introduction', title: '1. Introduction', icon: FileText },
   { id: 'data-collection', title: '2. Information We Collect', icon: Eye },
-  { id: 'background-location', title: '3. Background Location Tracking', icon: MapPin },
+  { id: 'location-tracking', title: '3. Location Tracking', icon: MapPin },
   { id: 'data-usage', title: '4. How We Use Your Data', icon: CheckCircle2 },
   { id: 'data-sharing', title: '5. Sharing & Third Parties', icon: Shield },
   { id: 'data-security', title: '6. Data Security', icon: Lock },
@@ -210,10 +210,10 @@ export default function PrivacyPolicyContent() {
               </div>
             </section>
 
-            {/* Section 3: Background Location (PROMINENT DISCLOSURE FOR PLAY STORE) */}
+            {/* Section 3: Foreground Location Tracking (DISCLOSURE FOR PLAY STORE) */}
             <section 
-              id="background-location" 
-              ref={(el) => { sectionRefs.current['background-location'] = el; }} 
+              id="location-tracking" 
+              ref={(el) => { sectionRefs.current['location-tracking'] = el; }} 
               className="relative overflow-hidden border border-orange-500/20 bg-orange-600/[0.02] rounded-3xl p-8 md:p-10 backdrop-blur-sm scroll-mt-28"
             >
               {/* Highlight background elements */}
@@ -223,14 +223,14 @@ export default function PrivacyPolicyContent() {
                 <div className="w-10 h-10 rounded-xl bg-orange-500/20 flex items-center justify-center text-orange-400 border border-orange-500/40">
                   <MapPin className="w-5 h-5 animate-pulse" />
                 </div>
-                <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white">3. Prominent Disclosure: Background Location Tracking</h2>
+                <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white">3. Prominent Disclosure: Foreground Location Tracking</h2>
               </div>
               
               <div className="space-y-6 leading-relaxed">
                 <div className="flex gap-4 items-start bg-orange-500/10 border border-orange-500/20 rounded-2xl p-5 mb-4 text-orange-200 font-semibold text-sm">
                   <AlertTriangle className="w-5 h-5 text-orange-500 shrink-0 mt-0.5" />
                   <p>
-                    Important for Google Play Store Policy compliance: This application collects precise location data to enable real-time fleet coordination, job dispatch, and driver safety scoring.
+                    Important for Google Play Store Policy compliance: This application collects precise location data to enable real-time fleet coordination, job dispatch, and driver navigation mapping.
                   </p>
                 </div>
                 
@@ -242,19 +242,19 @@ export default function PrivacyPolicyContent() {
                   <li className="flex items-start gap-3">
                     <span className="text-orange-500 font-bold mt-1">✓</span>
                     <div>
-                      <strong className="text-white">Background Location Access:</strong> FleetNET collects location data <span className="text-orange-400 font-bold">even when the app is closed, minimized, or not actively in use</span>. This occurs exclusively while the driver is signed in and marked as &quot;On-Shift&quot; inside the application.
+                      <strong className="text-white">Foreground Location Access:</strong> FleetNET collects location data <span className="text-orange-400 font-bold">only when the application is actively running in the foreground (open on screen)</span>. We do NOT access, track, or record your location data in the background when the app is closed, minimized, or not in use.
                     </div>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="text-orange-500 font-bold mt-1">✓</span>
                     <div>
-                      <strong className="text-white">Core Functional Purpose:</strong> Continuous tracking is essential for route optimization, real-time safety alerts (e.g., speed warnings), accurate arrival estimates (ETA) for fleet operators, and geofencing triggers.
+                      <strong className="text-white">Core Functional Purpose:</strong> Location tracking is used to display your current position on real-time transit maps, calculate route distance, and provide automated check-ins and accurate arrival estimates (ETA) to your fleet operators.
                     </div>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="text-orange-500 font-bold mt-1">✓</span>
                     <div>
-                      <strong className="text-white">User Control:</strong> Drivers can cease location tracking instantly by choosing the &quot;Off-Shift&quot; status or logging out of the application.
+                      <strong className="text-white">User Control:</strong> Location tracking is only active when you are logged into the app and marked as &quot;On-Shift&quot;. You can stop location tracking at any time by changing your status to &quot;Off-Shift&quot;, closing the application, or logging out.
                     </div>
                   </li>
                 </ul>
