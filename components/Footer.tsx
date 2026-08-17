@@ -1,14 +1,23 @@
-'use client';
+"use client";
 
-import { useGSAP } from '@gsap/react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ArrowRight, Facebook, Instagram, Linkedin, Mail, MapPin, Phone, Twitter } from 'lucide-react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { useRef } from 'react';
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import {
+  ArrowRight,
+  Facebook,
+  Instagram,
+  Linkedin,
+  Mail,
+  MapPin,
+  Phone,
+  Twitter,
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { useRef } from "react";
 
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
@@ -18,42 +27,47 @@ export default function Footer() {
   const columnRefs = useRef<(HTMLDivElement | null)[]>([]);
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  useGSAP(() => {
-    if (!containerRef.current) return;
+  useGSAP(
+    () => {
+      if (!containerRef.current) return;
 
-    // Subtly reveal the Footer content as it scrolls into view
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: containerRef.current,
-        start: 'top 80%', // Start animation when the top of the footer is 80% down the viewport
-        once: true, // Only animate once
-      }
-    });
+      // Subtly reveal the Footer content as it scrolls into view
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top 80%", // Start animation when the top of the footer is 80% down the viewport
+          once: true, // Only animate once
+        },
+      });
 
-    // 1. Reveal CTA
-    tl.fromTo(ctaRef.current, 
-      { opacity: 0, y: 30 },
-      { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }
-    )
-    
-    // 2. Reveal Columns (Brand, Solutions, Platform, Contact)
-    .fromTo(columnRefs.current, 
-      { opacity: 0, y: 20 },
-      { opacity: 1, y: 0, duration: 0.6, stagger: 0.1, ease: 'power2.out' },
-      "-=0.4"
-    )
+      // 1. Reveal CTA
+      tl.fromTo(
+        ctaRef.current,
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" },
+      )
 
-    // 3. Reveal Bottom Copyright Bar
-    .fromTo(bottomRef.current,
-      { opacity: 0, y: 10 },
-      { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' },
-      "-=0.2"
-    );
+        // 2. Reveal Columns (Brand, Solutions, Platform, Contact)
+        .fromTo(
+          columnRefs.current,
+          { opacity: 0, y: 20 },
+          { opacity: 1, y: 0, duration: 0.6, stagger: 0.1, ease: "power2.out" },
+          "-=0.4",
+        )
 
-  }, { scope: containerRef });
+        // 3. Reveal Bottom Copyright Bar
+        .fromTo(
+          bottomRef.current,
+          { opacity: 0, y: 10 },
+          { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" },
+          "-=0.2",
+        );
+    },
+    { scope: containerRef },
+  );
 
   return (
-    <footer 
+    <footer
       ref={containerRef}
       className="relative bg-black text-white pt-16 sm:pt-24 pb-10 sm:pb-12 overflow-hidden font-[family-name:var(--font-outfit)]"
     >
@@ -67,9 +81,8 @@ export default function Footer() {
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12">
-        
         {/* UPPER CTA SECTION */}
-        <div 
+        <div
           ref={ctaRef}
           className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 pb-20 border-b border-white/10 mb-16"
         >
@@ -79,11 +92,12 @@ export default function Footer() {
               <span className="text-white/40">your operations?</span>
             </h2>
             <p className="text-lg text-white/50 max-w-xl">
-              Join leading organizations optimizing their fleets with real-time intelligence and sustainable solutions.
+              Join leading organizations optimizing their fleets with real-time
+              intelligence and sustainable solutions.
             </p>
           </div>
-          <Link 
-            href="http://13.202.152.109/"
+          <Link
+            href="http://portal.fleetnetglobal.com/"
             target="_blank"
             rel="noopener noreferrer"
             className="group relative inline-flex items-center gap-3 px-8 py-4 bg-white text-black rounded-full font-bold uppercase tracking-wider overflow-hidden hover:scale-105 transition-transform duration-300 shrink-0 shadow-[0_0_30px_rgba(255,255,255,0.1)] hover:shadow-[0_0_40px_rgba(255,255,255,0.2)]"
@@ -96,9 +110,13 @@ export default function Footer() {
 
         {/* 4-COLUMN GRID */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8 mb-20">
-          
           {/* Brand Info (Larger Column) */}
-          <div ref={(el) => { columnRefs.current[0] = el; }} className="lg:col-span-4 lg:pr-12">
+          <div
+            ref={(el) => {
+              columnRefs.current[0] = el;
+            }}
+            className="lg:col-span-4 lg:pr-12"
+          >
             <Link href="/" className="inline-block mb-8">
               <div className="relative h-10 w-48">
                 <Image
@@ -111,14 +129,16 @@ export default function Footer() {
               </div>
             </Link>
             <p className="text-white/50 leading-relaxed mb-8 font-medium">
-              The world&apos;s most advanced fleet management operations platform. Empowering organizations with real-time visibility and intelligent control for a sustainable future.
+              The world&apos;s most advanced fleet management operations
+              platform. Empowering organizations with real-time visibility and
+              intelligent control for a sustainable future.
             </p>
             {/* Social Icons */}
             <div className="flex gap-3">
               {[Facebook, Twitter, Linkedin, Instagram].map((Icon, i) => (
-                <Link 
-                  key={i} 
-                  href="#" 
+                <Link
+                  key={i}
+                  href="#"
                   className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/60 hover:text-white hover:bg-white/10 hover:border-white/20 hover:-translate-y-1 transition-all duration-300"
                 >
                   <Icon className="w-4 h-4" />
@@ -128,13 +148,31 @@ export default function Footer() {
           </div>
 
           {/* Solutions Links */}
-          <div ref={(el) => { columnRefs.current[1] = el; }} className="lg:col-span-2 lg:col-start-6">
-            <h4 className="text-xs uppercase tracking-[0.2em] font-bold text-white/30 mb-8">Solutions</h4>
+          <div
+            ref={(el) => {
+              columnRefs.current[1] = el;
+            }}
+            className="lg:col-span-2 lg:col-start-6"
+          >
+            <h4 className="text-xs uppercase tracking-[0.2em] font-bold text-white/30 mb-8">
+              Solutions
+            </h4>
             <ul className="space-y-4 font-medium">
-              {['Logistics & Transport', 'Public Transit', 'Construction Fleets', 'Electric Vehicles', 'Cold Chain Logistics'].map((item) => (
+              {[
+                "Logistics & Transport",
+                "Public Transit",
+                "Construction Fleets",
+                "Electric Vehicles",
+                "Cold Chain Logistics",
+              ].map((item) => (
                 <li key={item}>
-                  <Link href="#" className="group flex items-center text-white/60 hover:text-white transition-colors">
-                    <span className="w-0 overflow-hidden group-hover:w-3 text-orange-500 transition-all duration-300 ease-out mr-0 group-hover:mr-2">■</span>
+                  <Link
+                    href="#"
+                    className="group flex items-center text-white/60 hover:text-white transition-colors"
+                  >
+                    <span className="w-0 overflow-hidden group-hover:w-3 text-orange-500 transition-all duration-300 ease-out mr-0 group-hover:mr-2">
+                      ■
+                    </span>
                     {item}
                   </Link>
                 </li>
@@ -143,25 +181,45 @@ export default function Footer() {
           </div>
 
           {/* Platform Links */}
-          <div ref={(el) => { columnRefs.current[2] = el; }} className="lg:col-span-2">
-            <h4 className="text-xs uppercase tracking-[0.2em] font-bold text-white/30 mb-8">Platform</h4>
+          <div
+            ref={(el) => {
+              columnRefs.current[2] = el;
+            }}
+            className="lg:col-span-2"
+          >
+            <h4 className="text-xs uppercase tracking-[0.2em] font-bold text-white/30 mb-8">
+              Platform
+            </h4>
             <ul className="space-y-4 font-medium">
-              {['Live Tracking', 'Driver Performance', 'Maintenance Planning', 'Fuel/Charge Analytics', 'API Documentation'].map((item) => (
+              {[
+                "Live Tracking",
+                "Driver Performance",
+                "Maintenance Planning",
+                "Fuel/Charge Analytics",
+                "API Documentation",
+              ].map((item) => (
                 <li key={item}>
-                  <Link href="#" className="group flex items-center text-white/60 hover:text-white transition-colors">
-                    <span className="w-0 overflow-hidden group-hover:w-3 text-orange-500 transition-all duration-300 ease-out mr-0 group-hover:mr-2">■</span>
+                  <Link
+                    href="#"
+                    className="group flex items-center text-white/60 hover:text-white transition-colors"
+                  >
+                    <span className="w-0 overflow-hidden group-hover:w-3 text-orange-500 transition-all duration-300 ease-out mr-0 group-hover:mr-2">
+                      ■
+                    </span>
                     {item}
                   </Link>
                 </li>
               ))}
               <li>
                 <Link
-                  href="http://13.202.152.109/"
+                  href="http://portal.fleetnetglobal.com/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="group flex items-center text-orange-400 font-bold hover:text-orange-300 transition-colors"
                 >
-                  <span className="w-0 overflow-hidden group-hover:w-3 text-orange-500 transition-all duration-300 ease-out mr-0 group-hover:mr-2">■</span>
+                  <span className="w-0 overflow-hidden group-hover:w-3 text-orange-500 transition-all duration-300 ease-out mr-0 group-hover:mr-2">
+                    ■
+                  </span>
                   Fleet Console
                 </Link>
               </li>
@@ -169,12 +227,23 @@ export default function Footer() {
           </div>
 
           {/* Contact Details */}
-          <div id="contact" ref={(el) => { columnRefs.current[3] = el; }} className="lg:col-span-3 lg:col-start-10 scroll-mt-32">
-            <h4 className="text-xs uppercase tracking-[0.2em] font-bold text-white/30 mb-8">Contact</h4>
+          <div
+            id="contact"
+            ref={(el) => {
+              columnRefs.current[3] = el;
+            }}
+            className="lg:col-span-3 lg:col-start-10 scroll-mt-32"
+          >
+            <h4 className="text-xs uppercase tracking-[0.2em] font-bold text-white/30 mb-8">
+              Contact
+            </h4>
             <ul className="space-y-6 text-white/60 font-medium">
               <li className="flex items-start gap-4 hover:text-white transition-colors">
                 <MapPin className="w-5 h-5 text-orange-500/80 shrink-0 mt-1" />
-                <span>Bay 1-5, Trace Expert City, <br />Tripoli Square, Colombo 10,</span>
+                <span>
+                  Bay 1-5, Trace Expert City, <br />
+                  Tripoli Square, Colombo 10,
+                </span>
               </li>
               <li className="flex items-center gap-4 hover:text-white transition-colors">
                 <Phone className="w-5 h-5 text-orange-500/80 shrink-0" />
@@ -182,15 +251,16 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-4 hover:text-white transition-colors group cursor-pointer">
                 <Mail className="w-5 h-5 text-orange-500/80 shrink-0" />
-                <span className="group-hover:underline underline-offset-4 pointer-events-auto">info@fleetnetglobal.com</span>
+                <span className="group-hover:underline underline-offset-4 pointer-events-auto">
+                  info@fleetnetglobal.com
+                </span>
               </li>
             </ul>
           </div>
-
         </div>
 
         {/* BOTTOM COPYRIGHT ROW */}
-        <div 
+        <div
           ref={bottomRef}
           className="pt-8 flex flex-col md:flex-row justify-between items-center gap-6 text-sm text-white/40 font-medium border-t border-white/10"
         >
@@ -198,16 +268,26 @@ export default function Footer() {
             <div className="w-2 h-2 rounded-full bg-green-500/80 animate-pulse" />
             <span>All systems operational</span>
           </div>
-          
+
           <div className="flex gap-6">
-            <Link href="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>
-            <Link href="#" className="hover:text-white transition-colors">Terms of Service</Link>
-            <Link href="#" className="hover:text-white transition-colors">Cookie Settings</Link>
+            <Link
+              href="/privacy-policy"
+              className="hover:text-white transition-colors"
+            >
+              Privacy Policy
+            </Link>
+            <Link href="#" className="hover:text-white transition-colors">
+              Terms of Service
+            </Link>
+            <Link href="#" className="hover:text-white transition-colors">
+              Cookie Settings
+            </Link>
           </div>
 
-          <p>© {new Date().getFullYear()} FleetNET GLOBAL. All rights reserved.</p>
+          <p>
+            © {new Date().getFullYear()} FleetNET GLOBAL. All rights reserved.
+          </p>
         </div>
-
       </div>
     </footer>
   );
