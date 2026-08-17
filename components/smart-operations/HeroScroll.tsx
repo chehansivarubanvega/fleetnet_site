@@ -100,7 +100,7 @@ export default function SmartOperationsHeroScroll() {
             </div>
           </motion.div>
         </div>
-        <div className="absolute inset-0 opacity-[0.04] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]" />
+        <div className="absolute inset-0 opacity-[0.04] pointer-events-none" style={{ backgroundImage: "url('https://www.transparenttextures.com/patterns/stardust.png')" }} />
       </div>
     </section>
   );

@@ -80,7 +80,7 @@ export default function FluidBackground() {
       </div>
 
       {/* Noise Texture Overlay for "Grainy" Paint Feel */}
-      <div className="absolute inset-0 opacity-[0.12] pointer-events-none mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+      <div className="absolute inset-0 opacity-[0.12] pointer-events-none mix-blend-overlay" style={{ backgroundImage: "url('https://grainy-gradients.vercel.app/noise.svg')" }} />
     </div>
   );
 }
