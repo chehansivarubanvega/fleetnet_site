@@ -1,9 +1,20 @@
 'use client';
 
-import { ActionResponse, submitContactForm } from '@/app/contact/actions';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AlertCircle, ArrowRight, Check, Compass, Globe, Mail, MapPin, Phone, Server, ShieldCheck, Users } from 'lucide-react';
 import { useState, useTransition } from 'react';
+
+interface ActionResponse {
+  success: boolean;
+  message: string;
+  errors?: {
+    name?: string;
+    email?: string;
+    organization?: string;
+    message?: string;
+    consent?: string;
+  };
+}
 
 export default function ContactForm() {
   const [isPending, startTransition] = useTransition();
@@ -23,30 +34,11 @@ export default function ContactForm() {
     e.preventDefault();
     setState(null);
 
-    const data = new FormData();
-    data.append('name', formData.name);
-    data.append('email', formData.email);
-    data.append('organization', formData.organization);
-    data.append('fleetSize', formData.fleetSize);
-    data.append('focus', formData.focus);
-    data.append('message', formData.message);
-    data.append('fax_number', formData.fax_number);
-    if (formData.consent) {
-      data.append('consent', 'on');
-    }
-
     startTransition(async () => {
-      const response = await submitContactForm(null, data);
-      setState(response);
-      if (response.success) {
-        // Keep name and email, reset form fields
-        setFormData((prev) => ({
-          ...prev,
-          message: '',
-          consent: false,
-          fax_number: '',
-        }));
-      }
+      setState({
+        success: false,
+        message: 'This form is temporarily unavailable. Please reach us directly at info@fleetnetglobal.com.',
+      });
     });
   };
 
