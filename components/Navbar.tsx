@@ -7,7 +7,7 @@ import { ChevronDown, LayoutDashboard, Menu, Phone, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 // Only register client-side
 if (typeof window !== "undefined") {
@@ -16,7 +16,7 @@ if (typeof window !== "undefined") {
 
 const navItems = [
   {
-    label: "About FleetNET",
+    label: "About",
     href: "/about",
     children: [
       {
@@ -94,6 +94,10 @@ const navItems = [
       },
     ],
   },
+  {
+    label: "Pricing",
+    href: "/pricing",
+  },
 ];
 
 export default function Navbar() {
@@ -101,6 +105,19 @@ export default function Navbar() {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const headerRef = useRef<HTMLElement>(null);
   const navContainerRef = useRef<HTMLDivElement>(null);
+  const mobileMenuOpenRef = useRef(false);
+
+  useEffect(() => {
+    mobileMenuOpenRef.current = mobileMenuOpen;
+    if (mobileMenuOpen && headerRef.current) {
+      gsap.to(headerRef.current, {
+        y: "0%",
+        duration: 0.3,
+        ease: "power2.out",
+        overwrite: "auto",
+      });
+    }
+  }, [mobileMenuOpen]);
 
   useGSAP(
     () => {
@@ -145,6 +162,34 @@ export default function Navbar() {
           // Slightly shrink the logo area
           gsap.set(".navbar-logo-container", {
             transform: `scale(${gsap.utils.interpolate(1, 0.9, p)})`,
+          });
+        },
+      });
+
+      // Hide on scroll down, reveal on scroll up
+      const HIDE_THRESHOLD = 80; // px scrolled before hiding kicks in
+
+      ScrollTrigger.create({
+        start: 0,
+        end: "max",
+        onUpdate: (self) => {
+          if (!headerRef.current || mobileMenuOpenRef.current) return;
+
+          if (self.scroll() < HIDE_THRESHOLD) {
+            gsap.to(headerRef.current, {
+              y: "0%",
+              duration: 0.3,
+              ease: "power2.out",
+              overwrite: "auto",
+            });
+            return;
+          }
+
+          gsap.to(headerRef.current, {
+            y: self.direction === 1 ? "-120%" : "0%",
+            duration: 0.3,
+            ease: "power2.out",
+            overwrite: "auto",
           });
         },
       });
