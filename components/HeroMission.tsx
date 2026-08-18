@@ -53,7 +53,9 @@ export default function HeroMission({
         style={{ opacity: 0 }}
         className="text-[14px] xs:text-[15px] sm:text-lg md:text-2xl lg:text-3xl text-white/50 max-w-[280px] xs:max-w-sm sm:max-w-xl lg:max-w-3xl leading-relaxed font-semibold text-balance"
       >
-        FleetNET honors the organizations rewriting the rules of logistics—locally rooted, community-loved, but driven by mission and built with care.
+        FleetNET honors the organizations rewriting the rules of logistics
+        locally rooted, community-loved, but driven by mission and built with
+        care.
       </p>
     </div>
   );
