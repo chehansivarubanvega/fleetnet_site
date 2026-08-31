@@ -13,6 +13,7 @@ export interface SubscriptionPackage {
   hasFuelAndMaintenance: boolean;
   hasPortalAccess: boolean;
   isActive: boolean;
+  isPerVehiclePricing: boolean;
 }
 
 export const subscriptionPackages: SubscriptionPackage[] = [
@@ -31,6 +32,7 @@ export const subscriptionPackages: SubscriptionPackage[] = [
     hasFuelAndMaintenance: false,
     hasPortalAccess: false,
     isActive: true,
+    isPerVehiclePricing: false,
   },
   {
     id: 2,
@@ -47,6 +49,7 @@ export const subscriptionPackages: SubscriptionPackage[] = [
     hasFuelAndMaintenance: false,
     hasPortalAccess: false,
     isActive: true,
+    isPerVehiclePricing: false,
   },
   {
     id: 3,
@@ -63,6 +66,7 @@ export const subscriptionPackages: SubscriptionPackage[] = [
     hasFuelAndMaintenance: true,
     hasPortalAccess: false,
     isActive: true,
+    isPerVehiclePricing: false,
   },
   {
     id: 4,
@@ -79,6 +83,7 @@ export const subscriptionPackages: SubscriptionPackage[] = [
     hasFuelAndMaintenance: true,
     hasPortalAccess: true,
     isActive: true,
+    isPerVehiclePricing: true,
   },
   {
     id: 5,
@@ -95,6 +100,7 @@ export const subscriptionPackages: SubscriptionPackage[] = [
     hasFuelAndMaintenance: true,
     hasPortalAccess: true,
     isActive: true,
+    isPerVehiclePricing: false,
   },
   {
     id: 6,
@@ -111,6 +117,7 @@ export const subscriptionPackages: SubscriptionPackage[] = [
     hasFuelAndMaintenance: true,
     hasPortalAccess: true,
     isActive: true,
+    isPerVehiclePricing: false,
   },
   {
     id: 7,
@@ -127,6 +134,7 @@ export const subscriptionPackages: SubscriptionPackage[] = [
     hasFuelAndMaintenance: true,
     hasPortalAccess: true,
     isActive: true,
+    isPerVehiclePricing: false,
   },
   {
     id: 8,
@@ -143,6 +151,7 @@ export const subscriptionPackages: SubscriptionPackage[] = [
     hasFuelAndMaintenance: true,
     hasPortalAccess: true,
     isActive: true,
+    isPerVehiclePricing: false,
   },
   {
     id: 9,
@@ -159,6 +168,7 @@ export const subscriptionPackages: SubscriptionPackage[] = [
     hasFuelAndMaintenance: true,
     hasPortalAccess: true,
     isActive: true,
+    isPerVehiclePricing: false,
   },
   {
     id: 10,
@@ -175,6 +185,7 @@ export const subscriptionPackages: SubscriptionPackage[] = [
     hasFuelAndMaintenance: true,
     hasPortalAccess: true,
     isActive: true,
+    isPerVehiclePricing: false,
   },
   {
     id: 11,
@@ -191,6 +202,7 @@ export const subscriptionPackages: SubscriptionPackage[] = [
     hasFuelAndMaintenance: true,
     hasPortalAccess: true,
     isActive: true,
+    isPerVehiclePricing: false,
   },
   {
     id: 12,
@@ -207,6 +219,7 @@ export const subscriptionPackages: SubscriptionPackage[] = [
     hasFuelAndMaintenance: true,
     hasPortalAccess: true,
     isActive: true,
+    isPerVehiclePricing: false,
   },
   {
     id: 13,
@@ -223,5 +236,6 @@ export const subscriptionPackages: SubscriptionPackage[] = [
     hasFuelAndMaintenance: true,
     hasPortalAccess: true,
     isActive: true,
+    isPerVehiclePricing: false,
   },
 ];
