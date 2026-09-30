@@ -1,0 +1,9 @@
+{
+  "redirects": [
+    {
+      "source": "/:path*",
+      "destination": "https://fleetnetglobal.com/:path*",
+      "permanent": true
+    }
+  ]
+}
