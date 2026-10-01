@@ -1,8 +1,12 @@
 {
+  "framework": null,
+  "installCommand": "echo skip",
+  "buildCommand": "mkdir -p vercel-empty && touch vercel-empty/.keep",
+  "outputDirectory": "vercel-empty",
   "redirects": [
     {
-      "source": "/:path*",
-      "destination": "https://fleetnetglobal.com/:path*",
+      "source": "/(.*)",
+      "destination": "https://fleetnetglobal.com/$1",
       "permanent": true
     }
   ]
